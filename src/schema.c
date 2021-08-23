@@ -242,8 +242,9 @@ SEXP sexp_from_metadata(unsigned char* metadata) {
   memcpy(&n, metadata + pos, sizeof(int32_t));
   pos += sizeof(int32_t);
 
+  // technically shouldn't happen because this is supposed to be NULL
   if (n == 0) {
-    return R_NilValue;
+    return R_NilValue; // # nocov
   }
 
   SEXP result = PROTECT(Rf_allocVector(VECSXP, n));

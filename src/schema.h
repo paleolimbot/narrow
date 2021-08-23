@@ -21,11 +21,11 @@ static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char*
 
   struct ArrowSchema* schema = (struct ArrowSchema*) R_ExternalPtrAddr(schema_xptr);
   if (schema == NULL) {
-    Rf_error("`%s` is an external pointer to NULL", arg);
+    Rf_error("`%s` is an external pointer to NULL", arg); // # nocov
   }
 
   if (schema->release == NULL) {
-    Rf_error("`%s` has already been released and is no longer valid", arg);
+    Rf_error("`%s` has already been released and is no longer valid", arg); // # nocov
   }
 
   return schema;

@@ -1,8 +1,7 @@
 
 #' Create Arrow Schema objects
 #'
-#' @param format A
-#'   [format string](https://arrow.apache.org/docs/format/CDataInterface.html#data-type-description-format-strings).
+#' @inheritParams parse_format
 #' @param metadata A named character vector of [list()] of [raw()]
 #'   containing key/value metadata.
 #' @param name An optional name

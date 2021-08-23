@@ -9,6 +9,17 @@ test_that("arrow_schema() works with mostly defaults", {
   expect_null(s_data$children)
   expect_null(s_data$dictionary)
   expect_null(s_data$name)
+
+  # get the garbage collector to run at least once
+  gc()
+})
+
+test_that("arrow_schema() errors for arguments with bad types", {
+  expect_error(arrow_schema("i", dictionary = "fish"), "must be an object")
+  expect_error(arrow_schema("i", children = list("fish")), "must be an object")
+  expect_error(arrow_schema(c("i", "j")), "must be a character vector")
+  expect_error(arrow_schema(NA_character_), "can't be NA_")
+  expect_error(arrow_schema("i", flags = 1:2), "must be an integer")
 })
 
 test_that("arrow_schema() works with values for all memebers", {
@@ -78,4 +89,5 @@ test_that("arrow_schema() list interface works", {
   expect_identical(s$format, "i")
   expect_identical(s[["format"]], "i")
   expect_identical(names(s), names(as.list(s)))
+  expect_identical(length(s), length(as.list(s)))
 })

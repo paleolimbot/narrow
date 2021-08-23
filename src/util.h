@@ -18,7 +18,7 @@ static inline const char* cstring_from_sexp(SEXP value, const char* arg) {
 
   SEXP value0 = STRING_ELT(value, 0);
   if (value0 == NA_STRING) {
-    Rf_error("`%s` can't be NA_character_");
+    Rf_error("`%s` can't be NA_character_", arg);
   }
 
   return Rf_translateCharUTF8(STRING_ELT(value, 0));
@@ -34,7 +34,7 @@ static inline const char* nullable_cstring_from_sexp(SEXP value, const char* arg
 
 static inline int int_from_sexp(SEXP value, const char* arg) {
   if ((TYPEOF(value) != INTSXP) || (Rf_length(value) != 1)) {
-    Rf_error("`%s` must be am integer vector of length 1", arg);
+    Rf_error("`%s` must be an integer vector of length 1", arg);
   }
 
   return INTEGER(value)[0];
