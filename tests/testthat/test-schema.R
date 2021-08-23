@@ -32,6 +32,40 @@ test_that("arrow_schema() works with values for all memebers", {
   expect_identical(s_data$name, "name")
 })
 
+test_that("metadata field can be serialized and deserialized", {
+  s <- arrow_schema("i", metadata = list(key1 = "value1", key2 = "value2"))
+  expect_identical(s$metadata, list(key1 = "value1", key2 = "value2"))
+
+  expect_identical(arrow_schema("i", metadata = list())$metadata, NULL)
+  expect_identical(arrow_schema("i", metadata = NULL)$metadata, NULL)
+  expect_identical(
+    arrow_schema("i", metadata = list(a = as.raw(0x00)))$metadata,
+    list(a = as.raw(0x00))
+  )
+
+  expect_error(arrow_schema("i", metadata = "not named"), "must be a named")
+  expect_error(arrow_schema("i", metadata = c(NA_character_)), "must be a list")
+  expect_error(arrow_schema("i", metadata = 4), "must be a list")
+  expect_error(arrow_schema("i", metadata = list(c("a", "b"))), "must be a list")
+})
+
+test_that("metadata field can roundtrip unicode strings", {
+  s <- arrow_schema("i", metadata = c(key = "\U00B9"))
+  expect_identical(s$metadata, list(key = "\U00B9"))
+})
+
+test_that("metadata field can theoretically handle zero-length or NA keys", {
+  expect_identical(
+    arrow_schema("i", metadata = setNames("val", ""))$metadata,
+    setNames(list("val"), "")
+  )
+
+  expect_identical(
+    arrow_schema("i", metadata = setNames("val", NA_character_))$metadata,
+    setNames(list("val"), "")
+  )
+})
+
 test_that("format(), print(), and str() methods for arrow_schema() work", {
   s <- arrow_schema("i")
   expect_match(format(s), "arrow_schema")

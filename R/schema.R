@@ -15,13 +15,48 @@
 #'
 arrow_schema <- function(format, name = NULL, metadata = NULL, flags = 0L,
                          children = NULL, dictionary = NULL) {
+  metadata <- metadata_to_list_of_raw(metadata)
   .Call(arrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
 #' @export
 as.list.arrowc_schema <- function(x, ...) {
-  .Call(arrow_c_schema_data, x)
+  result <- .Call(arrow_c_schema_data, x)
+  result$metadata <- list_of_raw_to_metadata(result$metadata)
+  result
 }
+
+metadata_to_list_of_raw <- function(metadata) {
+  if (is.null(metadata)) {
+    return(metadata)
+  }
+
+  lapply(metadata, function(x) {
+    if (is.character(x) && (length(x) == 1) && !is.na(x)) {
+      charToRaw(enc2utf8(x))
+    } else if (is.raw(x)) {
+      x
+    } else {
+      stop("`metadata` must be a list() of raw() or non-NA character(1)", call. = FALSE)
+    }
+  })
+}
+
+list_of_raw_to_metadata <- function(metadata) {
+  if (is.null(metadata)) {
+    return(metadata)
+  }
+
+  lapply(metadata, function(x) {
+    if (is.character(x) || any(x == 0)) {
+      x
+    } else {
+      x_str <- iconv(list(x), from = "UTF-8", to = "UTF-8", mark = TRUE)[[1]]
+      if (is.na(x_str)) x else x_str
+    }
+  })
+}
+
 
 #' @export
 length.arrowc_schema <- function(x, ...) {
