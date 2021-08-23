@@ -38,6 +38,10 @@ static inline struct ArrowSchema* nullable_schema_from_xptr(SEXP schema_xptr, co
 }
 
 static inline unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg) {
+  if (metadata_sexp == R_NilValue) {
+    return NULL;
+  }
+
   if (TYPEOF(metadata_sexp) != VECSXP) {
     Rf_error("`%s` must be a list()", arg);
   }

@@ -32,13 +32,16 @@ SEXP arrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sex
 
   // these pointers are only valid during .Call(), so copy the data
   const char* format = cstring_from_sexp(format_sexp, "format");
-  const char* name = cstring_from_sexp(name_sexp, "name");
   result->format = malloc((strlen(format) + 1) * sizeof(char));
-  result->name = malloc((strlen(name) + 1) * sizeof(char));
   check_trivial_alloc(result->format, "char[]");
-  check_trivial_alloc(result->name, "char[]");
   memcpy((char*) result->format, format, (strlen(format) + 1) * sizeof(char));
-  memcpy((char*) result->name, name, (strlen(name) + 1) * sizeof(char));
+
+  const char* name = nullable_cstring_from_sexp(name_sexp, "name");
+  if (name != NULL) {
+    result->name = malloc((strlen(name) + 1) * sizeof(char));
+    check_trivial_alloc(result->name, "char[]");
+    memcpy((char*) result->name, name, (strlen(name) + 1) * sizeof(char));
+  }
 
   result->flags = int_from_sexp(flags_sexp, "flags");
   result->dictionary = nullable_schema_from_xptr(dictionary_xptr, "dictionary");
@@ -100,23 +103,26 @@ SEXP arrow_c_schema_data(SEXP schema_xptr) {
     SEXP children_sexp = PROTECT(Rf_allocVector(VECSXP, schema->n_children));
     for (R_xlen_t i = 0; i < schema->n_children; i++) {
       SEXP child_xptr = PROTECT(R_MakeExternalPtr(schema->children[i], schema_xptr, R_NilValue));
+      Rf_setAttrib(child_xptr, R_ClassSymbol, Rf_mkString("arrowc_schema"));
       SET_VECTOR_ELT(children_sexp, i, child_xptr);
       UNPROTECT(1);
     }
     SET_VECTOR_ELT(result, 4, children_sexp);
     UNPROTECT(1);
   } else {
-    SET_VECTOR_ELT(result, 5, R_NilValue);
+    SET_VECTOR_ELT(result, 4, R_NilValue);
   }
 
   if (schema->dictionary != NULL) {
     SEXP dictionary_xptr = PROTECT(R_MakeExternalPtr(schema->dictionary, schema_xptr, R_NilValue));
+    Rf_setAttrib(dictionary_xptr, R_ClassSymbol, Rf_mkString("arrowc_schema"));
     SET_VECTOR_ELT(result, 5, dictionary_xptr);
     UNPROTECT(1);
   } else {
     SET_VECTOR_ELT(result, 5, R_NilValue);
   }
 
+  UNPROTECT(1);
   return result;
 }
 

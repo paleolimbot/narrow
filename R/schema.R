@@ -18,6 +18,47 @@ arrow_schema <- function(format, name = NULL, metadata = NULL, flags = 0L,
   .Call(arrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
-arrow_schema_data <- function(schema) {
-  .Call(arrow_c_schema_data, schema)
+#' @export
+as.list.arrowc_schema <- function(x, ...) {
+  .Call(arrow_c_schema_data, x)
+}
+
+#' @export
+length.arrowc_schema <- function(x, ...) {
+  length(as.list(x))
+}
+
+#' @export
+names.arrowc_schema <- function(x, ...) {
+  names(as.list(x))
+}
+
+#' @export
+`[[.arrowc_schema` <- function(x, i, ...) {
+  as.list(x)[[i]]
+}
+
+#' @export
+`$.arrowc_schema` <- function(x, i, ...) {
+  as.list(x)[[i]]
+}
+
+#' @export
+format.arrowc_schema <- function(x, ...) {
+  sprintf("<arrow_schema: '%s'>", as.list(x)$format)
+}
+
+#' @export
+print.arrowc_schema <- function(x, ...) {
+  cat(paste0(format(x), "\n"))
+  print(as.list(x), ...)
+  invisible(x)
+}
+
+#' @export
+#' @importFrom utils str
+str.arrowc_schema <- function(object, ...) {
+  cat(paste0(format(object), "\n"))
+  str(as.list(object), ...)
+  invisible(object)
 }

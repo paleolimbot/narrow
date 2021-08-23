@@ -24,6 +24,14 @@ static inline const char* cstring_from_sexp(SEXP value, const char* arg) {
   return Rf_translateCharUTF8(STRING_ELT(value, 0));
 }
 
+static inline const char* nullable_cstring_from_sexp(SEXP value, const char* arg) {
+  if (value == R_NilValue) {
+    return NULL;
+  } else {
+    return cstring_from_sexp(value, arg);
+  }
+}
+
 static inline int int_from_sexp(SEXP value, const char* arg) {
   if ((TYPEOF(value) != INTSXP) || (Rf_length(value) != 1)) {
     Rf_error("`%s` must be am integer vector of length 1", arg);
