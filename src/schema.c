@@ -88,11 +88,7 @@ SEXP arrow_c_schema_data(SEXP schema_xptr) {
   }
 
   // TODO parse metadata
-  if (schema->metadata != NULL) {
-    SET_VECTOR_ELT(result, 2, R_NilValue);
-  } else {
-    SET_VECTOR_ELT(result, 2, R_NilValue);
-  }
+  SET_VECTOR_ELT(result, 2, sexp_from_metadata((unsigned char*) schema->metadata));
 
   SET_VECTOR_ELT(result, 3, Rf_ScalarInteger(schema->flags));
 
@@ -152,4 +148,137 @@ void finalize_schema(struct ArrowSchema* schema) {
 
     schema->release = NULL;
   }
+}
+
+unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg) {
+  if (metadata_sexp == R_NilValue) {
+    return NULL;
+  }
+
+  if (TYPEOF(metadata_sexp) != VECSXP) {
+    Rf_error("`%s` must be a list()", arg);
+  }
+
+  SEXP names_sexp = Rf_getAttrib(metadata_sexp, R_NamesSymbol);
+  int32_t n = Rf_length(metadata_sexp);
+
+  if (names_sexp == R_NilValue && n > 0) {
+    Rf_error("`%s` must be a named list()", arg);
+  }
+
+  if (n == 0) {
+    return NULL;
+  }
+
+  // https://arrow.apache.org/docs/format/CDataInterface.html#c.ArrowSchema.metadata
+  // similar to how PHP encodes arrays:
+  // how many things, sizeof key, key, sizeof value, value
+  size_t required_buffer_length = sizeof(int32_t);
+
+  // first pass to calculate the length we need and error for
+  // invalid values before we malloc()
+  for (int i = 0; i < n; i++) {
+    const char* name = Rf_translateCharUTF8(STRING_ELT(names_sexp, i));
+    SEXP item = VECTOR_ELT(metadata_sexp, i);
+    if (TYPEOF(item) != RAWSXP) {
+      Rf_error("`%s` must be a list() of raw()", arg);
+    }
+
+    // this will expand the item if it's ALTREP to make longjmp less
+    // likely below
+    RAW(item);
+
+    required_buffer_length += sizeof(int32_t);
+    required_buffer_length += strlen(name);
+    required_buffer_length += sizeof(int32_t);
+    required_buffer_length += Rf_length(VECTOR_ELT(metadata_sexp, i));
+  }
+
+  unsigned char* buffer = (unsigned char*) malloc(required_buffer_length);
+  size_t pos = 0;
+  memcpy(buffer, &n, sizeof(int32_t));
+  pos += sizeof(int32_t);
+
+  for (int i = 0; i < n; i++) {
+    SEXP name_sexp = STRING_ELT(names_sexp, i);
+    const char* name = "";
+    if (name_sexp == NA_STRING) {
+      name = "";
+    } else {
+      name = Rf_translateCharUTF8(name_sexp);
+    }
+    SEXP item = VECTOR_ELT(metadata_sexp, i);
+    int32_t name_len = strlen(name);
+    int32_t value_len = Rf_length(item);
+
+    memcpy(buffer + pos, &name_len, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    if (name_len > 0) {
+      memcpy(buffer + pos, name, name_len);
+      pos += name_len;
+    }
+
+    memcpy(buffer + pos, &value_len, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    if (value_len > 0) {
+      memcpy(buffer + pos, RAW(item), value_len);
+      pos += value_len;
+    }
+  }
+
+  // must be free()d by caller
+  return buffer;
+}
+
+SEXP sexp_from_metadata(unsigned char* metadata) {
+  if (metadata == NULL) {
+    return R_NilValue;
+  }
+
+  size_t pos = 0;
+  int32_t n;
+  memcpy(&n, metadata + pos, sizeof(int32_t));
+  pos += sizeof(int32_t);
+
+  if (n == 0) {
+    return R_NilValue;
+  }
+
+  SEXP result = PROTECT(Rf_allocVector(VECSXP, n));
+  SEXP result_names = PROTECT(Rf_allocVector(STRSXP, n));
+  for (int i = 0; i < n; i++) {
+    int32_t name_len;
+    memcpy(&name_len, metadata + pos, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    // makes the assumption that there is never a name with embedded \0
+    SEXP name;
+    if (name_len > 0) {
+      name = PROTECT(Rf_mkCharLenCE((char*) metadata + pos, name_len, CE_UTF8));
+      pos += name_len;
+    } else {
+      name = PROTECT(Rf_mkCharCE("", CE_UTF8));
+    }
+
+    int32_t value_len;
+    memcpy(&value_len, metadata + pos, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    SEXP value = PROTECT(Rf_allocVector(RAWSXP, value_len));
+    if (value_len > 0) {
+      memcpy(RAW(value), metadata + pos, value_len);
+      pos += value_len;
+    }
+
+    SET_VECTOR_ELT(result, i, value);
+    SET_STRING_ELT(result_names, i, name);
+
+    UNPROTECT(2);
+  }
+
+  Rf_setAttrib(result, R_NamesSymbol, result_names);
+  UNPROTECT(2);
+  return result;
 }

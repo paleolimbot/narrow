@@ -25,7 +25,7 @@ test_that("arrow_schema() works with values for all memebers", {
 
   expect_identical(s_data$format, "i")
   expect_identical(s_data$flags, 1L)
-  expect_null(s_data$metadata)
+  expect_identical(s_data$metadata, list(key = as.raw(0x00)))
   expect_length(s_data$children, 1)
   expect_s3_class(s_data$children[[1]], "arrowc_schema")
   expect_s3_class(s_data$dictionary, "arrowc_schema")
