@@ -8,6 +8,14 @@
 \description{
 Provides an R API to the 'Apache Arrow' C API.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/paleolimbot/arrowc}
+  \item Report bugs at \url{https://github.com/paleolimbot/arrowc/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Dewey Dunnington \email{dewey@fishandwhistle.net} (\href{https://orcid.org/0000-0002-9415-4582}{ORCID})
 
