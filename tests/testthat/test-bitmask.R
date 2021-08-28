@@ -35,3 +35,21 @@ test_that("start/end limiting works for conversion to logical", {
     logical()
   )
 })
+
+test_that("bitmask print method works", {
+  expect_identical(format(new_bitmask(0x00)), format(rep(FALSE, 8)))
+  expect_output(print(new_bitmask()), "arrow_bitmask")
+})
+
+test_that("bitmask subset works", {
+  expect_identical(new_bitmask(0xff)[integer()], new_bitmask())
+  expect_identical(new_bitmask(0xff)[1], new_bitmask(0x01))
+  expect_identical(new_bitmask(0xff)[8], new_bitmask(0x01))
+  expect_identical(new_bitmask(0xff)[TRUE], new_bitmask(0xff))
+})
+
+test_that("subset assign works", {
+  b <- new_bitmask(0x00)
+  b[1] <- TRUE
+  expect_identical(b, new_bitmask(0x01))
+})

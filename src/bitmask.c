@@ -12,7 +12,7 @@ static inline SEXP bitmask_new(int64_t size) {
   SEXP bitmask = PROTECT(Rf_allocVector(RAWSXP, n_bytes));
 
   // zero potential padding bits on the end
-  if (size != (n_bytes * 8)) {
+  if (n_bytes > 0) {
     RAW(bitmask)[n_bytes - 1] = 0x00;
   }
 
@@ -47,7 +47,7 @@ SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
   int* lgl = LOGICAL(lgl_sexp);
 
   for (R_xlen_t i = start; i < end; i++) {
-    lgl[i] = BIT_LGL_VALUE(bytes, i);
+    lgl[i - start] = BIT_LGL_VALUE(bytes, i);
   }
 
   UNPROTECT(1);
@@ -64,14 +64,24 @@ SEXP arrow_c_bitmask_from_logical(SEXP lgl_sexp) {
   R_xlen_t length = Rf_xlength(lgl_sexp);
   int* lgl = LOGICAL(lgl_sexp);
   SEXP bitmask = PROTECT(bitmask_new(length));
+  R_xlen_t n_bytes = Rf_xlength(bitmask);
+
+  if (n_bytes == 0) {
+    UNPROTECT(1);
+    return bitmask;
+  }
 
   unsigned char* bytes = RAW(bitmask);
   unsigned char item;
   unsigned char lgl_value;
 
-  for (R_xlen_t i = 0; i < length; i++) {
+  for (R_xlen_t i = 0; i < n_bytes; i++) {
     item = 0;
     for (int j = 0; j < 8; j++) {
+      if ((i * 8 + j) >= length) {
+        break;
+      }
+
       lgl_value = 0 != lgl[i * 8 + j];
       item = item | (lgl_value << j);
     }

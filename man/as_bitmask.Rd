@@ -17,7 +17,7 @@ as_bitmask(x, ...)
 
 \method{as_bitmask}{logical}(x, ...)
 
-new_bitmask(buffer)
+new_bitmask(buffer = raw())
 
 \method{as.logical}{arrowc_bitmask}(x, ..., start = 1, end = NULL)
 }
