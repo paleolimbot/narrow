@@ -1,6 +1,7 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
+#include <stdint.h>
 
 #define BIT_ONE ((unsigned char ) 0x01)
 #define BIT_LGL_VALUE(data_, i_) 0 != (data_[i_ / 8] & (BIT_ONE << (i_ % 8)))
@@ -19,6 +20,16 @@ static inline SEXP bitmask_new(int64_t size) {
 
   UNPROTECT(1);
   return bitmask;
+}
+
+static inline int64_t scalar_offset_from_sexp(SEXP offset_sexp, const char* arg) {
+  if (IS_SIMPLE_SCALAR(offset_sexp, INTSXP)) {
+    return INTEGER(offset_sexp)[0];
+  } else if (IS_SIMPLE_SCALAR(offset_sexp, REALSXP)) {
+    return REAL(offset_sexp)[0];
+  } else {
+    Rf_error("`%s` must be numeric(1)", arg);
+  }
 }
 
 SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
@@ -43,27 +54,10 @@ SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
   return lgl_sexp;
 }
 
-SEXP arrow_c_logical_from_bitmask(SEXP pkd, SEXP start_sexp, SEXP end_sexp) {
-  R_xlen_t start;
-  R_xlen_t end;
-
-  if (IS_SIMPLE_SCALAR(start_sexp, INTSXP)) {
-    start = INTEGER(start_sexp)[0];
-  } else if (IS_SIMPLE_SCALAR(start_sexp, REALSXP)) {
-    start = REAL(start_sexp)[0];
-  } else {
-    Rf_error("`start` must be numeric(1)");
-  }
-
-  if (IS_SIMPLE_SCALAR(end_sexp, INTSXP)) {
-    end = INTEGER(end_sexp)[0];
-  } else if (IS_SIMPLE_SCALAR(end_sexp, REALSXP)) {
-    end = REAL(end_sexp)[0];
-  } else {
-    Rf_error("`end` must be numeric(1)");
-  }
-
-  return bitmask_to_logical(pkd, start, end);
+SEXP arrow_c_logical_from_bitmask(SEXP bitmask, SEXP start_sexp, SEXP end_sexp) {
+  R_xlen_t start = scalar_offset_from_sexp(start_sexp, "start");
+  R_xlen_t end = scalar_offset_from_sexp(end_sexp, "end");
+  return bitmask_to_logical(bitmask, start, end);
 }
 
 SEXP arrow_c_bitmask_from_logical(SEXP lgl_sexp) {

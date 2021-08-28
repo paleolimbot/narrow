@@ -19,7 +19,7 @@ as_bitmask(x, ...)
 
 new_bitmask(buffer)
 
-\method{as.logical}{arrowc_bitmask}(x, ...)
+\method{as.logical}{arrowc_bitmask}(x, ..., start = 1, end = NULL)
 }
 \arguments{
 \item{x}{An object to convert to a bitmask}
@@ -27,6 +27,9 @@ new_bitmask(buffer)
 \item{...}{Passed to S3 methods}
 
 \item{buffer}{A \code{\link[=raw]{raw()}} vector containing the bitmask data}
+
+\item{start, end}{Start and end indices (inclusive) to limit
+when converting to \code{\link[=logical]{logical()}}.}
 }
 \value{
 An object with class 'arrowc_bitmask'
@@ -36,6 +39,6 @@ Create bitmask buffers
 }
 \examples{
 as_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-as.logical(new_bitmask(as.raw(0x01)))
+as.logical(new_bitmask(0x01))
 
 }
