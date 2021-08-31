@@ -1,16 +1,8 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
-
-static inline int64_t scalar_offset_from_sexp(SEXP offset_sexp, const char* arg) {
-  if (IS_SIMPLE_SCALAR(offset_sexp, INTSXP)) {
-    return INTEGER(offset_sexp)[0];
-  } else if (IS_SIMPLE_SCALAR(offset_sexp, REALSXP)) {
-    return REAL(offset_sexp)[0];
-  } else {
-    Rf_error("`%s` must be numeric(1)", arg);
-  }
-}
+#include <stdint.h>
+#include "offset.h"
 
 SEXP offset_to_double(SEXP offset_sexp, R_xlen_t start, R_xlen_t end) {
   if (start < 0) {

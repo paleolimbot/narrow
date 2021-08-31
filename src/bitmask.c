@@ -2,6 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <stdint.h>
+#include "offset.h"
 
 #define BIT_ONE ((unsigned char ) 0x01)
 #define BIT_LGL_VALUE(data_, i_) 0 != (data_[i_ / 8] & (BIT_ONE << (i_ % 8)))
@@ -20,16 +21,6 @@ static inline SEXP bitmask_new(int64_t size) {
 
   UNPROTECT(1);
   return bitmask;
-}
-
-static inline int64_t scalar_offset_from_sexp(SEXP offset_sexp, const char* arg) {
-  if (IS_SIMPLE_SCALAR(offset_sexp, INTSXP)) {
-    return INTEGER(offset_sexp)[0];
-  } else if (IS_SIMPLE_SCALAR(offset_sexp, REALSXP)) {
-    return REAL(offset_sexp)[0];
-  } else {
-    Rf_error("`%s` must be numeric(1)", arg);
-  }
 }
 
 SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
