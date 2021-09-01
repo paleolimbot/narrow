@@ -103,16 +103,41 @@ format.arrowvctrs_schema <- function(x, ...) {
 }
 
 #' @export
-print.arrowvctrs_schema <- function(x, ...) {
-  cat(paste0(format(x), "\n"))
-  print(as.list(x), ...)
+print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
+  cat(paste0(indent.str, format(x), "\n"))
+  info <- as.list(x)
+  for (nm in c("format", "name", "flags")) {
+    cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
+  }
+
+  if (!is.null(info$metadata)) {
+    cat(sprintf("%s- metadata: ", indent.str))
+    utils::str(info$metadata, indent.str = "  ")
+  } else {
+    cat(sprintf("%s- metadata: NULL\n", indent.str))
+  }
+
+  cat(sprintf("%s- children[%s]:\n", indent.str, length(info$children)))
+  if (!is.null(info$children)) {
+    for (child in info$children) {
+      print(child, ..., indent.str = paste0(indent.str, "  "))
+    }
+  }
+
+  if (!is.null(info$dictionary)) {
+    cat(sprintf("%s- dictionary:\n", indent.str))
+    print(info$dictionary, ..., indent.str = paste0(indent.str, "  "))
+  } else {
+    cat(sprintf("%s- dictionary: NULL\n", indent.str))
+  }
+
   invisible(x)
 }
 
 #' @export
 #' @importFrom utils str
 str.arrowvctrs_schema <- function(object, ...) {
-  cat(paste0(format(object), "\n"))
+  cat(paste0(format(object), " "))
   str(as.list(object), ...)
   invisible(object)
 }

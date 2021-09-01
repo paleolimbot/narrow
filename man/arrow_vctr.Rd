@@ -2,9 +2,15 @@
 % Please edit documentation in R/vctr.R
 \name{arrow_vctr}
 \alias{arrow_vctr}
+\alias{as_arrow_vctr}
+\alias{as_arrow_vctr.arrowvctrs_vctr}
 \title{Create arrow vectors}
 \usage{
 arrow_vctr(schema = arrow_schema("n"), arrays = list())
+
+as_arrow_vctr(x, ...)
+
+\method{as_arrow_vctr}{arrowvctrs_vctr}(x, ...)
 }
 \arguments{
 \item{schema}{An \code{\link[=arrow_schema]{arrow_schema()}}}
