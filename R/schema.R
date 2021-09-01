@@ -8,6 +8,8 @@
 #' @param flags Flags to set on input.
 #' @param children A [list()] of objects created using [arrow_schema()].
 #' @param dictionary An [arrow_schema()] if this is a dictionary type.
+#' @param x An object to convert to an [arrow_schema()]
+#' @param ... Passed to S3 methods
 #'
 #' @return An external pointer with class 'arrowvctrs_schema'
 #' @export
@@ -16,6 +18,24 @@ arrow_schema <- function(format, name = NULL, metadata = NULL, flags = 0L,
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)
   .Call(arrowvctrs_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
+}
+
+#' @rdname arrow_schema
+#' @export
+as_arrow_schema <- function(x, ...) {
+  UseMethod("as_arrow_schema")
+}
+
+#' @rdname arrow_schema
+#' @export
+as_arrow_schema.arrowvctrs_schema <- function(x, ...) {
+  x
+}
+
+#' @rdname arrow_schema
+#' @export
+as_arrow_schema.character <- function(x, ...) {
+  arrow_schema(x)
 }
 
 #' @export

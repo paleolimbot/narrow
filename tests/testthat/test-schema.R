@@ -14,6 +14,12 @@ test_that("arrow_schema() works with mostly defaults", {
   gc()
 })
 
+test_that("as_arrow_schemea() works", {
+  s <- arrow_schema("i")
+  expect_identical(as_arrow_schema(s), s)
+  expect_identical(as.list(as_arrow_schema("i")), as.list(s))
+})
+
 test_that("arrow_schema() errors for arguments with bad types", {
   expect_error(arrow_schema("i", dictionary = "fish"), "must be an object")
   expect_error(arrow_schema("i", children = list("fish")), "must be an object")

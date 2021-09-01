@@ -2,6 +2,9 @@
 % Please edit documentation in R/schema.R
 \name{arrow_schema}
 \alias{arrow_schema}
+\alias{as_arrow_schema}
+\alias{as_arrow_schema.arrowvctrs_schema}
+\alias{as_arrow_schema.character}
 \title{Create Arrow Schema objects}
 \usage{
 arrow_schema(
@@ -12,6 +15,12 @@ arrow_schema(
   children = NULL,
   dictionary = NULL
 )
+
+as_arrow_schema(x, ...)
+
+\method{as_arrow_schema}{arrowvctrs_schema}(x, ...)
+
+\method{as_arrow_schema}{character}(x, ...)
 }
 \arguments{
 \item{format}{A
@@ -27,6 +36,10 @@ containing key/value metadata.}
 \item{children}{A \code{\link[=list]{list()}} of objects created using \code{\link[=arrow_schema]{arrow_schema()}}.}
 
 \item{dictionary}{An \code{\link[=arrow_schema]{arrow_schema()}} if this is a dictionary type.}
+
+\item{x}{An object to convert to an \code{\link[=arrow_schema]{arrow_schema()}}}
+
+\item{...}{Passed to S3 methods}
 }
 \value{
 An external pointer with class 'arrowvctrs_schema'
