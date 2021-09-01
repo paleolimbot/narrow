@@ -40,4 +40,11 @@ static inline int int_from_sexp(SEXP value, const char* arg) {
   return INTEGER(value)[0];
 }
 
+static inline SEXP xptr_addr_char(const void* addr) {
+  char buf[1024];
+  memset(buf, 0, 1024);
+  snprintf(buf, 1024, "%p", addr);
+  return Rf_mkChar(buf);
+}
+
 #endif

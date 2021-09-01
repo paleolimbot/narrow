@@ -21,4 +21,18 @@ static inline int64_t scalar_offset_from_sexp(SEXP offset_sexp, const char* arg)
   }
 }
 
+static inline SEXP sexp_from_offset(int64_t n, int64_t* offset) {
+  SEXP offset_sexp = PROTECT(Rf_allocVector(REALSXP, n));
+  if (n > 0) {
+    memcpy(REAL(offset_sexp), offset, n * sizeof(int64_t));
+  }
+  Rf_setAttrib(offset_sexp, R_ClassSymbol, Rf_mkString("arrowc_offset"));
+  UNPROTECT(1);
+  return offset_sexp;
+}
+
+static inline SEXP sexp_from_scalar_offset(int64_t offset) {
+  return sexp_from_offset(1, &offset);
+}
+
 #endif

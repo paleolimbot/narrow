@@ -3,7 +3,10 @@
 #include <Rinternals.h>
 #include <R_ext/Rdynload.h>
 
-SEXP arrow_c_array_from_vector(SEXP vec, SEXP schema_xptr);
+SEXP arrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
+                             SEXP offset_sexp, SEXP children_sexp, SEXP dictionary_xptr);
+SEXP arrow_c_array_info(SEXP array_xptr);
+
 SEXP arrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr);
 SEXP arrow_c_schema_data(SEXP schema_xptr);
@@ -15,8 +18,11 @@ SEXP arrow_c_double_from_offset(SEXP offset, SEXP start_sexp, SEXP end_sexp);
 SEXP arrow_c_offset_from_double(SEXP dbl_sexp);
 SEXP arrow_c_offset_from_integer(SEXP int_sexp);
 
+SEXP arrow_c_xptr_addr(SEXP xptr);
+
 static const R_CallMethodDef CallEntries[] = {
-  {"arrow_c_array_from_vector", (DL_FUNC) &arrow_c_array_from_vector, 2},
+  {"arrow_c_array_from_sexp", (DL_FUNC) &arrow_c_array_from_sexp, 6},
+  {"arrow_c_array_info", (DL_FUNC) &arrow_c_array_info, 1},
   {"arrow_c_schema_xptr_new", (DL_FUNC) &arrow_c_schema_xptr_new, 6},
   {"arrow_c_schema_data", (DL_FUNC) &arrow_c_schema_data, 1},
   {"arrow_c_logical_from_bitmask", (DL_FUNC) &arrow_c_logical_from_bitmask, 3},
@@ -24,6 +30,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrow_c_offset_from_double", (DL_FUNC) &arrow_c_offset_from_double, 1},
   {"arrow_c_offset_from_integer", (DL_FUNC) &arrow_c_offset_from_integer, 1},
   {"arrow_c_double_from_offset", (DL_FUNC) &arrow_c_double_from_offset, 3},
+  {"arrow_c_xptr_addr", (DL_FUNC) &arrow_c_xptr_addr, 1},
   {NULL, NULL, 0}
 };
 
