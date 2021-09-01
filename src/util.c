@@ -2,7 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <memory.h>
-#include <util.h>
+#include "util.h"
 
 SEXP arrow_c_xptr_addr(SEXP xptr) {
   char buf[1024];
