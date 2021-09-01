@@ -8,17 +8,19 @@
 #define BIT_LGL_VALUE(data_, i_) 0 != (data_[i_ / 8] & (BIT_ONE << (i_ % 8)))
 
 static inline SEXP bitmask_new(int64_t size) {
-  // not considering alignment for now
-  R_xlen_t n_bytes = (size - 1) / 8 + 1;
-  SEXP bitmask = PROTECT(Rf_allocVector(RAWSXP, n_bytes));
+  SEXP bitmask;
+  if (size == 0) {
+    bitmask = PROTECT(Rf_allocVector(RAWSXP, 0));
+  } else {
+    // not considering alignment for now
+    R_xlen_t n_bytes = (size - 1) / 8 + 1;
+    bitmask = PROTECT(Rf_allocVector(RAWSXP, n_bytes));
 
-  // zero potential padding bits on the end
-  if (n_bytes > 0) {
+    // zero potential padding bits on the end
     RAW(bitmask)[n_bytes - 1] = 0x00;
   }
 
   Rf_setAttrib(bitmask, R_ClassSymbol, Rf_mkString("arrowc_bitmask"));
-
   UNPROTECT(1);
   return bitmask;
 }

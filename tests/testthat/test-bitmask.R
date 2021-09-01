@@ -1,5 +1,5 @@
 
-test_that("bitmask <-> logical works", {
+test_that("as_bitmask() works", {
   expect_identical(
     as_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE)),
     new_bitmask(0x01)
@@ -12,6 +12,13 @@ test_that("bitmask <-> logical works", {
 
   expect_identical(as.logical(new_bitmask(0x80)), c(rep(FALSE, 7), TRUE))
   expect_identical(as.logical(new_bitmask(0x01)), c(TRUE, rep(FALSE, 7)))
+
+  expect_identical(as.logical(new_bitmask()), logical())
+  expect_identical(as_bitmask(logical()), new_bitmask())
+
+  expect_identical(as_bitmask("TRUE"), as_bitmask(TRUE))
+  b <- as_bitmask(TRUE)
+  expect_identical(as_bitmask(b), b)
 })
 
 test_that("start/end limiting works for conversion to logical", {
@@ -46,6 +53,7 @@ test_that("bitmask subset works", {
   expect_identical(new_bitmask(0xff)[1], new_bitmask(0x01))
   expect_identical(new_bitmask(0xff)[8], new_bitmask(0x01))
   expect_identical(new_bitmask(0xff)[TRUE], new_bitmask(0xff))
+  expect_identical(new_bitmask(0xff)[1:2], as_bitmask(c(TRUE, TRUE)))
 })
 
 test_that("subset assign works", {
