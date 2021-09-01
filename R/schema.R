@@ -9,18 +9,18 @@
 #' @param children A [list()] of objects created using [arrow_schema()].
 #' @param dictionary An [arrow_schema()] if this is a dictionary type.
 #'
-#' @return An external pointer with class 'arrowc_schema'
+#' @return An external pointer with class 'arrowvctrs_schema'
 #' @export
 #'
 arrow_schema <- function(format, name = NULL, metadata = NULL, flags = 0L,
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)
-  .Call(arrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
+  .Call(arrowvctrs_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
 #' @export
-as.list.arrowc_schema <- function(x, ...) {
-  result <- .Call(arrow_c_schema_data, x)
+as.list.arrowvctrs_schema <- function(x, ...) {
+  result <- .Call(arrowvctrs_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
   result
 }
@@ -58,32 +58,32 @@ list_of_raw_to_metadata <- function(metadata) {
 
 
 #' @export
-length.arrowc_schema <- function(x, ...) {
+length.arrowvctrs_schema <- function(x, ...) {
   length(as.list(x))
 }
 
 #' @export
-names.arrowc_schema <- function(x, ...) {
+names.arrowvctrs_schema <- function(x, ...) {
   names(as.list(x))
 }
 
 #' @export
-`[[.arrowc_schema` <- function(x, i, ...) {
+`[[.arrowvctrs_schema` <- function(x, i, ...) {
   as.list(x)[[i]]
 }
 
 #' @export
-`$.arrowc_schema` <- function(x, i, ...) {
+`$.arrowvctrs_schema` <- function(x, i, ...) {
   as.list(x)[[i]]
 }
 
 #' @export
-format.arrowc_schema <- function(x, ...) {
+format.arrowvctrs_schema <- function(x, ...) {
   sprintf("<arrow_schema: '%s'>", as.list(x)$format)
 }
 
 #' @export
-print.arrowc_schema <- function(x, ...) {
+print.arrowvctrs_schema <- function(x, ...) {
   cat(paste0(format(x), "\n"))
   print(as.list(x), ...)
   invisible(x)
@@ -91,7 +91,7 @@ print.arrowc_schema <- function(x, ...) {
 
 #' @export
 #' @importFrom utils str
-str.arrowc_schema <- function(object, ...) {
+str.arrowvctrs_schema <- function(object, ...) {
   cat(paste0(format(object), "\n"))
   str(as.list(object), ...)
   invisible(object)

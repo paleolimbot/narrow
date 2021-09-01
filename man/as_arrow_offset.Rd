@@ -12,7 +12,7 @@ as_arrow_offset(x, ...)
 \item{...}{Passed to S3 Methods}
 }
 \value{
-An object of class "arrowc_offset"
+An object of class "arrowvctrs_offset"
 }
 \description{
 Offset vectors

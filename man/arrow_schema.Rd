@@ -29,7 +29,7 @@ containing key/value metadata.}
 \item{dictionary}{An \code{\link[=arrow_schema]{arrow_schema()}} if this is a dictionary type.}
 }
 \value{
-An external pointer with class 'arrowc_schema'
+An external pointer with class 'arrowvctrs_schema'
 }
 \description{
 Create Arrow Schema objects

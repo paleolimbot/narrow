@@ -10,7 +10,7 @@
 #include "schema.h"
 #include "util.h"
 
-SEXP arrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
+SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   struct ArrowSchema* result = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(result, "struct ArrowSchema");
@@ -27,7 +27,7 @@ SEXP arrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sex
   // wrap in external ptr early to ensure deletion
   // keep references to other externalptr(struct ArrowSchema)
   SEXP result_xptr = PROTECT(R_MakeExternalPtr(result, children_sexp, dictionary_xptr));
-  Rf_setAttrib(result_xptr, R_ClassSymbol, Rf_mkString("arrowc_schema"));
+  Rf_setAttrib(result_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
   R_RegisterCFinalizer(result_xptr, &finalize_schema_xptr);
 
   // these pointers are only valid during .Call(), so copy the data
@@ -67,7 +67,7 @@ SEXP arrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sex
   return result_xptr;
 }
 
-SEXP arrow_c_schema_data(SEXP schema_xptr) {
+SEXP arrowvctrs_c_schema_data(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   const char* names[] = {"format", "name", "metadata", "flags", "children", "dictionary", ""};
@@ -99,7 +99,7 @@ SEXP arrow_c_schema_data(SEXP schema_xptr) {
     SEXP children_sexp = PROTECT(Rf_allocVector(VECSXP, schema->n_children));
     for (R_xlen_t i = 0; i < schema->n_children; i++) {
       SEXP child_xptr = PROTECT(R_MakeExternalPtr(schema->children[i], schema_xptr, R_NilValue));
-      Rf_setAttrib(child_xptr, R_ClassSymbol, Rf_mkString("arrowc_schema"));
+      Rf_setAttrib(child_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
       SET_VECTOR_ELT(children_sexp, i, child_xptr);
       UNPROTECT(1);
     }
@@ -111,7 +111,7 @@ SEXP arrow_c_schema_data(SEXP schema_xptr) {
 
   if (schema->dictionary != NULL) {
     SEXP dictionary_xptr = PROTECT(R_MakeExternalPtr(schema->dictionary, schema_xptr, R_NilValue));
-    Rf_setAttrib(dictionary_xptr, R_ClassSymbol, Rf_mkString("arrowc_schema"));
+    Rf_setAttrib(dictionary_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
     SET_VECTOR_ELT(result, 5, dictionary_xptr);
     UNPROTECT(1);
   } else {
@@ -132,7 +132,7 @@ void finalize_schema_xptr(SEXP schema_xptr) {
   }
 }
 
-// for ArrowSchema* that were created by arrow_c_schema_xptr_new()
+// for ArrowSchema* that were created by arrowvctrs_c_schema_xptr_new()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_schema(struct ArrowSchema* schema) {

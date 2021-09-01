@@ -1,6 +1,6 @@
 
-#ifndef ARROWC_OFFSET_H_INCLUDED
-#define ARROWC_OFFSET_H_INCLUDED
+#ifndef arrowvctrs_OFFSET_H_INCLUDED
+#define arrowvctrs_OFFSET_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>
@@ -8,7 +8,7 @@
 #include <memory.h>
 
 static inline int64_t scalar_offset_from_sexp(SEXP offset_sexp, const char* arg) {
-  if (Rf_inherits(offset_sexp, "arrowc_offset")) {
+  if (Rf_inherits(offset_sexp, "arrowvctrs_offset")) {
     int64_t out;
     memcpy(&out, REAL(offset_sexp), sizeof(int64_t));
     return out;
@@ -26,7 +26,7 @@ static inline SEXP sexp_from_offset(int64_t n, int64_t* offset) {
   if (n > 0) {
     memcpy(REAL(offset_sexp), offset, n * sizeof(int64_t));
   }
-  Rf_setAttrib(offset_sexp, R_ClassSymbol, Rf_mkString("arrowc_offset"));
+  Rf_setAttrib(offset_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_offset"));
   UNPROTECT(1);
   return offset_sexp;
 }

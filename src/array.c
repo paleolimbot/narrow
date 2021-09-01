@@ -10,7 +10,7 @@ void finalize_array_xptr(SEXP array_xptr);
 void finalize_array(struct ArrowArray* array);
 
 static inline struct ArrowArray* array_from_xptr(SEXP array_xptr, const char* arg) {
-  if (!Rf_inherits(array_xptr, "arrowc_array")) {
+  if (!Rf_inherits(array_xptr, "arrowvctrs_array")) {
     Rf_error("`%s` must be an object created with arrow_array()", arg);
   }
 
@@ -34,7 +34,7 @@ static inline struct ArrowArray* nullable_array_from_xptr(SEXP array_xptr, const
   }
 }
 
-SEXP arrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
+SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
                              SEXP offset_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   const char* names_prot[] = {"buffers", "children", "dictionary", ""};
   SEXP array_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
@@ -92,12 +92,12 @@ SEXP arrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_coun
 
   array->dictionary = nullable_array_from_xptr(dictionary_xptr, "dictionary");
 
-  Rf_setAttrib(array_xptr, R_ClassSymbol, Rf_mkString("arrowc_array"));
+  Rf_setAttrib(array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
   UNPROTECT(1);
   return array_xptr;
 }
 
-SEXP arrow_c_array_info(SEXP array_xptr) {
+SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   struct ArrowArray* array = array_from_xptr(array_xptr, "array");
   const char* names[] = {
     "length", "null_count", "offset", "n_buffers", "n_children",
@@ -131,7 +131,7 @@ void finalize_array_xptr(SEXP array_xptr) {
   }
 }
 
-// for ArrowArray* that were created by arrow_c_array_from_sexp()
+// for ArrowArray* that were created by arrowvctrs_c_array_from_sexp()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_array(struct ArrowArray* array) {

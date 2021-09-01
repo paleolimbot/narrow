@@ -3,23 +3,23 @@
 \name{as_bitmask}
 \alias{as_bitmask}
 \alias{as_bitmask.default}
-\alias{as_bitmask.arrowc_bitmask}
+\alias{as_bitmask.arrowvctrs_bitmask}
 \alias{as_bitmask.logical}
 \alias{new_bitmask}
-\alias{as.logical.arrowc_bitmask}
+\alias{as.logical.arrowvctrs_bitmask}
 \title{Create bitmask buffers}
 \usage{
 as_bitmask(x, ...)
 
 \method{as_bitmask}{default}(x, ...)
 
-\method{as_bitmask}{arrowc_bitmask}(x, ...)
+\method{as_bitmask}{arrowvctrs_bitmask}(x, ...)
 
 \method{as_bitmask}{logical}(x, ...)
 
 new_bitmask(buffer = raw())
 
-\method{as.logical}{arrowc_bitmask}(x, ..., start = 1, end = NULL)
+\method{as.logical}{arrowvctrs_bitmask}(x, ..., start = 1, end = NULL)
 }
 \arguments{
 \item{x}{An object to convert to a bitmask}
@@ -32,7 +32,7 @@ new_bitmask(buffer = raw())
 when converting to \code{\link[=logical]{logical()}}.}
 }
 \value{
-An object with class 'arrowc_bitmask'
+An object with class 'arrowvctrs_bitmask'
 }
 \description{
 Create bitmask buffers

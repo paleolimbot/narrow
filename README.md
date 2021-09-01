@@ -1,18 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# arrowc
+# arrowvctrs
 
 <!-- badges: start -->
 
 [![Codecov test
-coverage](https://codecov.io/gh/paleolimbot/arrowc/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/arrowc?branch=master)
-[![R-CMD-check](https://github.com/paleolimbot/arrowc/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/arrowc/actions)
+coverage](https://codecov.io/gh/paleolimbot/arrowvctrs/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/arrowvctrs?branch=master)
+[![R-CMD-check](https://github.com/paleolimbot/arrowvctrs/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/arrowvctrs/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of arrowc is to wrap the [Arrow Data C
+The goal of arrowvctrs is to wrap the [Arrow Data C
 API](https://arrow.apache.org/docs/format/CDataInterface.html) and
 [Arrow Stream C
 API](https://arrow.apache.org/docs/format/CStreamInterface.html) to
@@ -27,7 +27,7 @@ You can install the development version from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("paleolimbot/arrowc")
+remotes::install_github("paleolimbot/arrowvctrs")
 ```
 
 ## Example
@@ -35,7 +35,7 @@ remotes::install_github("paleolimbot/arrowc")
 This is a basic example which shows you how to solve a common problem:
 
 ``` r
-library(arrowc)
+library(arrowvctrs)
 
 arrow_schema("i")
 #> <arrow_schema: 'i'>

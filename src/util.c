@@ -4,7 +4,7 @@
 #include <memory.h>
 #include "util.h"
 
-SEXP arrow_c_xptr_addr(SEXP xptr) {
+SEXP arrowvctrs_c_xptr_addr(SEXP xptr) {
   char buf[1024];
   memset(buf, 0, 1024);
   snprintf(buf, 1024, "%p", R_ExternalPtrAddr(xptr));

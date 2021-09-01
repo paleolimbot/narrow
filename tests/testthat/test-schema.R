@@ -1,7 +1,7 @@
 
 test_that("arrow_schema() works with mostly defaults", {
   s <- arrow_schema("i")
-  expect_s3_class(s, "arrowc_schema")
+  expect_s3_class(s, "arrowvctrs_schema")
   s_data <- as.list(s)
   expect_identical(s_data$format, "i")
   expect_identical(s_data$flags, 0L)
@@ -38,8 +38,8 @@ test_that("arrow_schema() works with values for all memebers", {
   expect_identical(s_data$flags, 1L)
   expect_identical(s_data$metadata, list(key = as.raw(0x00)))
   expect_length(s_data$children, 1)
-  expect_s3_class(s_data$children[[1]], "arrowc_schema")
-  expect_s3_class(s_data$dictionary, "arrowc_schema")
+  expect_s3_class(s_data$children[[1]], "arrowvctrs_schema")
+  expect_s3_class(s_data$dictionary, "arrowvctrs_schema")
   expect_identical(s_data$name, "name")
 })
 

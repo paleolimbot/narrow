@@ -3,7 +3,7 @@
 \name{arrow_array}
 \alias{arrow_array}
 \alias{as_arrow_array}
-\alias{as_arrow_array.arrowc_array}
+\alias{as_arrow_array.arrowvctrs_array}
 \alias{as_arrow_buffer}
 \alias{as_arrow_buffer.default}
 \title{Create Arrow arrays}
@@ -19,7 +19,7 @@ arrow_array(
 
 as_arrow_array(x, ...)
 
-\method{as_arrow_array}{arrowc_array}(x, ...)
+\method{as_arrow_array}{arrowvctrs_array}(x, ...)
 
 as_arrow_buffer(x, ...)
 
@@ -45,7 +45,7 @@ computed yet.}
 \item{...}{Passed to S3 Methods}
 }
 \value{
-An object of class "arrowc_array"
+An object of class "arrowvctrs_array"
 }
 \description{
 Create Arrow arrays

@@ -1,6 +1,6 @@
 
-#ifndef ARROWC_SCHEMA_H_INCLUDED
-#define ARROWC_SCHEMA_H_INCLUDED
+#ifndef arrowvctrs_SCHEMA_H_INCLUDED
+#define arrowvctrs_SCHEMA_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>
@@ -15,7 +15,7 @@ unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg);
 SEXP sexp_from_metadata(unsigned char* metadata);
 
 static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char* arg) {
-  if (!Rf_inherits(schema_xptr, "arrowc_schema")) {
+  if (!Rf_inherits(schema_xptr, "arrowvctrs_schema")) {
     Rf_error("`%s` must be an object created with arrow_schema()", arg);
   }
 

@@ -12,7 +12,7 @@
 #' @param x An object to convert to an arrow_array
 #' @param ... Passed to S3 Methods
 #'
-#' @return An object of class "arrowc_array"
+#' @return An object of class "arrowvctrs_array"
 #' @export
 #'
 #' @examples
@@ -31,7 +31,7 @@ arrow_array <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
   dictionary <- if (is.null(dictionary)) NULL else as_arrow_array(dictionary)
 
   .Call(
-    arrow_c_array_from_sexp,
+    arrowvctrs_c_array_from_sexp,
     buffers,
     length,
     null_count,
@@ -42,8 +42,8 @@ arrow_array <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
 }
 
 #' @export
-as.list.arrowc_array <- function(x, ...) {
-  .Call(arrow_c_array_info, x)
+as.list.arrowvctrs_array <- function(x, ...) {
+  .Call(arrowvctrs_c_array_info, x)
 }
 
 #' @rdname arrow_array
@@ -54,7 +54,7 @@ as_arrow_array <- function(x, ...) {
 
 #' @rdname arrow_array
 #' @export
-as_arrow_array.arrowc_array <- function(x, ...) {
+as_arrow_array.arrowvctrs_array <- function(x, ...) {
   x
 }
 
@@ -67,38 +67,38 @@ as_arrow_buffer <- function(x, ...) {
 #' @rdname arrow_array
 #' @export
 as_arrow_buffer.default <- function(x, ...) {
-  # sanitized in arrow_c_array_from_sexp()
+  # sanitized in arrowvctrs_c_array_from_sexp()
   x
 }
 
 
 #' @export
-length.arrowc_array <- function(x, ...) {
+length.arrowvctrs_array <- function(x, ...) {
   length(as.list(x))
 }
 
 #' @export
-names.arrowc_array <- function(x, ...) {
+names.arrowvctrs_array <- function(x, ...) {
   names(as.list(x))
 }
 
 #' @export
-`[[.arrowc_array` <- function(x, i, ...) {
+`[[.arrowvctrs_array` <- function(x, i, ...) {
   as.list(x)[[i]]
 }
 
 #' @export
-`$.arrowc_array` <- function(x, i, ...) {
+`$.arrowvctrs_array` <- function(x, i, ...) {
   as.list(x)[[i]]
 }
 
 #' @export
-format.arrowc_array <- function(x, ...) {
+format.arrowvctrs_array <- function(x, ...) {
   sprintf("<arrow_array at %s>", xptr_addr(x))
 }
 
 #' @export
-print.arrowc_array <- function(x, ..., indent.str = "") {
+print.arrowvctrs_array <- function(x, ..., indent.str = "") {
   cat(sprintf("%s%s\n", indent.str, format(x)))
   info <- as.list(x)
   for (nm in c("length", "null_count", "offset")) {
