@@ -99,7 +99,7 @@ names.arrowvctrs_schema <- function(x, ...) {
 
 #' @export
 format.arrowvctrs_schema <- function(x, ...) {
-  sprintf("<arrow_schema: '%s'>", as.list(x)$format)
+  sprintf("<arrow_schema '%s' at %s>", as.list(x)$format, xptr_addr(x))
 }
 
 #' @export

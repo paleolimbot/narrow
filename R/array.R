@@ -120,7 +120,10 @@ print.arrowvctrs_array <- function(x, ..., indent.str = "") {
   }
 
   if (!is.null(info$dictionary)) {
+    cat(sprintf("%s- dictionary:\n", indent.str))
     print(info$dictionary, ..., indent.str = paste0(indent.str, "  "))
+  } else {
+    cat(sprintf("%s- dictionary: NULL\n", indent.str))
   }
 
   invisible(x)

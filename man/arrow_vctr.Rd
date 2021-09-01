@@ -16,6 +16,10 @@ as_arrow_vctr(x, ...)
 \item{schema}{An \code{\link[=arrow_schema]{arrow_schema()}}}
 
 \item{arrays}{An \code{\link[=arrow_array]{arrow_array()}} or \code{\link[=list]{list()}} of \code{\link[=arrow_array]{arrow_array()}}s.}
+
+\item{x}{An object to convert to an \code{\link[=arrow_vctr]{arrow_vctr()}}}
+
+\item{...}{Passed to S3 methods}
 }
 \value{
 An object of class "arrowvctrs_vctr"

@@ -3,6 +3,8 @@
 #'
 #' @param schema An [arrow_schema()]
 #' @param arrays An [arrow_array()] or [list()] of [arrow_array()]s.
+#' @param x An object to convert to an [arrow_vctr()]
+#' @param ... Passed to S3 methods
 #'
 #' @return An object of class "arrowvctrs_vctr"
 #' @export
