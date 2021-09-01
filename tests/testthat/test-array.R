@@ -15,9 +15,13 @@ test_that("arrays can be constructed from R objects", {
 
   a_buf <- arrow_array(1:10, 10)
   expect_identical(a_buf$buffers[[1]], 1:10)
+  expect_match(format(a_buf), "arrow_array")
+  expect_output(expect_identical(print(a_buf, "arrow_array"), a_buf))
 
   a_buf2 <- arrow_array(list(1:10, 1:5), 10)
   expect_identical(a_buf2$buffers, list(1:10, 1:5))
+  expect_match(format(a_buf2), "arrow_array")
+  expect_output(expect_identical(print(a_buf2, "arrow_array"), a_buf2))
 
   a_dict <- arrow_array(dictionary = arrow_array(1:10, 10))
   expect_identical(a_dict$dictionary$length, as_arrow_offset(10))
