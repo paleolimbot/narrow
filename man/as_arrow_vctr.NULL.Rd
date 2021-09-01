@@ -5,6 +5,7 @@
 \alias{as_arrow_vctr.logical}
 \alias{as_arrow_vctr.integer}
 \alias{as_arrow_vctr.double}
+\alias{as_arrow_vctr.character}
 \alias{as_arrow_vctr.raw}
 \alias{as_arrow_vctr.data.frame}
 \title{Convert base R objects to Arrow vectors}
@@ -16,6 +17,8 @@
 \method{as_arrow_vctr}{integer}(x, ..., name = NULL)
 
 \method{as_arrow_vctr}{double}(x, ..., name = NULL)
+
+\method{as_arrow_vctr}{character}(x, ..., name = NULL)
 
 \method{as_arrow_vctr}{raw}(x, ..., name = NULL)
 
@@ -33,8 +36,9 @@ An \code{\link[=arrow_vctr]{arrow_vctr()}}
 }
 \description{
 These methods return an \code{\link[=arrow_vctr]{arrow_vctr()}} for R objects that don't involve
-copying or unnecessary allocating (with the exception of ALTREP objects,
-which will be expanded).
+copying or unnecessary allocating. Two excpetions are (1) ALTREP objects,
+which will be expanded, and (2) character vectors, which will be converted
+to UTF-8 and serialized as a single \code{\link[=raw]{raw()}} vector.
 }
 \examples{
 as_arrow_vctr(NULL)
@@ -42,6 +46,7 @@ as_arrow_vctr(c(TRUE, FALSE, NA))
 as_arrow_vctr(1:10)
 as_arrow_vctr(c(1.1, 2.2))
 as_arrow_vctr(as.raw(0x00))
+as_arrow_vctr("fish")
 as_arrow_vctr(data.frame(x = 1:10, y = as.raw(1:10)))
 
 }

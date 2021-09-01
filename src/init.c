@@ -18,6 +18,8 @@ SEXP arrowvctrs_c_double_from_offset(SEXP offset, SEXP start_sexp, SEXP end_sexp
 SEXP arrowvctrs_c_offset_from_double(SEXP dbl_sexp);
 SEXP arrowvctrs_c_offset_from_integer(SEXP int_sexp);
 
+SEXP arrowvctrs_c_buffers_from_character(SEXP chr);
+
 SEXP arrowvctrs_c_xptr_addr(SEXP xptr);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -30,6 +32,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_offset_from_double", (DL_FUNC) &arrowvctrs_c_offset_from_double, 1},
   {"arrowvctrs_c_offset_from_integer", (DL_FUNC) &arrowvctrs_c_offset_from_integer, 1},
   {"arrowvctrs_c_double_from_offset", (DL_FUNC) &arrowvctrs_c_double_from_offset, 3},
+  {"arrowvctrs_c_buffers_from_character", (DL_FUNC) &arrowvctrs_c_buffers_from_character, 1},
   {"arrowvctrs_c_xptr_addr", (DL_FUNC) &arrowvctrs_c_xptr_addr, 1},
   {NULL, NULL, 0}
 };

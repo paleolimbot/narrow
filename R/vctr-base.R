@@ -2,8 +2,9 @@
 #' Convert base R objects to Arrow vectors
 #'
 #' These methods return an [arrow_vctr()] for R objects that don't involve
-#' copying or unnecessary allocating (with the exception of ALTREP objects,
-#' which will be expanded).
+#' copying or unnecessary allocating. Two excpetions are (1) ALTREP objects,
+#' which will be expanded, and (2) character vectors, which will be converted
+#' to UTF-8 and serialized as a single [raw()] vector.
 #'
 #' @inheritParams arrow_vctr
 #' @inheritParams arrow_schema
@@ -17,6 +18,7 @@
 #' as_arrow_vctr(1:10)
 #' as_arrow_vctr(c(1.1, 2.2))
 #' as_arrow_vctr(as.raw(0x00))
+#' as_arrow_vctr("fish")
 #' as_arrow_vctr(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
 as_arrow_vctr.NULL <- function(x, ..., name = NULL) {
@@ -61,6 +63,35 @@ as_arrow_vctr.double <- function(x, ..., name = NULL) {
     arrow_schema("g", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      length = length(x),
+      null_count = sum(is.na(x)),
+      offset = 0
+    )
+  )
+}
+
+#' @export
+#' @rdname as_arrow_vctr.NULL
+as_arrow_vctr.character <- function(x, ..., name = NULL) {
+  x_is_na <- is.na(x)
+
+  # flatten and check for long data vector
+  buffers <- .Call(arrowvctrs_c_buffers_from_character, x)
+  if (length(buffers[[2]]) <= (2 ^ 31 - 1)) {
+    buffers[[1]] <- as.integer(as.numeric(buffers[[1]]))
+    format <- "u"
+  } else {
+    format <- "U"
+  }
+
+  if (any(x_is_na)) {
+    buffers <- c(list(as_arrow_bitmask(!x_is_na)), buffers)
+  }
+
+  arrow_vctr(
+    arrow_schema(format, name, flags = arrow_schema_flags(nullable = any(x_is_na))),
+    arrow_array(
+      buffers = buffers,
       length = length(x),
       null_count = sum(is.na(x)),
       offset = 0
