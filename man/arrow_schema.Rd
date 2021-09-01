@@ -2,6 +2,7 @@
 % Please edit documentation in R/schema.R
 \name{arrow_schema}
 \alias{arrow_schema}
+\alias{arrow_schema_flags}
 \alias{as_arrow_schema}
 \alias{as_arrow_schema.arrowvctrs_schema}
 \alias{as_arrow_schema.character}
@@ -11,9 +12,15 @@ arrow_schema(
   format,
   name = NULL,
   metadata = NULL,
-  flags = 0L,
+  flags = arrow_schema_flags(),
   children = NULL,
   dictionary = NULL
+)
+
+arrow_schema_flags(
+  dictionary_ordered = FALSE,
+  nullable = FALSE,
+  map_keys_sorted = FALSE
 )
 
 as_arrow_schema(x, ...)
@@ -31,11 +38,17 @@ as_arrow_schema(x, ...)
 \item{metadata}{A named character vector of \code{\link[=list]{list()}} of \code{\link[=raw]{raw()}}
 containing key/value metadata.}
 
-\item{flags}{Flags to set on input.}
+\item{flags}{Flags to set on input (see \code{\link[=arrow_schema_flags]{arrow_schema_flags()}})}
 
 \item{children}{A \code{\link[=list]{list()}} of objects created using \code{\link[=arrow_schema]{arrow_schema()}}.}
 
 \item{dictionary}{An \code{\link[=arrow_schema]{arrow_schema()}} if this is a dictionary type.}
+
+\item{dictionary_ordered}{\code{TRUE} if the \code{dictionary} array is ordered}
+
+\item{nullable}{\code{TRUE} if the type is semantically nullable}
+
+\item{map_keys_sorted}{\code{TRUE} if the keys for a map have been sorted}
 
 \item{x}{An object to convert to an \code{\link[=arrow_schema]{arrow_schema()}}}
 

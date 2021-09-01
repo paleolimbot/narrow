@@ -76,6 +76,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
       case INTSXP:
       case LGLSXP:
       case CPLXSXP:
+      case RAWSXP:
         array->buffers[i] = DATAPTR(item);
         break;
       default:

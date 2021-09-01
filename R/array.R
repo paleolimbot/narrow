@@ -112,18 +112,18 @@ print.arrowvctrs_array <- function(x, ..., indent.str = "") {
     cat(sprintf("%s- buffers[%s]:\n", indent.str, format(info$n_buffers)))
   }
 
-  cat(sprintf("%s- children[%s]:\n", indent.str, format(info$n_children)))
-  if (!is.null(info$children)) {
-    for (child in info$children) {
-      print(child, ..., indent.str = paste0(indent.str, "  "))
-    }
-  }
-
   if (!is.null(info$dictionary)) {
     cat(sprintf("%s- dictionary:\n", indent.str))
     print(info$dictionary, ..., indent.str = paste0(indent.str, "  "))
   } else {
     cat(sprintf("%s- dictionary: NULL\n", indent.str))
+  }
+
+  cat(sprintf("%s- children[%s]:\n", indent.str, format(info$n_children)))
+  if (!is.null(info$children)) {
+    for (child in info$children) {
+      print(child, ..., indent.str = paste0(indent.str, "  "))
+    }
   }
 
   invisible(x)
