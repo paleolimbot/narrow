@@ -14,7 +14,7 @@
 #'
 arrow_default_ptype <- function(schema) {
   if (!is.null(schema$dictionary)) {
-    arrow_default_ptype(schema$dictionary)
+    return(arrow_default_ptype(schema$dictionary))
   }
 
   info <- parse_format(schema$format)
