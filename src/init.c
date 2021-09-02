@@ -4,7 +4,7 @@
 #include <R_ext/Rdynload.h>
 
 SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
-                             SEXP offset_sexp, SEXP children_sexp, SEXP dictionary_xptr);
+                             SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr);
 SEXP arrowvctrs_c_array_info(SEXP array_xptr);
 
 SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
@@ -14,9 +14,9 @@ SEXP arrowvctrs_c_schema_data(SEXP schema_xptr);
 SEXP arrowvctrs_c_logical_from_bitmask(SEXP pkd, SEXP start_sexp, SEXP end_sexp);
 SEXP arrowvctrs_c_bitmask_from_logical(SEXP lgl_sexp);
 
-SEXP arrowvctrs_c_double_from_offset(SEXP offset, SEXP start_sexp, SEXP end_sexp);
-SEXP arrowvctrs_c_offset_from_double(SEXP dbl_sexp);
-SEXP arrowvctrs_c_offset_from_integer(SEXP int_sexp);
+SEXP arrowvctrs_c_double_from_int64(SEXP int64_sexp, SEXP start_sexp, SEXP end_sexp);
+SEXP arrowvctrs_c_int64_from_double(SEXP dbl_sexp);
+SEXP arrowvctrs_c_int64_from_integer(SEXP int_sexp);
 
 SEXP arrowvctrs_c_buffers_from_character(SEXP chr);
 
@@ -29,9 +29,9 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_schema_data", (DL_FUNC) &arrowvctrs_c_schema_data, 1},
   {"arrowvctrs_c_logical_from_bitmask", (DL_FUNC) &arrowvctrs_c_logical_from_bitmask, 3},
   {"arrowvctrs_c_bitmask_from_logical", (DL_FUNC) &arrowvctrs_c_bitmask_from_logical, 1},
-  {"arrowvctrs_c_offset_from_double", (DL_FUNC) &arrowvctrs_c_offset_from_double, 1},
-  {"arrowvctrs_c_offset_from_integer", (DL_FUNC) &arrowvctrs_c_offset_from_integer, 1},
-  {"arrowvctrs_c_double_from_offset", (DL_FUNC) &arrowvctrs_c_double_from_offset, 3},
+  {"arrowvctrs_c_int64_from_double", (DL_FUNC) &arrowvctrs_c_int64_from_double, 1},
+  {"arrowvctrs_c_int64_from_integer", (DL_FUNC) &arrowvctrs_c_int64_from_integer, 1},
+  {"arrowvctrs_c_double_from_int64", (DL_FUNC) &arrowvctrs_c_double_from_int64, 3},
   {"arrowvctrs_c_buffers_from_character", (DL_FUNC) &arrowvctrs_c_buffers_from_character, 1},
   {"arrowvctrs_c_xptr_addr", (DL_FUNC) &arrowvctrs_c_xptr_addr, 1},
   {NULL, NULL, 0}

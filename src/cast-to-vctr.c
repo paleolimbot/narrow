@@ -2,6 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <memory.h>
+#include <stdint.h>
 
 SEXP arrowvctrs_c_buffers_from_character(SEXP chr) {
   R_xlen_t n = Rf_xlength(chr);
@@ -42,7 +43,7 @@ SEXP arrowvctrs_c_buffers_from_character(SEXP chr) {
   }
 
   offsets[n] = n_bytes;
-  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_offset"));
+  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_int64"));
 
   SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(result, 0, offsets_sexp);

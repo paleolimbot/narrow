@@ -2,7 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <string.h>
-#include "offset.h"
+#include "int64.h"
 #include "abi.h"
 #include "util.h"
 
@@ -35,7 +35,7 @@ static inline struct ArrowArray* nullable_array_from_xptr(SEXP array_xptr, const
 }
 
 SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
-                             SEXP offset_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
+                             SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   const char* names_prot[] = {"buffers", "children", "dictionary", ""};
   SEXP array_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
   SET_VECTOR_ELT(array_prot, 0, buffers_sexp);
@@ -59,9 +59,9 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   UNPROTECT(1);
   R_RegisterCFinalizer(array_xptr, finalize_array_xptr);
 
-  array->length = scalar_offset_from_sexp(length_sexp, "length");
-  array->null_count = scalar_offset_from_sexp(null_count_sexp, "null_count");
-  array->offset = scalar_offset_from_sexp(offset_sexp, "offset");
+  array->length = scalar_int64_from_sexp(length_sexp, "length");
+  array->null_count = scalar_int64_from_sexp(null_count_sexp, "null_count");
+  array->offset = scalar_int64_from_sexp(int64_sexp, "offset");
 
   if (buffers_sexp != R_NilValue) {
     array->n_buffers = Rf_xlength(buffers_sexp);
@@ -106,11 +106,11 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   };
   SEXP array_info = PROTECT(Rf_mkNamed(VECSXP, names));
 
-  SET_VECTOR_ELT(array_info, 0, sexp_from_scalar_offset(array->length));
-  SET_VECTOR_ELT(array_info, 1, sexp_from_scalar_offset(array->null_count));
-  SET_VECTOR_ELT(array_info, 2, sexp_from_scalar_offset(array->offset));
-  SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_offset(array->n_buffers));
-  SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_offset(array->n_children));
+  SET_VECTOR_ELT(array_info, 0, sexp_from_scalar_int64(array->length));
+  SET_VECTOR_ELT(array_info, 1, sexp_from_scalar_int64(array->null_count));
+  SET_VECTOR_ELT(array_info, 2, sexp_from_scalar_int64(array->offset));
+  SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array->n_buffers));
+  SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array->n_children));
 
   SEXP array_sexp = R_ExternalPtrTag(array_xptr);
   SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0));

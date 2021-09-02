@@ -2,7 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <stdint.h>
-#include "offset.h"
+#include "int64.h"
 
 #define BIT_ONE ((unsigned char ) 0x01)
 #define BIT_LGL_VALUE(data_, i_) 0 != (data_[i_ / 8] & (BIT_ONE << (i_ % 8)))
@@ -48,8 +48,8 @@ SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
 }
 
 SEXP arrowvctrs_c_logical_from_bitmask(SEXP bitmask, SEXP start_sexp, SEXP end_sexp) {
-  R_xlen_t start = scalar_offset_from_sexp(start_sexp, "start");
-  R_xlen_t end = scalar_offset_from_sexp(end_sexp, "end");
+  R_xlen_t start = scalar_int64_from_sexp(start_sexp, "start");
+  R_xlen_t end = scalar_int64_from_sexp(end_sexp, "end");
   return bitmask_to_logical(bitmask, start, end);
 }
 
