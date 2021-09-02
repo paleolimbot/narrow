@@ -36,3 +36,67 @@ test_that("from_arrow_vctr(, logical()) works", {
     c(TRUE, FALSE, NA)
   )
 })
+
+test_that("from_arrow_vctr(, integer()) works", {
+  # with and without validity buffer for lgl (int underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE)), integer()),
+    c(1L, 0L)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), integer()),
+    c(1L, 0L, NA)
+  )
+
+  # with and without validity buffer for int (int underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1L, 0L)), integer()),
+    c(1L, 0L)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1L, 0L, NA)), integer()),
+    c(1L, 0L, NA)
+  )
+
+  # with and without validity buffer for dbl (dbl underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1, 0)), integer()),
+    c(1L, 0L)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1, 0, NA)), integer()),
+    c(1L, 0L, NA)
+  )
+})
+
+test_that("from_arrow_vctr(, double()) works", {
+  # with and without validity buffer for lgl (int underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE)), double()),
+    c(1, 0)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), double()),
+    c(1, 0, NA)
+  )
+
+  # with and without validity buffer for int (int underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1L, 0L)), double()),
+    c(1, 0)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1L, 0L, NA)), double()),
+    c(1, 0, NA)
+  )
+
+  # with and without validity buffer for dbl (dbl underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1, 0)), double()),
+    c(1, 0)
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(1, 0, NA)), double()),
+    c(1, 0, NA)
+  )
+})
