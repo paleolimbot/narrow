@@ -55,6 +55,10 @@ from_arrow_vctr.integer <- function(x, ptype, ...) {
   .Call(arrowvctrs_c_integer_from_vctr, x)
 }
 
+from_arrow_vctr_integer <- function(x) {
+  .Call(arrowvctrs_c_integer_from_vctr, x)
+}
+
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.double <- function(x, ptype, ...) {
@@ -72,8 +76,21 @@ from_arrow_vctr.raw <- function(x, ptype, ...) {
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.character <- function(x, ptype, ...) {
-  stopifnot(is.null(x$schema$dictionary))
-  .Call(arrowvctrs_c_character_from_vctr, x)
+  if (is.null(x$schema$dictionary)) {
+    .Call(arrowvctrs_c_character_from_vctr, x)
+  } else {
+    indices <- Map(arrow_vctr, list(x$schema), x$arrays)
+    index_values <- lapply(indices, from_arrow_vctr_integer)
+    dictionaries <- Map(arrow_vctr, list(x$schema$dictionary), lapply(x$arrays, "[[", "dictionary"))
+    level_values <- lapply(dictionaries, from_arrow_vctr, character())
+    unlist(
+      Map(
+        function(x, y) x[y + 1L],
+        level_values,
+        index_values
+      )
+    )
+  }
 }
 
 #' @rdname from_arrow_vctr
@@ -82,12 +99,17 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
   assert_x_arrow_vctr(x)
   stopifnot(!is.null(x$schema$dictionary))
 
+  # because of weirdness with UseMethod()
+  if (missing(ptype)) {
+    ptype <- arrow_default_ptype(x$schema)
+  }
+
   if (length(x$arrays) == 0) {
     return(ptype[integer(0)])
   }
 
   # get indices
-  indices <- from_arrow_vctr(x, integer()) + 1L
+  indices <- from_arrow_vctr_integer(x) + 1L
 
   # try to detect levels if none were given
   levels <- levels(ptype)
@@ -109,6 +131,7 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
 #' @export
 from_arrow_vctr.data.frame <- function(x, ptype, ...) {
   assert_x_arrow_vctr(x)
+  stopifnot(is.null(x$schema$dictionary))
 
   # because of weirdness with UseMethod()
   if (missing(ptype)) {
@@ -120,7 +143,7 @@ from_arrow_vctr.data.frame <- function(x, ptype, ...) {
   if (ncol(ptype) == 0) {
     ptype <- arrow_default_ptype(x$schema)
   } else {
-    stopifnot(identical(names(ptype), vapply(child_schemas, "[[", character(1), "name")))
+    stopifnot(identical(ncol(ptype), length(child_schemas)))
   }
 
   child_arrays <- lapply(seq_along(child_schemas), function(i) {
