@@ -2,6 +2,8 @@
 % Please edit documentation in R/cast-from-vctr.R
 \name{from_arrow_vctr}
 \alias{from_arrow_vctr}
+\alias{from_arrow_vctr.default}
+\alias{from_arrow_vctr.NULL}
 \alias{from_arrow_vctr.logical}
 \alias{from_arrow_vctr.integer}
 \alias{from_arrow_vctr.double}
@@ -11,6 +13,10 @@
 \title{Convert Arrow vectors to R objects}
 \usage{
 from_arrow_vctr(x, ptype, ...)
+
+\method{from_arrow_vctr}{default}(x, ptype, ...)
+
+\method{from_arrow_vctr}{`NULL`}(x, ptype, ...)
 
 \method{from_arrow_vctr}{logical}(x, ptype, ...)
 
@@ -25,19 +31,19 @@ from_arrow_vctr(x, ptype, ...)
 \method{from_arrow_vctr}{data.frame}(x, ptype, ...)
 }
 \arguments{
-\item{x}{An \code{\link[=arrow_vector]{arrow_vector()}}}
+\item{x}{An \code{\link[=arrow_vctr]{arrow_vctr()}}}
 
 \item{ptype}{An R object to use as a prototype}
 
-\item{...}{}
+\item{...}{Passed to S3 methods}
 }
 \value{
 An object with the same class as \code{ptype}
 }
 \description{
-Convert Arrow vectors to R objects
+Note that \code{\link[=from_arrow_vctr]{from_arrow_vctr()}} dispatches on \code{ptype}
 }
 \examples{
-# from_arrow_vctr(as_arrow_vctr(1:10))
+from_arrow_vctr(as_arrow_vctr(NULL), NULL)
 
 }

@@ -20,6 +20,12 @@ SEXP arrowvctrs_c_int64_from_integer(SEXP int_sexp);
 
 SEXP arrowvctrs_c_buffers_from_character(SEXP chr);
 
+SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp);
+SEXP arrowvctrs_c_integer_from_vctr(SEXP vctr_sexp);
+SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp);
+SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp);
+SEXP arrowvctrs_c_factor_from_vctr(SEXP vctr_sexp);
+
 SEXP arrowvctrs_c_xptr_addr(SEXP xptr);
 
 static const R_CallMethodDef CallEntries[] = {
@@ -33,6 +39,11 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_int64_from_integer", (DL_FUNC) &arrowvctrs_c_int64_from_integer, 1},
   {"arrowvctrs_c_double_from_int64", (DL_FUNC) &arrowvctrs_c_double_from_int64, 3},
   {"arrowvctrs_c_buffers_from_character", (DL_FUNC) &arrowvctrs_c_buffers_from_character, 1},
+  {"arrowvctrs_c_logical_from_vctr", (DL_FUNC) &arrowvctrs_c_logical_from_vctr, 1},
+  {"arrowvctrs_c_integer_from_vctr", (DL_FUNC) &arrowvctrs_c_integer_from_vctr, 1},
+  {"arrowvctrs_c_double_from_vctr", (DL_FUNC) &arrowvctrs_c_double_from_vctr, 1},
+  {"arrowvctrs_c_character_from_vctr", (DL_FUNC) &arrowvctrs_c_double_from_vctr, 1},
+  {"arrowvctrs_c_factor_from_vctr", (DL_FUNC) &arrowvctrs_c_factor_from_vctr, 1},
   {"arrowvctrs_c_xptr_addr", (DL_FUNC) &arrowvctrs_c_xptr_addr, 1},
   {NULL, NULL, 0}
 };
