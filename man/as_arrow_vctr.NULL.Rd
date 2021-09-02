@@ -9,7 +9,7 @@
 \alias{as_arrow_vctr.factor}
 \alias{as_arrow_vctr.raw}
 \alias{as_arrow_vctr.data.frame}
-\title{Convert base R objects to Arrow vectors}
+\title{Convert R objects to Arrow vectors}
 \usage{
 \method{as_arrow_vctr}{`NULL`}(x, ..., name = NULL)
 

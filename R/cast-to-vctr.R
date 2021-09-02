@@ -1,5 +1,5 @@
 
-#' Convert base R objects to Arrow vectors
+#' Convert R objects to Arrow vectors
 #'
 #' These methods return an [arrow_vctr()] for R objects that don't involve
 #' copying or unnecessary allocating. Two excpetions are (1) ALTREP objects,
