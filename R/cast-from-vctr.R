@@ -36,36 +36,43 @@ from_arrow_vctr.NULL <- function(x, ptype, ...) {
     NextMethod()
   }
 
+  stopifnot(is.null(x$schema$dictionary))
+
   NULL
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.logical <- function(x, ptype, ...) {
+  stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_logical_from_vctr, x)
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.integer <- function(x, ptype, ...) {
+  stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_integer_from_vctr, x)
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.double <- function(x, ptype, ...) {
+  stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_double_from_vctr, x)
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.raw <- function(x, ptype, ...) {
+  stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_raw_from_vctr, x)
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.character <- function(x, ptype, ...) {
+  stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_character_from_vctr, x)
 }
 
@@ -73,6 +80,7 @@ from_arrow_vctr.character <- function(x, ptype, ...) {
 #' @export
 from_arrow_vctr.factor <- function(x, ptype, ...) {
   assert_x_arrow_vctr(x)
+  stopifnot(!is.null(x$schema$dictionary))
 
   if (length(x$arrays) == 0) {
     return(ptype[integer(0)])
@@ -88,7 +96,7 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
     level_values <- lapply(dictionaries, from_arrow_vctr, character())
     levels <- level_values[[1]]
     for (levs in level_values) {
-      stopifnot(!identical(levs, levels))
+      stopifnot(identical(levs, levels))
     }
   }
 
@@ -102,16 +110,25 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
 from_arrow_vctr.data.frame <- function(x, ptype, ...) {
   assert_x_arrow_vctr(x)
 
-  if (ncol(ptype) == 0) {
+  # because of weirdness with UseMethod()
+  if (missing(ptype)) {
     ptype <- arrow_default_ptype(x$schema)
   }
 
   child_schemas <- x$schema$children
+
+  if (ncol(ptype) == 0) {
+    ptype <- arrow_default_ptype(x$schema)
+  } else {
+    stopifnot(identical(names(ptype), vapply(child_schemas, "[[", character(1), "name")))
+  }
+
   child_arrays <- lapply(seq_along(child_schemas), function(i) {
     lapply(x$arrays, function(a) a$children[[i]])
   })
   child_vctrs <- Map(arrow_vctr, child_schemas, child_arrays)
   result <- Map(from_arrow_vctr, child_vctrs, ptype)
+  names(result) <- names(ptype)
   new_data_frame(result, nrow = arrow_vctr_length(x))
 }
 
