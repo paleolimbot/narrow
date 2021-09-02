@@ -169,3 +169,12 @@ test_that("from_arrow_vctr(, raw()) works", {
     as.raw(c(1, 0))
   )
 })
+
+test_that("from_arrow_vctr(, data.frame()) works", {
+  tbl <- data.frame(a = 1, b = "fish")
+  expect_identical(from_arrow_vctr(as_arrow_vctr(tbl)), tbl)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(tbl), data.frame(alpha = integer(), beta = character())),
+    data.frame(alpha = 1L, beta = "fish")
+  )
+})
