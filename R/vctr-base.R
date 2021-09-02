@@ -22,7 +22,7 @@
 #' as_arrow_vctr(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
 as_arrow_vctr.NULL <- function(x, ..., name = NULL) {
-  arrow_vctr(arrow_schema("n", name), arrow_array())
+  arrow_vctr(arrow_schema("n", name), arrow_array(null_count = 0))
 }
 
 #' @export
@@ -117,7 +117,7 @@ as_arrow_vctr.raw <- function(x, ..., name = NULL) {
 #' @rdname as_arrow_vctr.NULL
 as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
   vctrs <- Map(as_arrow_vctr, x, name = names(x))
-  # this ony works if all array sizes are length 1
+  # this only works if all array sizes are length 1
   arrays <- lapply(vctrs, "[[", "arrays")
   arrays_len <- vapply(arrays, length, integer(1))
   stopifnot(all(arrays_len == 1L))
