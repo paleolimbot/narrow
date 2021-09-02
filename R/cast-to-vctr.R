@@ -34,7 +34,7 @@ as_arrow_vctr.logical <- function(x, ..., name = NULL) {
     arrow_array(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
       length = length(x),
-      null_count = sum(is.na(x)),
+      null_count = sum(x_is_na),
       offset = 0
     )
   )
@@ -49,7 +49,7 @@ as_arrow_vctr.integer <- function(x, ..., name = NULL) {
     arrow_array(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
       length = length(x),
-      null_count = sum(is.na(x)),
+      null_count = sum(x_is_na),
       offset = 0
     )
   )
@@ -64,7 +64,7 @@ as_arrow_vctr.double <- function(x, ..., name = NULL) {
     arrow_array(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
       length = length(x),
-      null_count = sum(is.na(x)),
+      null_count = sum(x_is_na),
       offset = 0
     )
   )
@@ -93,8 +93,34 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
     arrow_array(
       buffers = buffers,
       length = length(x),
-      null_count = sum(is.na(x)),
+      null_count = sum(x_is_na),
       offset = 0
+    )
+  )
+}
+
+#' @export
+#' @rdname as_arrow_vctr.NULL
+as_arrow_vctr.factor <- function(x, ..., name = NULL) {
+  x_is_na <- is.na(x)
+
+  # arrow uses 0-based indexes; to avoid copying the memory of the vector
+  # we add an element to the front of the dictionary that is never used
+  dictionary_chr <- c("", levels(x))
+  dictionary_vctr <- as_arrow_vctr(dictionary_chr)
+
+  arrow_vctr(
+    arrow_schema(
+      "i", name,
+      flags = arrow_schema_flags(nullable = any(x_is_na)),
+      dictionary = dictionary_vctr$schema
+    ),
+    arrow_array(
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      length = length(x),
+      null_count = sum(x_is_na),
+      offset = 0,
+      dictionary = dictionary_vctr$arrays[[1]]
     )
   )
 }

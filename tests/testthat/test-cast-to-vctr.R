@@ -112,6 +112,19 @@ test_that("large character(0) to vctr works", {
   expect_identical(length(vctr$arrays[[1]]$buffers[[2]]), 2 ^ 31)
 })
 
+test_that("factor() to vctr works", {
+  l <- factor(c(NA, rep(letters, 2)))
+  vctr <- as_arrow_vctr(l)
+  expect_identical(vctr$schema$format, "i")
+  expect_identical(vctr$schema$dictionary$format, "u")
+  expect_identical(vctr$arrays[[1]]$length, as_arrow_int64(26 * 2 + 1))
+  expect_identical(vctr$arrays[[1]]$null_count, as_arrow_int64(1))
+  expect_identical(vctr$arrays[[1]]$buffers[[1]], as_arrow_bitmask(!is.na(l)))
+  expect_equal(unclass(vctr$arrays[[1]]$buffers[[2]]), c(NA, 1:26, 1:26), ignore_attr = TRUE)
+  expect_equal(vctr$arrays[[1]]$dictionary$buffers[[1]], c(0L, 0:26))
+  expect_equal(vctr$arrays[[1]]$dictionary$buffers[[2]], charToRaw(paste(letters, collapse = "")))
+})
+
 test_that("raw(0) to vctr works", {
   l <- raw(0)
   vctr <- as_arrow_vctr(l)

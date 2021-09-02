@@ -6,6 +6,7 @@
 \alias{as_arrow_vctr.integer}
 \alias{as_arrow_vctr.double}
 \alias{as_arrow_vctr.character}
+\alias{as_arrow_vctr.factor}
 \alias{as_arrow_vctr.raw}
 \alias{as_arrow_vctr.data.frame}
 \title{Convert base R objects to Arrow vectors}
@@ -19,6 +20,8 @@
 \method{as_arrow_vctr}{double}(x, ..., name = NULL)
 
 \method{as_arrow_vctr}{character}(x, ..., name = NULL)
+
+\method{as_arrow_vctr}{factor}(x, ..., name = NULL)
 
 \method{as_arrow_vctr}{raw}(x, ..., name = NULL)
 
