@@ -45,5 +45,6 @@ Note that \code{\link[=from_arrow_vctr]{from_arrow_vctr()}} dispatches on \code{
 }
 \examples{
 from_arrow_vctr(as_arrow_vctr(NULL), NULL)
+from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), logical())
 
 }

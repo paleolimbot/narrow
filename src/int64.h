@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <memory.h>
 
+#define BIG_INTEGER(data_) ((int64_t*) REAL(data_))
+
 static inline int64_t scalar_int64_from_sexp(SEXP int64_sexp, const char* arg) {
   if (Rf_inherits(int64_sexp, "arrowvctrs_int64")) {
     int64_t out;

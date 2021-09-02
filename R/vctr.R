@@ -32,8 +32,7 @@ as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
 
 #' @export
 format.arrowvctrs_vctr <- function(x, ...) {
-  lengths <- lapply(x$arrays, "[[", "length")
-  total_length <- sum(vapply(lengths, as.numeric, double(1)))
+  total_length <- arrow_vctr_length(x)
   sprintf("<arrow_vctr %s[%d]>", x$schema$format, total_length)
 }
 
@@ -48,4 +47,9 @@ print.arrowvctrs_vctr <- function(x, ...) {
   lapply(x$arrays, print, indent.str = "  ")
 
   invisible(x)
+}
+
+arrow_vctr_length <- function(x, ...) {
+  lengths <- lapply(x$arrays, "[[", "length")
+  sum(vapply(lengths, as.numeric, double(1)))
 }

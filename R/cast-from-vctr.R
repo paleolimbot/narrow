@@ -12,6 +12,7 @@
 #'
 #' @examples
 #' from_arrow_vctr(as_arrow_vctr(NULL), NULL)
+#' from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), logical())
 #'
 from_arrow_vctr <- function(x, ptype, ...) {
   UseMethod("from_arrow_vctr", ptype)
@@ -77,7 +78,7 @@ from_arrow_vctr.character <- function(x, ptype, ...) {
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.factor <- function(x, ptype, ...) {
-  .Call(arrowvctrs_c_factor_from_vctr, x)
+  NULL
 }
 
 #' @rdname from_arrow_vctr
