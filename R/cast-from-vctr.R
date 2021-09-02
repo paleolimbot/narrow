@@ -11,29 +11,17 @@
 #' @export
 #'
 #' @examples
-#' from_arrow_vctr(as_arrow_vctr(NULL), NULL)
 #' from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), logical())
 #'
-from_arrow_vctr <- function(x, ptype, ...) {
+from_arrow_vctr <- function(x, ptype = arrow_default_ptype(x$schema), ...) {
   UseMethod("from_arrow_vctr", ptype)
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.default <- function(x, ptype, ...) {
-  if (!inherits(x, "arrowvctrs_vctr")) {
-    stop("`x` is not an `arrow_vctr()`", call. = FALSE)
-  }
-
-  ptype_label <- class(ptype)[1]
-  stop(
-    sprintf(
-      "Can't convert schema format '%s' to '%s'",
-      x$schema$format,
-      ptype_label
-    ),
-    call. = FALSE
-  )
+  assert_x_arrow_vctr(x)
+  stop_cant_convert(x, ptype)
 }
 
 #' @rdname from_arrow_vctr
@@ -71,6 +59,12 @@ from_arrow_vctr.double <- function(x, ptype, ...) {
 
 #' @rdname from_arrow_vctr
 #' @export
+from_arrow_vctr.raw <- function(x, ptype, ...) {
+  .Call(arrowvctrs_c_raw_from_vctr, x)
+}
+
+#' @rdname from_arrow_vctr
+#' @export
 from_arrow_vctr.character <- function(x, ptype, ...) {
   .Call(arrowvctrs_c_character_from_vctr, x)
 }
@@ -78,11 +72,64 @@ from_arrow_vctr.character <- function(x, ptype, ...) {
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.factor <- function(x, ptype, ...) {
-  NULL
+  assert_x_arrow_vctr(x)
+
+  if (length(x$arrays) == 0) {
+    return(ptype[integer(0)])
+  }
+
+  # get indices
+  indices <- from_arrow_vctr(x, integer()) + 1L
+
+  # try to detect levels if none were given
+  levels <- levels(ptype)
+  if (identical(levels, character())) {
+    dictionaries <- Map(arrow_vctr, list(x$schema$dictionary), lapply(x$arrays, "[[", "dictionary"))
+    level_values <- lapply(dictionaries, from_arrow_vctr, character())
+    levels <- level_values[[1]]
+    for (levs in level_values) {
+      stopifnot(!identical(levs, levels))
+    }
+  }
+
+  class(indices) <- "factor"
+  attr(indices, "levels") <- levels
+  indices
 }
 
 #' @rdname from_arrow_vctr
 #' @export
 from_arrow_vctr.data.frame <- function(x, ptype, ...) {
-  NULL
+  assert_x_arrow_vctr(x)
+
+  if (ncol(ptype) == 0) {
+    ptype <- arrow_default_ptype(x$schema)
+  }
+
+  child_schemas <- x$schema$children
+  child_arrays <- lapply(seq_along(child_schemas), function(i) {
+    lapply(x$arrays, function(a) a$children[[i]])
+  })
+  child_vctrs <- Map(arrow_vctr, child_schemas, child_arrays)
+  result <- Map(from_arrow_vctr, child_vctrs, ptype)
+  new_data_frame(result, nrow = arrow_vctr_length(x))
+}
+
+
+assert_x_arrow_vctr <- function(x) {
+  if (!inherits(x, "arrowvctrs_vctr")) {
+    stop("`x` is not an `arrow_vctr()`", call. = FALSE)
+  }
+}
+
+stop_cant_convert <- function(x, ptype) {
+  ptype_label <- class(ptype)[1]
+  stop(
+    sprintf(
+      "Can't convert schema format '%s' to '%s'",
+      x$schema$format,
+      ptype_label
+    ),
+    call. = FALSE
+  )
 }

@@ -72,7 +72,7 @@ SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
         array->length
       );
     } else {
-      Rf_error("Can't convert schema format `%s` to `ptype`", schema->format);
+      Rf_error("Can't convert schema format `%s` to `logical()`", schema->format);
     }
 
     if (validity_buffer != NULL) {
@@ -133,7 +133,7 @@ SEXP arrowvctrs_c_integer_from_vctr(SEXP vctr_sexp) {
         array->length
       );
     } else {
-      Rf_error("Can't convert schema format `%s` to `ptype`", schema->format);
+      Rf_error("Can't convert schema format `%s` to `integer()`", schema->format);
     }
 
     if (validity_buffer != NULL) {
@@ -194,7 +194,7 @@ SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp) {
         array->length
       );
     } else {
-      Rf_error("Can't convert schema format `%s` to `ptype`", schema->format);
+      Rf_error("Can't convert schema format `%s` to `double()`", schema->format);
     }
 
     if (validity_buffer != NULL) {
@@ -213,6 +213,76 @@ SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
+SEXP arrowvctrs_c_raw_from_vctr(SEXP vctr_sexp) {
+  struct ArrowSchema* schema = schema_from_vctr(vctr_sexp, "x");
+  int64_t size = vctr_size(vctr_sexp);
+  SEXP result_sexp = PROTECT(Rf_allocVector(RAWSXP, size));
+  unsigned char* result = RAW(result_sexp);
+  int64_t result_offset = 0;
+
+  SEXP arrays = VECTOR_ELT(vctr_sexp, 1);
+  int64_t n_arrays = Rf_xlength(arrays);
+
+  for (int64_t i_array = 0; i_array < n_arrays; i_array++) {
+    struct ArrowArray* array = array_from_xptr(VECTOR_ELT(arrays, i_array), "array[[i]]");
+    if (array->length == 0) {
+      continue;
+    }
+
+    const void* data_buffer;
+    const unsigned char* validity_buffer;
+
+    if (array->n_buffers >= 2) {
+      validity_buffer = (const unsigned char*) array->buffers[0];
+      data_buffer = array->buffers[1];
+    } else if (array->n_buffers >= 1) {
+      validity_buffer = NULL;
+      data_buffer = array->buffers[0];
+    } else {
+      Rf_error("array %ld has zero buffers", i_array + 1);
+    }
+
+    if (strcmp(schema->format, "i") == 0) {
+      copy_uint8_t_from_int32_t(
+        result + (result_offset * sizeof(unsigned char)),
+        ((int32_t*) data_buffer) + (array->offset * sizeof(int32_t)),
+        array->length
+      );
+    } else if (strcmp(schema->format, "g") == 0) {
+      copy_uint8_t_from_double(
+        result + (result_offset * sizeof(unsigned char)),
+        ((double*) data_buffer) + (array->offset * sizeof(double)),
+        array->length
+      );
+    } else if (strcmp(schema->format, "C") == 0) {
+      copy_uint8_t_from_uint8_t(
+        result + (result_offset * sizeof(unsigned char)),
+        ((uint8_t*) data_buffer) + (array->offset * sizeof(uint8_t)),
+        array->length
+      );
+    } else {
+      Rf_error("Can't convert schema format `%s` to `raw()`", schema->format);
+    }
+
+    if (validity_buffer != NULL) {
+      // almost certainly faster to loop through bytes here and skip 0xff bytes
+      // NA values for raw() aren't really defined; however, this is never the
+      // default and is better than exposing undefined bits of memory
+      for (int64_t i = 0; i < array->length; i++) {
+        if (!bitmask_value(validity_buffer, i + array->offset)) {
+          result[result_offset + i] = 0x00;
+        }
+      }
+    }
+
+    result_offset += array->length;
+  }
+
+  UNPROTECT(1);
+  return result_sexp;
+}
+
 SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp) {
+  Rf_error("Not implemented");
   return R_NilValue;
 }

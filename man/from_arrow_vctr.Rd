@@ -7,12 +7,13 @@
 \alias{from_arrow_vctr.logical}
 \alias{from_arrow_vctr.integer}
 \alias{from_arrow_vctr.double}
+\alias{from_arrow_vctr.raw}
 \alias{from_arrow_vctr.character}
 \alias{from_arrow_vctr.factor}
 \alias{from_arrow_vctr.data.frame}
 \title{Convert Arrow vectors to R objects}
 \usage{
-from_arrow_vctr(x, ptype, ...)
+from_arrow_vctr(x, ptype = arrow_default_ptype(x$schema), ...)
 
 \method{from_arrow_vctr}{default}(x, ptype, ...)
 
@@ -23,6 +24,8 @@ from_arrow_vctr(x, ptype, ...)
 \method{from_arrow_vctr}{integer}(x, ptype, ...)
 
 \method{from_arrow_vctr}{double}(x, ptype, ...)
+
+\method{from_arrow_vctr}{raw}(x, ptype, ...)
 
 \method{from_arrow_vctr}{character}(x, ptype, ...)
 
@@ -44,7 +47,6 @@ An object with the same class as \code{ptype}
 Note that \code{\link[=from_arrow_vctr]{from_arrow_vctr()}} dispatches on \code{ptype}
 }
 \examples{
-from_arrow_vctr(as_arrow_vctr(NULL), NULL)
 from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), logical())
 
 }
