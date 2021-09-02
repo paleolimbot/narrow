@@ -101,6 +101,37 @@ test_that("from_arrow_vctr(, double()) works", {
   )
 })
 
+test_that("from_arrow_vctr(, character()) works", {
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c("fish", "ball")), character()),
+    c("fish", "ball")
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c("fish", "ball", NA)), character()),
+    c("fish", "ball", NA)
+  )
+
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball"))), character()),
+    c("fish", "ball")
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball", NA))), character()),
+    c("fish", "ball", NA)
+  )
+})
+
+test_that("from_arrow_vctr(, factor()) works", {
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball"))), factor()),
+    factor(c("fish", "ball"), levels = c("", "ball", "fish"))
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball", NA))), factor()),
+    factor(c("fish", "ball", NA), levels = c("", "ball", "fish"))
+  )
+})
+
 test_that("from_arrow_vctr(, raw()) works", {
   # with and without validity buffer for lgl (int underlying type)
   expect_identical(
