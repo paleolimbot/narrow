@@ -38,7 +38,9 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(arrowvctrs)
+(vctr <- as_arrow_vctr(ggplot2::mpg))
+```
 
-arrow_schema("i")
-parse_format("i")
+```{r}
+tibble::as_tibble(from_arrow_vctr(vctr))
 ```
