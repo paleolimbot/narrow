@@ -39,84 +39,84 @@ library(arrowvctrs)
 (vctr <- as_arrow_vctr(ggplot2::mpg))
 #> <arrow_vctr +s[234]>
 #> - schema:
-#>   <arrow_schema '+s' at 0x1436b0d40>
+#>   <arrow_schema '+s' at 0x14d6e8770>
 #>   - format: +s
 #>   - name: NULL
 #>   - flags: 
 #>   - metadata: NULL
 #>   - dictionary: NULL
 #>   - children[11]:
-#>     <arrow_schema 'u' at 0x155835660>
+#>     <arrow_schema 'u' at 0x14d623730>
 #>     - format: u
 #>     - name: manufacturer
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'u' at 0x155838cd0>
+#>     <arrow_schema 'u' at 0x11d6ad320>
 #>     - format: u
 #>     - name: model
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'g' at 0x1558f3aa0>
+#>     <arrow_schema 'g' at 0x11d615360>
 #>     - format: g
 #>     - name: displ
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'i' at 0x155881980>
+#>     <arrow_schema 'i' at 0x11d6a2af0>
 #>     - format: i
 #>     - name: year
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'i' at 0x155871a00>
+#>     <arrow_schema 'i' at 0x11d6c6b60>
 #>     - format: i
 #>     - name: cyl
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'u' at 0x155856020>
+#>     <arrow_schema 'u' at 0x11d626fd0>
 #>     - format: u
 #>     - name: trans
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'u' at 0x15586a4b0>
+#>     <arrow_schema 'u' at 0x11d6a2c30>
 #>     - format: u
 #>     - name: drv
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'i' at 0x143692d20>
+#>     <arrow_schema 'i' at 0x11d68fea0>
 #>     - format: i
 #>     - name: cty
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'i' at 0x1436a00d0>
+#>     <arrow_schema 'i' at 0x11d68b7c0>
 #>     - format: i
 #>     - name: hwy
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'u' at 0x1436be4e0>
+#>     <arrow_schema 'u' at 0x11d6a79e0>
 #>     - format: u
 #>     - name: fl
 #>     - flags: 
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_schema 'u' at 0x143690a90>
+#>     <arrow_schema 'u' at 0x11d691800>
 #>     - format: u
 #>     - name: class
 #>     - flags: 
@@ -124,14 +124,14 @@ library(arrowvctrs)
 #>     - dictionary: NULL
 #>     - children[0]:
 #> - arrays[1]:
-#>   <arrow_array at 0x1436b1c60>
+#>   <arrow_array at 0x11d6d4020>
 #>   - length: 234
 #>   - null_count: 0
 #>   - offset: 0
 #>   - buffers[0]:  list()
 #>   - dictionary: NULL
 #>   - children[11]:
-#>     <arrow_array at 0x15583fc60>
+#>     <arrow_array at 0x14d6f0eb0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -140,7 +140,7 @@ library(arrowvctrs)
 #>       $ : raw [1:1463] 61 75 64 69 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x15582e5b0>
+#>     <arrow_array at 0x11d6bb920>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -149,7 +149,7 @@ library(arrowvctrs)
 #>       $ : raw [1:2455] 61 34 61 34 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x155858800>
+#>     <arrow_array at 0x11d6bca90>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -157,7 +157,7 @@ library(arrowvctrs)
 #>       $ : num [1:234] 1.8 1.8 2 2 2.8 2.8 3.1 1.8 1.8 2 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x1558eb840>
+#>     <arrow_array at 0x11d63a4c0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -165,7 +165,7 @@ library(arrowvctrs)
 #>       $ : int [1:234] 1999 1999 2008 2008 1999 1999 2008 1999 1999 2008 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x1558a2ad0>
+#>     <arrow_array at 0x11d6cdfb0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -173,7 +173,7 @@ library(arrowvctrs)
 #>       $ : int [1:234] 4 4 4 4 6 6 6 4 4 4 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x1558c2b00>
+#>     <arrow_array at 0x11d62b3e0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -182,7 +182,7 @@ library(arrowvctrs)
 #>       $ : raw [1:2026] 61 75 74 6f ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x14367bbd0>
+#>     <arrow_array at 0x11d671660>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -191,7 +191,7 @@ library(arrowvctrs)
 #>       $ : raw [1:234] 66 66 66 66 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x1436933e0>
+#>     <arrow_array at 0x11d6abcd0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -199,7 +199,7 @@ library(arrowvctrs)
 #>       $ : int [1:234] 18 21 20 21 16 18 18 18 16 20 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x14369e0d0>
+#>     <arrow_array at 0x11d62bd90>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -207,7 +207,7 @@ library(arrowvctrs)
 #>       $ : int [1:234] 29 29 31 30 26 26 27 26 25 28 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x14365d450>
+#>     <arrow_array at 0x11d651b50>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
@@ -216,7 +216,7 @@ library(arrowvctrs)
 #>       $ : raw [1:234] 70 70 70 70 ...
 #>     - dictionary: NULL
 #>     - children[0]:
-#>     <arrow_array at 0x14364c8d0>
+#>     <arrow_array at 0x14d6f03c0>
 #>     - length: 234
 #>     - null_count: 0
 #>     - offset: 0
