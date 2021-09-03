@@ -2,7 +2,7 @@
 #' Create arrow vectors
 #'
 #' @param schema An [arrow_schema()]
-#' @param arrays An [arrow_array()] or [list()] of [arrow_array()]s.
+#' @param array An [arrow_array()]
 #' @param x An object to convert to an [arrow_vctr()]
 #' @param ... Passed to S3 methods
 #'
@@ -12,10 +12,10 @@
 #' @examples
 #' arrow_vctr()
 #'
-arrow_vctr <- function(schema = arrow_schema("n"), arrays = list()) {
+arrow_vctr <- function(schema = arrow_schema("n"), array = arrow_array()) {
   schema <- as_arrow_schema(schema)
-  arrays <- if (is.list(arrays)) lapply(arrays, as_arrow_array) else list(as_arrow_array(arrays))
-  structure(list(schema = schema, arrays = arrays), class = "arrowvctrs_vctr")
+  arrays <- as_arrow_array(array)
+  structure(list(schema = schema, array = array), class = "arrowvctrs_vctr")
 }
 
 #' @rdname arrow_vctr
@@ -32,8 +32,8 @@ as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
 
 #' @export
 format.arrowvctrs_vctr <- function(x, ...) {
-  total_length <- arrow_vctr_length(x)
-  sprintf("<arrow_vctr %s[%d]>", x$schema$format, total_length)
+  total_length <- x$array$length
+  sprintf("<arrow_vctr %s[%s]>", x$schema$format, format(total_length))
 }
 
 #' @export
@@ -43,13 +43,8 @@ print.arrowvctrs_vctr <- function(x, ...) {
   cat("- schema:\n")
   print(x$schema, indent.str = "  ")
 
-  cat(sprintf("- arrays[%d]:\n", length(x$arrays)))
-  lapply(x$arrays, print, indent.str = "  ")
+  cat(sprintf("- array:\n"))
+  print(x$array, indent.str = "  ")
 
   invisible(x)
-}
-
-arrow_vctr_length <- function(x, ...) {
-  lengths <- lapply(x$arrays, "[[", "length")
-  sum(vapply(lengths, as.numeric, double(1)))
 }

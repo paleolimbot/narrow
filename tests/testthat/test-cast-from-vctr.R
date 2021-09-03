@@ -35,6 +35,12 @@ test_that("from_arrow_vctr(, logical()) works", {
     from_arrow_vctr(as_arrow_vctr(c(1, 0, NA)), logical()),
     c(TRUE, FALSE, NA)
   )
+
+  # for uint8 (uint8 underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(as.raw(c(1, 0))), logical()),
+    c(TRUE, FALSE)
+  )
 })
 
 test_that("from_arrow_vctr(, integer()) works", {
@@ -66,6 +72,12 @@ test_that("from_arrow_vctr(, integer()) works", {
   expect_identical(
     from_arrow_vctr(as_arrow_vctr(c(1, 0, NA)), integer()),
     c(1L, 0L, NA)
+  )
+
+  # for uint8 (uint8 underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(as.raw(c(1, 0))), integer()),
+    c(1L, 0L)
   )
 })
 
@@ -99,6 +111,12 @@ test_that("from_arrow_vctr(, double()) works", {
     from_arrow_vctr(as_arrow_vctr(c(1, 0, NA)), double()),
     c(1, 0, NA)
   )
+
+  # for uint8 (uint8 underlying type)
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(as.raw(c(1, 0))), double()),
+    c(1, 0)
+  )
 })
 
 test_that("from_arrow_vctr(, character()) works", {
@@ -124,11 +142,11 @@ test_that("from_arrow_vctr(, character()) works", {
 test_that("from_arrow_vctr(, factor()) works", {
   expect_identical(
     from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball"))), factor()),
-    factor(c("fish", "ball"), levels = c("", "ball", "fish"))
+    factor(c("fish", "ball"), levels = c("ball", "fish"))
   )
   expect_identical(
     from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball", NA))), factor()),
-    factor(c("fish", "ball", NA), levels = c("", "ball", "fish"))
+    factor(c("fish", "ball", NA), levels = c("ball", "fish"))
   )
 })
 

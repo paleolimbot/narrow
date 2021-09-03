@@ -79,17 +79,9 @@ from_arrow_vctr.character <- function(x, ptype, ...) {
   if (is.null(x$schema$dictionary)) {
     .Call(arrowvctrs_c_character_from_vctr, x)
   } else {
-    indices <- Map(arrow_vctr, list(x$schema), x$arrays)
-    index_values <- lapply(indices, from_arrow_vctr_integer)
-    dictionaries <- Map(arrow_vctr, list(x$schema$dictionary), lapply(x$arrays, "[[", "dictionary"))
-    level_values <- lapply(dictionaries, from_arrow_vctr, character())
-    unlist(
-      Map(
-        function(x, y) x[y + 1L],
-        level_values,
-        index_values
-      )
-    )
+    indices <- from_arrow_vctr_integer(x) + 1L
+    dictionary <- arrow_vctr(x$schema$dictionary, x$array$dictionary)
+    from_arrow_vctr(dictionary, character())[indices]
   }
 }
 
@@ -104,22 +96,14 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
     ptype <- arrow_default_ptype(x$schema)
   }
 
-  if (length(x$arrays) == 0) {
-    return(ptype[integer(0)])
-  }
-
   # get indices
   indices <- from_arrow_vctr_integer(x) + 1L
 
   # try to detect levels if none were given
   levels <- levels(ptype)
   if (identical(levels, character())) {
-    dictionaries <- Map(arrow_vctr, list(x$schema$dictionary), lapply(x$arrays, "[[", "dictionary"))
-    level_values <- lapply(dictionaries, from_arrow_vctr, character())
-    levels <- level_values[[1]]
-    for (levs in level_values) {
-      stopifnot(identical(levs, levels))
-    }
+    dictionary <- arrow_vctr(x$schema$dictionary, x$array$dictionary)
+    levels <- from_arrow_vctr(dictionary, character())
   }
 
   class(indices) <- "factor"
@@ -146,13 +130,11 @@ from_arrow_vctr.data.frame <- function(x, ptype, ...) {
     stopifnot(identical(ncol(ptype), length(child_schemas)))
   }
 
-  child_arrays <- lapply(seq_along(child_schemas), function(i) {
-    lapply(x$arrays, function(a) a$children[[i]])
-  })
+  child_arrays <- x$array$children
   child_vctrs <- Map(arrow_vctr, child_schemas, child_arrays)
   result <- Map(from_arrow_vctr, child_vctrs, ptype)
   names(result) <- names(ptype)
-  new_data_frame(result, nrow = arrow_vctr_length(x))
+  new_data_frame(result, nrow = as.integer(as.numeric(x$array$length)))
 }
 
 

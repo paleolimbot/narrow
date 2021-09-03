@@ -104,10 +104,12 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
 as_arrow_vctr.factor <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
 
-  # arrow uses 0-based indexes; to avoid copying the memory of the vector
-  # we add an element to the front of the dictionary that is never used
-  dictionary_chr <- c("", levels(x))
-  dictionary_vctr <- as_arrow_vctr(dictionary_chr)
+  # indices are 1-based and Arrow needs 0-based
+  # could also add a factor level here to avoid copying the
+  # indices vector but this makes it harder
+  # to round-trip a factor() and a little disingenuous
+  dictionary_vctr <- as_arrow_vctr(levels(x))
+  indices <- unclass(x) - 1L
 
   arrow_vctr(
     arrow_schema(
@@ -116,11 +118,11 @@ as_arrow_vctr.factor <- function(x, ..., name = NULL) {
       dictionary = dictionary_vctr$schema
     ),
     arrow_array(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), indices) else indices,
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0,
-      dictionary = dictionary_vctr$arrays[[1]]
+      dictionary = dictionary_vctr$array
     )
   )
 }
@@ -144,9 +146,7 @@ as_arrow_vctr.raw <- function(x, ..., name = NULL) {
 as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
   vctrs <- Map(as_arrow_vctr, x, name = names(x))
   # this only works if all array sizes are length 1
-  arrays <- lapply(vctrs, "[[", "arrays")
-  arrays_len <- vapply(arrays, length, integer(1))
-  stopifnot(all(arrays_len == 1L))
+  arrays <- lapply(vctrs, "[[", "array")
 
   arrow_vctr(
     arrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
@@ -154,7 +154,7 @@ as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
       buffers = list(),
       length = nrow(x),
       null_count = 0,
-      children = lapply(arrays, "[[", 1)
+      children = arrays
     )
   )
 }
