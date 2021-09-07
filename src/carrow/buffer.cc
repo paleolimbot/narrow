@@ -8,6 +8,13 @@
 template <class dest_type_t, class src_type_t>
 int static_copy_template_class(void* dest_void, const void* src_void,
                                int64_t n_elements, int64_t offset) {
+  if (n_elements == 0) {
+    return 0;
+  }
+
+  if (dest_void == nullptr || src_void == nullptr) {
+    return EINVAL;
+  }
   dest_type_t* dest = (dest_type_t*) dest_void;
   src_type_t* src = (src_type_t*) src_void;
 
@@ -37,14 +44,6 @@ int static_copy_template_class(void* dest_void, const void* src_void,
 int arrow_buffer_copy_value(void* dest_void, int dest_ARROW_TYPE,
                             const void* src_void, int src_ARROW_TYPE,
                             int64_t n_elements, int64_t offset) {
-  if (n_elements == 0) {
-    return 0;
-  }
-
-  if (dest_void == nullptr || src_void == nullptr) {
-    return EINVAL;
-  }
-
   switch (dest_ARROW_TYPE) {
   case ARROW_TYPE_INT8: SWITCH_SRC_TYPE_ID(int8_t)
   case ARROW_TYPE_UINT8: SWITCH_SRC_TYPE_ID(uint8_t)
