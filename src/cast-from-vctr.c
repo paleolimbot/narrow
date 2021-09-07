@@ -7,17 +7,6 @@
 #include "array.h"
 #include "bitmask.h"
 #include "int64.h"
-#include "copy-convert.h"
-
-// just a note for readers that this code is in serious need of abstraction!
-
-static inline struct ArrowSchema* schema_from_vctr(SEXP vctr_sexp, const char* arg) {
-  return schema_from_xptr(VECTOR_ELT(vctr_sexp, 0), arg);
-}
-
-static inline struct ArrowArray* array_from_vctr(SEXP vctr_sexp, const char* arg) {
-  return array_from_xptr(VECTOR_ELT(vctr_sexp, 1), arg);
-}
 
 static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, const char* arg) {
   if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
@@ -36,7 +25,7 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
   }
 }
 
-#define LOOP_SET_NODATA(_body) \
+#define LOOP_NODATA(_body) \
   unsigned char* validity_buffer = arrow_vector_validity_buffer(&vector); \
   if (validity_buffer != NULL || size == 0) { \
     for (int64_t i = 0; i < size; i++) { \
@@ -49,7 +38,6 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
 SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
-
   int64_t size = vector.array->length;
   int64_t offset = vector.array->offset;
 
@@ -58,7 +46,7 @@ SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
 
   int copy_result = arrow_buffer_copy_value(
     result, ARROW_TYPE_INT32,
-    arrow_vector_data_buffer(&vector), vector.data_buffer_type,
+    arrow_vector_data_buffer(&vector), vector.type,
     size, offset
   );
 
@@ -66,215 +54,92 @@ SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
     Rf_error("Can't convert vctr with format '%s' to logical()", vector.schema->format);
   }
 
-  LOOP_SET_NODATA(result[i] = NA_LOGICAL)
+  LOOP_NODATA(result[i] = NA_LOGICAL)
 
   UNPROTECT(1);
   return result_sexp;
 }
 
 SEXP arrowvctrs_c_integer_from_vctr(SEXP vctr_sexp) {
-  if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
-    Rf_error("`x` must be an `arrow_vctr()`");
-  }
-
-  struct ArrowSchema* schema = schema_from_vctr(vctr_sexp, "x$schema");
-  struct ArrowArray* array = array_from_vctr(vctr_sexp, "x$array");
-  int64_t size = array->length;
+  struct ArrowVector vector;
+  vctr_from_vctr(vctr_sexp, &vector, "x");
+  int64_t size = vector.array->length;
+  int64_t offset = vector.array->offset;
 
   SEXP result_sexp = PROTECT(Rf_allocVector(INTSXP, size));
-  if (size == 0) {
-    UNPROTECT(1);
-    return result_sexp;
-  }
-
   int* result = INTEGER(result_sexp);
 
-  const void* data_buffer;
-  const unsigned char* validity_buffer;
+  int copy_result = arrow_buffer_copy_value(
+    result, ARROW_TYPE_INT32,
+    arrow_vector_data_buffer(&vector), vector.type,
+    size, offset
+  );
 
-  if (array->n_buffers >= 2) {
-    validity_buffer = (const unsigned char*) array->buffers[0];
-    data_buffer = array->buffers[1];
-  } else if (array->n_buffers >= 1) {
-    validity_buffer = NULL;
-    data_buffer = array->buffers[0];
-  } else {
-    Rf_error("`x$array` has too few buffers");
+  if (copy_result != 0) {
+    Rf_error("Can't convert vctr with format '%s' to integer()", vector.schema->format);
   }
 
-  if (strcmp(schema->format, "C") == 0) {
-    copy_int32_t_from_uint8_t(
-      result,
-      ((uint8_t*) data_buffer) + (array->offset * sizeof(uint8_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "i") == 0) {
-    copy_int32_t_from_int32_t(
-      result,
-      ((int32_t*) data_buffer) + (array->offset * sizeof(int32_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "g") == 0) {
-    copy_int32_t_from_double(
-      result,
-      ((double*) data_buffer) + (array->offset * sizeof(double)),
-      array->length
-    );
-  } else {
-    Rf_error("Can't convert schema format `%s` to `logical()`", schema->format);
-  }
-
-  if (validity_buffer != NULL) {
-    // almost certainly faster to loop through bytes here and skip 0xff bytes
-    for (int64_t i = 0; i < array->length; i++) {
-      if (!bitmask_value(validity_buffer, i + array->offset)) {
-        result[i] = NA_INTEGER;
-      }
-    }
-  }
+  LOOP_NODATA(result[i] = NA_INTEGER)
 
   UNPROTECT(1);
   return result_sexp;
 }
 
 SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp) {
-  if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
-    Rf_error("`x` must be an `arrow_vctr()`");
-  }
-
-  struct ArrowSchema* schema = schema_from_vctr(vctr_sexp, "x$schema");
-  struct ArrowArray* array = array_from_vctr(vctr_sexp, "x$array");
-  int64_t size = array->length;
+  struct ArrowVector vector;
+  vctr_from_vctr(vctr_sexp, &vector, "x");
+  int64_t size = vector.array->length;
+  int64_t offset = vector.array->offset;
 
   SEXP result_sexp = PROTECT(Rf_allocVector(REALSXP, size));
-  if (size == 0) {
-    UNPROTECT(1);
-    return result_sexp;
-  }
-
   double* result = REAL(result_sexp);
 
-  const void* data_buffer;
-  const unsigned char* validity_buffer;
+  int copy_result = arrow_buffer_copy_value(
+    result, ARROW_TYPE_DOUBLE,
+    arrow_vector_data_buffer(&vector), vector.type,
+    size, offset
+  );
 
-  if (array->n_buffers >= 2) {
-    validity_buffer = (const unsigned char*) array->buffers[0];
-    data_buffer = array->buffers[1];
-  } else if (array->n_buffers >= 1) {
-    validity_buffer = NULL;
-    data_buffer = array->buffers[0];
-  } else {
-    Rf_error("`x$array` has too few buffers");
+  if (copy_result != 0) {
+    Rf_error("Can't convert vctr with format '%s' to double()", vector.schema->format);
   }
 
-  if (strcmp(schema->format, "C") == 0) {
-    copy_double_from_uint8_t(
-      result,
-      ((uint8_t*) data_buffer) + (array->offset * sizeof(uint8_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "i") == 0) {
-    copy_double_from_int32_t(
-      result,
-      ((int32_t*) data_buffer) + (array->offset * sizeof(int32_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "g") == 0) {
-    copy_double_from_double(
-      result,
-      ((double*) data_buffer) + (array->offset * sizeof(double)),
-      array->length
-    );
-  } else {
-    Rf_error("Can't convert schema format `%s` to `logical()`", schema->format);
-  }
-
-  if (validity_buffer != NULL) {
-    // almost certainly faster to loop through bytes here and skip 0xff bytes
-    for (int64_t i = 0; i < array->length; i++) {
-      if (!bitmask_value(validity_buffer, i + array->offset)) {
-        result[i] = NA_REAL;
-      }
-    }
-  }
+  LOOP_NODATA(result[i] = NA_REAL)
 
   UNPROTECT(1);
   return result_sexp;
 }
 
 SEXP arrowvctrs_c_raw_from_vctr(SEXP vctr_sexp) {
-  if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
-    Rf_error("`x` must be an `arrow_vctr()`");
-  }
-
-  struct ArrowSchema* schema = schema_from_vctr(vctr_sexp, "x$schema");
-  struct ArrowArray* array = array_from_vctr(vctr_sexp, "x$array");
-  int64_t size = array->length;
+  struct ArrowVector vector;
+  vctr_from_vctr(vctr_sexp, &vector, "x");
+  int64_t size = vector.array->length;
+  int64_t offset = vector.array->offset;
 
   SEXP result_sexp = PROTECT(Rf_allocVector(RAWSXP, size));
-  if (size == 0) {
-    UNPROTECT(1);
-    return result_sexp;
-  }
-
   unsigned char* result = RAW(result_sexp);
 
-  const void* data_buffer;
-  const unsigned char* validity_buffer;
+  int copy_result = arrow_buffer_copy_value(
+    result, ARROW_TYPE_UINT8,
+    arrow_vector_data_buffer(&vector), vector.type,
+    size, offset
+  );
 
-  if (array->n_buffers >= 2) {
-    validity_buffer = (const unsigned char*) array->buffers[0];
-    data_buffer = array->buffers[1];
-  } else if (array->n_buffers >= 1) {
-    validity_buffer = NULL;
-    data_buffer = array->buffers[0];
-  } else {
-    Rf_error("`x$array` has too few buffers");
+  if (copy_result != 0) {
+    Rf_error("Can't convert vctr with format '%s' to raw()", vector.schema->format);
   }
 
-  if (strcmp(schema->format, "C") == 0) {
-    copy_uint8_t_from_uint8_t(
-      result,
-      ((uint8_t*) data_buffer) + (array->offset * sizeof(uint8_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "i") == 0) {
-    copy_uint8_t_from_int32_t(
-      result,
-      ((int32_t*) data_buffer) + (array->offset * sizeof(int32_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "g") == 0) {
-    copy_uint8_t_from_double(
-      result,
-      ((double*) data_buffer) + (array->offset * sizeof(double)),
-      array->length
-    );
-  } else {
-    Rf_error("Can't convert schema format `%s` to `logical()`", schema->format);
-  }
-
-  if (validity_buffer != NULL) {
-    // almost certainly faster to loop through bytes here and skip 0xff bytes
-    for (int64_t i = 0; i < array->length; i++) {
-      if (!bitmask_value(validity_buffer, i + array->offset)) {
-        result[i] = 0x00;
-      }
-    }
-  }
+  LOOP_NODATA(result[i] = 0x00)
 
   UNPROTECT(1);
   return result_sexp;
 }
 
 SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp) {
-  if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
-    Rf_error("`x` must be an `arrow_vctr()`");
-  }
-
-  struct ArrowSchema* schema = schema_from_vctr(vctr_sexp, "x$schema");
-  struct ArrowArray* array = array_from_vctr(vctr_sexp, "x$array");
-  int64_t size = array->length;
+  struct ArrowVector vector;
+  vctr_from_vctr(vctr_sexp, &vector, "x");
+  int64_t size = vector.array->length;
+  int64_t offset = vector.array->offset;
 
   SEXP result_sexp = PROTECT(Rf_allocVector(STRSXP, size));
   if (size == 0) {
@@ -282,56 +147,90 @@ SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp) {
     return result_sexp;
   }
 
-  const char* data_buffer;
-  const void* offsets_buffer;
-  const unsigned char* validity_buffer;
-
-  if (array->n_buffers >= 3) {
-    validity_buffer = (const unsigned char*) array->buffers[0];
-    offsets_buffer = array->buffers[1];
-    data_buffer = array->buffers[2];
-  } else if (array->n_buffers >= 2) {
-    validity_buffer = NULL;
-    offsets_buffer = array->buffers[0];
-    data_buffer = array->buffers[1];
-  } else {
-    Rf_error("`x$array` has too few buffers");
+  void* data_buffer = arrow_vector_data_buffer(&vector);
+  if (data_buffer == NULL) {
+    Rf_error("Can't convert schema format '%s' to `character()`", vector.schema->format);
   }
 
-  if (strcmp(schema->format, "U") == 0) {
-    const int64_t* offsets = (const int64_t*) offsets_buffer;
-    for (int64_t i = 0; i < array->length; i++) {
-      int64_t item_length = offsets[i + array->offset + 1] - offsets[i + array->offset];
+  const char* char_buffer = (const char*) data_buffer;
+
+  switch (vector.type) {
+  case ARROW_TYPE_STRING:
+  case ARROW_TYPE_BINARY: {
+    const int32_t* offsets = arrow_vector_offset_buffer(&vector);
+    for (int64_t i = 0; i < size; i++) {
+      int64_t item_length = offsets[i + offset + 1] - offsets[i + offset];
       SET_STRING_ELT(
         result_sexp,
         i,
-        Rf_mkCharLenCE(data_buffer + offsets[i + array->offset], item_length, CE_UTF8)
+        Rf_mkCharLenCE(char_buffer + offsets[i + offset], item_length, CE_UTF8)
       );
     }
-  } else if (strcmp(schema->format, "u") == 0) {
-    const int32_t* offsets = (const int32_t*) offsets_buffer;
-    for (int64_t i = 0; i < array->length; i++) {
-      int item_length = offsets[i + array->offset + 1] - offsets[i + array->offset];
+    break;
+  }
+
+  case ARROW_TYPE_LARGE_STRING:
+  case ARROW_TYPE_LARGE_BINARY: {
+    const int64_t* large_offsets = arrow_vector_large_offset_buffer(&vector);
+    for (int64_t i = 0; i < size; i++) {
+      int64_t item_length = large_offsets[i + offset + 1] - large_offsets[i + offset];
       SET_STRING_ELT(
         result_sexp,
         i,
-        Rf_mkCharLenCE(data_buffer + offsets[i + array->offset], item_length, CE_UTF8)
+        Rf_mkCharLenCE(char_buffer + large_offsets[i + offset], item_length, CE_UTF8)
       );
     }
-  } else {
-    Rf_error("Can't convert schema format '%s' to `character()`", schema->format);
+    break;
   }
 
-  if (validity_buffer != NULL) {
-    // almost certainly faster to loop through bytes here and skip 0xff bytes
-    // NA values for raw() aren't really defined; however, this is never the
-    // default and is better than exposing undefined bits of memory
-    for (int64_t i = 0; i < array->length; i++) {
-      if (!bitmask_value(validity_buffer, i + array->offset)) {
-        SET_STRING_ELT(result_sexp, i, NA_STRING);
-      }
+  case ARROW_TYPE_FIXED_SIZE_BINARY: {
+    for (int64_t i = 0; i < size; i++) {
+      SET_STRING_ELT(
+        result_sexp,
+        i,
+        Rf_mkCharLenCE(
+          char_buffer + vector.element_size_bytes * (i + offset),
+          vector.element_size_bytes,
+          CE_UTF8
+        )
+      );
     }
+    break;
   }
+
+  case ARROW_TYPE_INT8:
+  case ARROW_TYPE_UINT8:
+  case ARROW_TYPE_INT16:
+  case ARROW_TYPE_UINT16:
+  case ARROW_TYPE_INT32:
+  case ARROW_TYPE_UINT32:
+  case ARROW_TYPE_INT64: // this may be lossy for int64
+  case ARROW_TYPE_UINT64: // this may be lossy for uint64
+  case ARROW_TYPE_HALF_FLOAT:
+  case ARROW_TYPE_FLOAT:
+  case ARROW_TYPE_DOUBLE: {
+    int double_copy_result;
+    double double_val;
+    char double_buffer[32];
+    memset(double_buffer, 0, 32);
+    for (int64_t i = 0; i < size; i++) {
+      double_copy_result = arrow_buffer_copy_value(
+        &double_val, ARROW_TYPE_DOUBLE,
+        data_buffer, vector.type,
+        1, offset + i
+      );
+      sprintf(double_buffer, "%g", double_val);
+      SET_STRING_ELT(result_sexp, i, Rf_mkCharCE(double_buffer, CE_UTF8));
+    }
+    break;
+  }
+
+  default:
+    Rf_error("Can't convert schema format '%s' to `character()`", vector.schema->format);
+  }
+
+  // propagate nodata value as NA_STRING
+  LOOP_NODATA(SET_STRING_ELT(result_sexp, i, NA_STRING);)
 
   UNPROTECT(1);
   return result_sexp;

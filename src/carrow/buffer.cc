@@ -12,7 +12,7 @@ int static_copy_template_class(void* dest_void, const void* src_void,
   src_type_t* src = (src_type_t*) src_void;
 
   for (int64_t i = 0; i < n_elements; i++) {
-    dest[i] = static_cast<dest_type_t>(src[i]);
+    dest[i] = static_cast<dest_type_t>(src[i + offset]);
   }
 
   return 0;

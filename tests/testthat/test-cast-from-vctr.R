@@ -130,6 +130,15 @@ test_that("from_arrow_vctr(, character()) works", {
   )
 
   expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(123.4, 567.8)), character()),
+    c("123.4", "567.8")
+  )
+  expect_identical(
+    from_arrow_vctr(as_arrow_vctr(c(123.4, 567.8, NA)), character()),
+    c("123.4", "567.8", NA)
+  )
+
+  expect_identical(
     from_arrow_vctr(as_arrow_vctr(factor(c("fish", "ball"))), character()),
     c("fish", "ball")
   )
