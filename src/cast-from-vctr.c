@@ -36,65 +36,37 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
   }
 }
 
+#define LOOP_SET_NODATA(_body) \
+  unsigned char* validity_buffer = arrow_vector_validity_buffer(&vector); \
+  if (validity_buffer != NULL || size == 0) { \
+    for (int64_t i = 0; i < size; i++) { \
+      if (!bitmask_value(validity_buffer, i + offset)) { \
+        _body; \
+      } \
+    } \
+  }
+
 SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
 
-  struct ArrowSchema* schema = vector.schema;
-  struct ArrowArray* array = vector.array;
-  int64_t size = array->length;
+  int64_t size = vector.array->length;
+  int64_t offset = vector.array->offset;
 
   SEXP result_sexp = PROTECT(Rf_allocVector(LGLSXP, size));
-  if (size == 0) {
-    UNPROTECT(1);
-    return result_sexp;
-  }
-
   int* result = LOGICAL(result_sexp);
 
-  const void* data_buffer;
-  const unsigned char* validity_buffer;
+  int copy_result = arrow_buffer_copy_value(
+    result, ARROW_TYPE_INT32,
+    arrow_vector_data_buffer(&vector), vector.data_buffer_type,
+    size, offset
+  );
 
-  if (array->n_buffers >= 2) {
-    validity_buffer = (const unsigned char*) array->buffers[0];
-    data_buffer = array->buffers[1];
-  } else if (array->n_buffers >= 1) {
-    validity_buffer = NULL;
-    data_buffer = array->buffers[0];
-  } else {
-    Rf_error("`x$array` has too few buffers");
+  if (copy_result != 0) {
+    Rf_error("Can't convert vctr with format '%s' to logical()", vector.schema->format);
   }
 
-  if (strcmp(schema->format, "C") == 0) {
-    copy_int32_t_from_uint8_t(
-      result,
-      ((uint8_t*) data_buffer) + (array->offset * sizeof(uint8_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "i") == 0) {
-    copy_int32_t_from_int32_t(
-      result,
-      ((int32_t*) data_buffer) + (array->offset * sizeof(int32_t)),
-      array->length
-    );
-  } else if (strcmp(schema->format, "g") == 0) {
-    copy_int32_t_from_double(
-      result,
-      ((double*) data_buffer) + (array->offset * sizeof(double)),
-      array->length
-    );
-  } else {
-    Rf_error("Can't convert schema format `%s` to `logical()`", schema->format);
-  }
-
-  if (validity_buffer != NULL) {
-    // almost certainly faster to loop through bytes here and skip 0xff bytes
-    for (int64_t i = 0; i < array->length; i++) {
-      if (!bitmask_value(validity_buffer, i + array->offset)) {
-        result[i] = NA_LOGICAL;
-      }
-    }
-  }
+  LOOP_SET_NODATA(result[i] = NA_LOGICAL)
 
   UNPROTECT(1);
   return result_sexp;

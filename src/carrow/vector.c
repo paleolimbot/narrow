@@ -15,6 +15,7 @@ void arrow_vector_set_error(struct ArrowVector* vector, const char* fmt, ...) {
 }
 
 void arrow_vector_set_primitive(struct ArrowVector* vector, enum ArrowType type, uint64_t size) {
+  vector->type = type;
   vector->data_buffer_type = vector->type;
   vector->n_buffers = 1;
   vector->data_buffer_id = 0;
@@ -46,34 +47,34 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
     arrow_vector_set_primitive(vector, ARROW_TYPE_INT8, sizeof(int8_t));
     return 0;
   case 'C':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT8, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT8, sizeof(uint8_t));
     return 0;
   case 's':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_INT16, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_INT16, sizeof(int16_t));
     return 0;
   case 'S':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT16, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT16, sizeof(uint16_t));
     return 0;
   case 'i':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_INT32, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_INT32, sizeof(int32_t));
     return 0;
   case 'I':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT32, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT32, sizeof(uint32_t));
     return 0;
   case 'l':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_INT64, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_INT64, sizeof(int64_t));
     return 0;
   case 'L':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT64, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_UINT64, sizeof(uint64_t));
     return 0;
   case 'e':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_HALF_FLOAT, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_HALF_FLOAT, 2);
     return 0;
   case 'f':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_FLOAT, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_FLOAT, 4);
     return 0;
   case 'g':
-    arrow_vector_set_primitive(vector, ARROW_TYPE_DOUBLE, sizeof(int8_t));
+    arrow_vector_set_primitive(vector, ARROW_TYPE_DOUBLE, 8);
     return 0;
 
   // fixed-width binary
@@ -283,7 +284,7 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array)
     } else {
       arrow_vector_set_error(
         vector,
-        "Expected %l or %l buffers but found %l",
+        "Expected %l or %l buffers in array but found %l",
         vector->n_buffers, vector->n_buffers + 1, array->n_buffers
       );
       return EINVAL;

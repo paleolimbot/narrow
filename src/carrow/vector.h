@@ -188,7 +188,7 @@ static inline int32_t* arrow_vector_offset_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (int32_t*) vector->array->buffers[vector->offset_buffer_id - vector->has_validity_buffer];
+  return (int32_t*) vector->array->buffers[vector->offset_buffer_id + vector->has_validity_buffer];
 }
 
 static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vector) {
@@ -196,7 +196,7 @@ static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vect
     return 0;
   }
 
-  return (int64_t*) vector->array->buffers[vector->large_offset_buffer_id - vector->has_validity_buffer];
+  return (int64_t*) vector->array->buffers[vector->large_offset_buffer_id + vector->has_validity_buffer];
 }
 
 static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
@@ -204,7 +204,7 @@ static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (char*) vector->array->buffers[vector->union_type_buffer_id - vector->has_validity_buffer];
+  return (char*) vector->array->buffers[vector->union_type_buffer_id + vector->has_validity_buffer];
 }
 
 static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
@@ -212,7 +212,7 @@ static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (void*) vector->array->buffers[vector->data_buffer_id - vector->has_validity_buffer];
+  return (void*) vector->array->buffers[vector->data_buffer_id + vector->has_validity_buffer];
 }
 
 #ifdef __cplusplus
