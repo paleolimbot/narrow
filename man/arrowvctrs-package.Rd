@@ -4,7 +4,7 @@
 \name{arrowvctrs-package}
 \alias{arrowvctrs}
 \alias{arrowvctrs-package}
-\title{arrowvctrs: An R interface to the 'Apache Arrow' C API}
+\title{arrowvctrs: An R Interface to the 'Apache Arrow' C API}
 \description{
 Provides an R API to the 'Apache Arrow' C API.
 }

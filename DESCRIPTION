@@ -1,5 +1,5 @@
 Package: arrowvctrs
-Title: An R interface to the 'Apache Arrow' C API
+Title: An R Interface to the 'Apache Arrow' C API
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Dewey",
