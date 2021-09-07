@@ -5,7 +5,7 @@
 #include <memory.h>
 #include <stdio.h>
 
-#include "abi.h"
+#include "carrow/carrow.h"
 
 #include "schema.h"
 #include "util.h"

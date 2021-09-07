@@ -170,7 +170,7 @@ struct ArrowVector {
 };
 
 int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema);
-int arrow_vector_set_arrray(struct ArrowVector* vector, struct ArrowArray* array);
+int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array);
 //int arrow_vector_copy(struct ArrowVector* vector_dest, int64_t dest_offset,
 //                      struct ArrowVector* vector_src, int64_t src_offset,
 //                      int64_t n_elements);

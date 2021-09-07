@@ -7,7 +7,7 @@
 #include <memory.h>
 #include <stdint.h>
 #include <string.h>
-#include "abi.h"
+#include "carrow/carrow.h"
 
 void finalize_schema_xptr(SEXP schema_xptr);
 void finalize_schema(struct ArrowSchema* schema);

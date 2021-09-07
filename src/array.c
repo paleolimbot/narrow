@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 #include <string.h>
 #include "int64.h"
-#include "abi.h"
+#include "carrow/carrow.h"
 #include "array.h"
 #include "util.h"
 

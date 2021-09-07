@@ -3,7 +3,7 @@
 #define ARRAY_H_INCLUDED
 #include <R.h>
 #include <Rinternals.h>
-#include "abi.h"
+#include "carrow/carrow.h"
 
 static inline struct ArrowArray* array_from_xptr(SEXP array_xptr, const char* arg) {
   if (!Rf_inherits(array_xptr, "arrowvctrs_array")) {
