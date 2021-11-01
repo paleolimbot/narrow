@@ -151,7 +151,7 @@ struct ArrowVector {
   // implement some common operations
   enum ArrowType type;
   enum ArrowType data_buffer_type;
-  char* args;
+  const char* args;
   int n_buffers;
   int64_t element_size_bytes;
 
@@ -169,11 +169,14 @@ struct ArrowVector {
   char error_message[1024];
 };
 
+int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
+                      struct ArrowArray* array);
 int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema);
 int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array);
-//int arrow_vector_copy(struct ArrowVector* vector_dest, int64_t dest_offset,
-//                      struct ArrowVector* vector_src, int64_t src_offset,
-//                      int64_t n_elements);
+int arrow_vector_alloc_buffers(struct ArrowVector* vector);
+int arrow_vector_copy(struct ArrowVector* vector_dest, int64_t dest_offset,
+                      struct ArrowVector* vector_src, int64_t src_offset,
+                      int64_t n_elements);
 
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
   if (vector->has_validity_buffer) {
