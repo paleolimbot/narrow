@@ -41,7 +41,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
 
   if (buffers_sexp != R_NilValue) {
     array->n_buffers = Rf_xlength(buffers_sexp);
-    array->buffers = malloc(array->n_buffers * sizeof(void*));
+    array->buffers = (const void**) malloc(array->n_buffers * sizeof(void*));
     for (int64_t i = 0; i < array->n_buffers; i++) {
       SEXP item = VECTOR_ELT(buffers_sexp, i);
       switch (TYPEOF(item)) {
@@ -102,7 +102,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
 // this could be a pointer to an ArrowArray created by us or some other
 // package
 void finalize_array_xptr(SEXP array_xptr) {
-  struct ArrowArray* array = R_ExternalPtrAddr(array_xptr);
+  struct ArrowArray* array = (struct ArrowArray*) R_ExternalPtrAddr(array_xptr);
   if (array != NULL && array->release != NULL) {
     array->release(array);
   }

@@ -29,6 +29,42 @@ void arrow_schema_release_internal(struct ArrowSchema* schema) {
   schema->release = NULL;
 }
 
+int64_t arrow_schema_metadata_size(const char* metadata) {
+  if (metadata == NULL) {
+    return 0;
+  }
+
+  int64_t pos = 0;
+  int32_t n;
+  memcpy(&n, metadata + pos, sizeof(int32_t));
+  pos += sizeof(int32_t);
+
+  for (int i = 0; i < n; i++) {
+    int32_t name_len;
+    memcpy(&name_len, metadata + pos, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    if (name_len > 0) {
+      // name = PROTECT(Rf_mkCharLenCE((char*) metadata + pos, name_len, CE_UTF8));
+      pos += name_len;
+    } else {
+      // name = PROTECT(Rf_mkCharCE("", CE_UTF8));
+    }
+
+    int32_t value_len;
+    memcpy(&value_len, metadata + pos, sizeof(int32_t));
+    pos += sizeof(int32_t);
+
+    // SEXP value = PROTECT(Rf_allocVector(RAWSXP, value_len));
+    if (value_len > 0) {
+      // memcpy(RAW(value), metadata + pos, value_len);
+      pos += value_len;
+    }
+  }
+
+  return pos;
+}
+
 void arrow_schema_reset_internal(struct ArrowSchema* schema) {
   schema->format = NULL;
   schema->name = NULL;
@@ -64,13 +100,14 @@ int arrow_schema_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
     memcpy((void*) out->name, schema->name, strlen(schema->name) + 1);
   }
 
-  if (schema->metadata != NULL) {
-    out->metadata = (const char*) malloc(strlen(schema->metadata) + 1);
+  int64_t metadata_size = arrow_schema_metadata_size(schema->metadata);
+  if (metadata_size > 0) {
+    out->metadata = (const char*) malloc(metadata_size);
     if (out->metadata == NULL) {
       out->release(out);
       return ENOMEM;
     }
-    memcpy((void*) out->metadata, schema->metadata, strlen(schema->metadata) + 1);
+    memcpy((void*) out->metadata, schema->metadata, metadata_size);
   }
 
   out->flags = schema->flags;

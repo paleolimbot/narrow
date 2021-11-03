@@ -4,6 +4,7 @@
 #' @inheritParams parse_format
 #' @param metadata A named character vector of [list()] of [raw()]
 #'   containing key/value metadata.
+#' @param schema A schema created with [arrow_schema()]
 #' @param name An optional name
 #' @param flags Flags to set on input (see [arrow_schema_flags()])
 #' @param children A [list()] of objects created using [arrow_schema()].
@@ -44,6 +45,12 @@ arrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
 
 #' @rdname arrow_schema
 #' @export
+arrow_schema_copy <- function(schema) {
+  .Call(arrowvctrs_c_schema_copy, as_arrow_schema(schema))
+}
+
+#' @rdname arrow_schema
+#' @export
 as_arrow_schema <- function(x, ...) {
   UseMethod("as_arrow_schema")
 }
@@ -61,9 +68,18 @@ as_arrow_schema.character <- function(x, ...) {
 }
 
 #' @export
-as.list.arrowvctrs_schema <- function(x, ...) {
+as.list.arrowvctrs_schema <- function(x, ..., recursive = FALSE) {
   result <- .Call(arrowvctrs_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
+  if (recursive) {
+    if (!is.null(result$children)) {
+      result$children <- lapply(result$children, as.list, recursive = TRUE)
+    }
+
+    if (!is.null(result$dictionary)) {
+      result$dictionary <- as.list(result$dictionary)
+    }
+  }
   result
 }
 

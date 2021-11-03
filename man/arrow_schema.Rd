@@ -3,6 +3,7 @@
 \name{arrow_schema}
 \alias{arrow_schema}
 \alias{arrow_schema_flags}
+\alias{arrow_schema_copy}
 \alias{as_arrow_schema}
 \alias{as_arrow_schema.arrowvctrs_schema}
 \alias{as_arrow_schema.character}
@@ -22,6 +23,8 @@ arrow_schema_flags(
   nullable = FALSE,
   map_keys_sorted = FALSE
 )
+
+arrow_schema_copy(schema)
 
 as_arrow_schema(x, ...)
 
@@ -49,6 +52,8 @@ containing key/value metadata.}
 \item{nullable}{\code{TRUE} if the type is semantically nullable}
 
 \item{map_keys_sorted}{\code{TRUE} if the keys for a map have been sorted}
+
+\item{schema}{A schema created with \code{\link[=arrow_schema]{arrow_schema()}}}
 
 \item{x}{An object to convert to an \code{\link[=arrow_schema]{arrow_schema()}}}
 

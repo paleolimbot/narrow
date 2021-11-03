@@ -5,6 +5,8 @@
 #include <Rinternals.h>
 #include "carrow/carrow.h"
 
+void finalize_array_xptr(SEXP array_xptr);
+
 static inline struct ArrowArray* array_from_xptr(SEXP array_xptr, const char* arg) {
   if (!Rf_inherits(array_xptr, "arrowvctrs_array")) {
     Rf_error("`%s` must be an object created with arrow_array()", arg);

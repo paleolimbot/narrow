@@ -7,6 +7,8 @@
 #include <string.h>
 #include "vector.h"
 
+#include <R.h>
+
 void arrow_vector_set_error(struct ArrowVector* vector, const char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
@@ -506,6 +508,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
   char* union_type_buffer = arrow_vector_union_type_buffer(vector);
   if (vector->union_type_buffer_id != -1 && union_type_buffer == NULL) {
     union_type_buffer = (char*) malloc(vector->array->length * sizeof(char));
+    alloc_succeeded = alloc_succeeded && union_type_buffer != NULL;
     vector->array->buffers[vector->union_type_buffer_id + vector->has_validity_buffer] = union_type_buffer;
   }
 
@@ -516,6 +519,10 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
     } else if (max_offset > 0) {
       data_buffer = malloc(max_offset);
     }
+
+    alloc_succeeded = alloc_succeeded && data_buffer != NULL;
+
+    Rf_error("Made it! data_buffer_id=%d; has_validity_buffer=%d\n", vector->data_buffer_id, vector->has_validity_buffer);
 
     vector->array->buffers[vector->data_buffer_id + vector->has_validity_buffer] = data_buffer;
   }
@@ -541,14 +548,16 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
   }
 
   // ...and dictionary vector
-  result = arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary);
-  if (result != 0) {
-    return result;
-  }
+  if (vector->schema->dictionary != NULL) {
+    result = arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary);
+    if (result != 0) {
+      return result;
+    }
 
-  result = arrow_vector_alloc_buffers(&child_vector);
-  if (result != 0) {
-    return result;
+    result = arrow_vector_alloc_buffers(&child_vector);
+    if (result != 0) {
+      return result;
+    }
   }
 
   return 0;

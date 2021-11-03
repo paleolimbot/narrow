@@ -49,6 +49,23 @@ test_that("arrow_schema() works with values for all memebers", {
   expect_identical(s_data$name, "name")
 })
 
+test_that("arrow_schema_copy() works", {
+  original <- arrow_schema("i")
+  copy <- arrow_schema_copy(original)
+  expect_identical(as.list(original), as.list(copy))
+
+  original <- arrow_schema(
+    "i",
+    name = "name",
+    metadata = list(key = as.raw(0x01)),
+    dictionary = arrow_schema("Z"),
+    flags = 1L,
+    children = list(arrow_schema("d"))
+  )
+  copy <- arrow_schema_copy(original)
+  expect_identical(as.list(original, recursive = TRUE), as.list(copy, recursive = TRUE))
+})
+
 test_that("metadata field can be serialized and deserialized", {
   s <- arrow_schema("i", metadata = list(key1 = "value1", key2 = "value2"))
   expect_identical(s$metadata, list(key1 = "value1", key2 = "value2"))
