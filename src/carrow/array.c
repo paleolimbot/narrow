@@ -48,7 +48,7 @@ int arrow_array_copy_ptype(struct ArrowArray* out, struct ArrowArray* array) {
   out->release = &arrow_array_release_internal;
 
   if (array->n_buffers > 0) {
-    out->buffers = (const void**) malloc(array->n_children * sizeof(void*));
+    out->buffers = (const void**) malloc(array->n_buffers * sizeof(void*));
     if (out->buffers == NULL) {
       out->release(out);
       return ENOMEM;

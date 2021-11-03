@@ -7,8 +7,6 @@
 #include <string.h>
 #include "vector.h"
 
-#include <R.h>
-
 void arrow_vector_set_error(struct ArrowVector* vector, const char* fmt, ...) {
   va_list args;
   va_start(args, fmt);
@@ -521,9 +519,6 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
     }
 
     alloc_succeeded = alloc_succeeded && data_buffer != NULL;
-
-    Rf_error("Made it! data_buffer_id=%d; has_validity_buffer=%d\n", vector->data_buffer_id, vector->has_validity_buffer);
-
     vector->array->buffers[vector->data_buffer_id + vector->has_validity_buffer] = data_buffer;
   }
 
