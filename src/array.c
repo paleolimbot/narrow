@@ -88,17 +88,43 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array->n_buffers));
   SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array->n_children));
 
+  SEXP array_sexp = R_ExternalPtrTag(array_xptr);
+
   // if we alloced this ourselves (from R's C API),
   // it will have the SEXPs attached
-  SEXP array_sexp = R_ExternalPtrTag(array_xptr);
-  if (array_sexp != R_NilValue) {
-    SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0));
-    SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_sexp, 1));
-    SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_sexp, 2));
-  }
+  if (array_sexp != R_NilValue && Rf_inherits(array_sexp, "arrowvctrs_array")) {
+    SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0)); // buffers
+    SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_sexp, 1)); // children
+    SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_sexp, 2)); // dictionary
+  } else {
+    // if we didn't alloc it ourselves, we have to surface some of this stuff
+    // that currently only exists in C
+    if (array->n_buffers > 0) {
+      SEXP buffers = PROTECT(Rf_allocVector(VECSXP, array->n_buffers));
+      for (int64_t i = 0; i < array->n_buffers; i++) {
+        SEXP buffer = R_MakeExternalPtr((void*) array->buffers[i], R_NilValue, array_xptr);
+        SET_VECTOR_ELT(buffers, i, buffer);
+      }
+      SET_VECTOR_ELT(array_info, 5, buffers);
+      UNPROTECT(1);
+    }
 
-  // if we didn't alloc it ourselves, we have to surface some of this stuff
-  // that currently only exists in C
+    if (array->n_children > 0) {
+      SEXP children = PROTECT(Rf_allocVector(VECSXP, array->n_children));
+      for (int64_t i = 0; i < array->n_children; i++) {
+        SEXP child = R_MakeExternalPtr(array->children[i], R_NilValue, array_xptr);
+        SET_VECTOR_ELT(children, i, child);
+      }
+      SET_VECTOR_ELT(array_info, 6, children);
+      UNPROTECT(1);
+    }
+
+    if (array->dictionary != NULL) {
+      SEXP dictionary = PROTECT(R_MakeExternalPtr(array->dictionary, R_NilValue, array_xptr));
+      SET_VECTOR_ELT(array_info, 7, dictionary);
+      UNPROTECT(1);
+    }
+  }
 
   UNPROTECT(1);
   return array_info;
