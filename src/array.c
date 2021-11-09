@@ -17,6 +17,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   SET_VECTOR_ELT(array_prot, 0, buffers_sexp);
   SET_VECTOR_ELT(array_prot, 1, children_sexp);
   SET_VECTOR_ELT(array_prot, 2, dictionary_xptr);
+  Rf_setAttrib(array_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_array_prot"));
 
   struct ArrowArray* array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array, "struct ArrowArray");
@@ -88,22 +89,23 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array->n_buffers));
   SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array->n_children));
 
-  SEXP array_sexp = R_ExternalPtrTag(array_xptr);
+  SEXP array_prot = R_ExternalPtrTag(array_xptr);
 
   // if we alloced this ourselves (from R's C API),
   // it will have the SEXPs attached
-  if (array_sexp != R_NilValue && Rf_inherits(array_sexp, "arrowvctrs_array")) {
-    SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0)); // buffers
-    SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_sexp, 1)); // children
-    SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_sexp, 2)); // dictionary
+  if (array_prot != R_NilValue && Rf_inherits(array_prot, "arrowvctrs_array_prot")) {
+    SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_prot, 0)); // buffers
+    SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_prot, 1)); // children
+    SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_prot, 2)); // dictionary
   } else {
     // if we didn't alloc it ourselves, we have to surface some of this stuff
     // that currently only exists in C
     if (array->n_buffers > 0) {
       SEXP buffers = PROTECT(Rf_allocVector(VECSXP, array->n_buffers));
       for (int64_t i = 0; i < array->n_buffers; i++) {
-        SEXP buffer = R_MakeExternalPtr((void*) array->buffers[i], R_NilValue, array_xptr);
+        SEXP buffer = PROTECT(R_MakeExternalPtr((void*) array->buffers[i], R_NilValue, array_xptr));
         SET_VECTOR_ELT(buffers, i, buffer);
+        UNPROTECT(1);
       }
       SET_VECTOR_ELT(array_info, 5, buffers);
       UNPROTECT(1);
@@ -112,8 +114,9 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     if (array->n_children > 0) {
       SEXP children = PROTECT(Rf_allocVector(VECSXP, array->n_children));
       for (int64_t i = 0; i < array->n_children; i++) {
-        SEXP child = R_MakeExternalPtr(array->children[i], R_NilValue, array_xptr);
+        SEXP child = PROTECT(R_MakeExternalPtr(array->children[i], R_NilValue, array_xptr));
         SET_VECTOR_ELT(children, i, child);
+        UNPROTECT(1);
       }
       SET_VECTOR_ELT(array_info, 6, children);
       UNPROTECT(1);

@@ -50,6 +50,7 @@ SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
   SEXP vctr_result_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
   SET_VECTOR_ELT(vctr_result_sexp, 0, fun_result_schema_xptr);
   SET_VECTOR_ELT(vctr_result_sexp, 1, fun_result_array_xptr);
+  Rf_setAttrib(vctr_result_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_vctr"));
   UNPROTECT(3);
   return vctr_result_sexp;
 }
