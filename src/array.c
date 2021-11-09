@@ -88,10 +88,17 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array->n_buffers));
   SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array->n_children));
 
+  // if we alloced this ourselves (from R's C API),
+  // it will have the SEXPs attached
   SEXP array_sexp = R_ExternalPtrTag(array_xptr);
-  SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0));
-  SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_sexp, 1));
-  SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_sexp, 2));
+  if (array_sexp != R_NilValue) {
+    SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_sexp, 0));
+    SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_sexp, 1));
+    SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_sexp, 2));
+  }
+
+  // if we didn't alloc it ourselves, we have to surface some of this stuff
+  // that currently only exists in C
 
   UNPROTECT(1);
   return array_info;

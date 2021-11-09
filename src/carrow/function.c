@@ -110,9 +110,6 @@ int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
     return result;
   }
 
-  // Rf_error("made it!")
-  // something funny about buffers here!
-
   result = arrow_vector_alloc_buffers(&vector);
   if (result != 0) {
     return result;

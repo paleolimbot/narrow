@@ -490,7 +490,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
     offset_buffer = (int32_t*) malloc((vector->array->length + 1) * sizeof(int32_t));
     alloc_succeeded = alloc_succeeded && offset_buffer != NULL;
     vector->array->buffers[vector->offset_buffer_id + vector->has_validity_buffer] = offset_buffer;
-  } else {
+  } else if (offset_buffer != NULL) {
     max_offset = offset_buffer[vector->array->length + 1];
   }
 
@@ -499,7 +499,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
     large_offset_buffer = (int64_t*) malloc((vector->array->length + 1) * sizeof(int64_t));
     alloc_succeeded = alloc_succeeded && large_offset_buffer != NULL;
     vector->array->buffers[vector->large_offset_buffer_id + vector->has_validity_buffer] = large_offset_buffer;
-  } else {
+  } else if(large_offset_buffer != NULL) {
     max_offset = large_offset_buffer[vector->array->length + 1];
   }
 

@@ -1,7 +1,7 @@
 
 test_that("arrow_identity() works for primitive types", {
   # these might segfault currently
-  stop("intermittent segfault")
+  # stop("intermittent segfault")
   arrow_identity(as_arrow_vctr(1:5))
 
   if (FALSE) {
