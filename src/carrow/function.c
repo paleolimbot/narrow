@@ -47,11 +47,17 @@ int arrow_function_identity_compute(struct ArrowFunction* function, int64_t n_ar
 
   int result;
 
-  struct ArrowVector vector_dest;
-  result = arrow_vector_init(&vector_dest, argument_schemas[0], argument_arrays[0]);
-
   struct ArrowVector vector_src;
-  result = arrow_vector_init(&vector_src, allocated_schema, allocated_array);
+  result = arrow_vector_init(&vector_src, argument_schemas[0], argument_arrays[0]);
+  if (result != 0) {
+    return result;
+  }
+
+  struct ArrowVector vector_dest;
+  result = arrow_vector_init(&vector_dest, allocated_schema, allocated_array);
+  if (result != 0) {
+    return result;
+  }
 
   return arrow_vector_copy(&vector_dest, 0, &vector_src, 0, allocated_array->length);
 }
