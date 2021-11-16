@@ -35,7 +35,12 @@ int arrow_function_identity_compute_ptype(struct ArrowFunction* function, int64_
     return result;
   }
 
-  return arrow_array_copy_ptype(ptype_out, argument_ptypes[0]);
+  result = arrow_array_copy_ptype(ptype_out, argument_ptypes[0]);
+  if (result != 0) {
+    return result;
+  }
+
+  return 0;
 }
 
 int arrow_function_identity_compute(struct ArrowFunction* function, int64_t n_arguments,
@@ -59,7 +64,11 @@ int arrow_function_identity_compute(struct ArrowFunction* function, int64_t n_ar
     return result;
   }
 
-  return arrow_vector_copy(&vector_dest, 0, &vector_src, 0, allocated_array->length);
+  return arrow_vector_copy(
+    &vector_dest, 0,
+    &vector_src, argument_arrays[0]->offset,
+    allocated_array->length
+  );
 }
 
 int arrow_function_identity(struct ArrowFunction* out) {

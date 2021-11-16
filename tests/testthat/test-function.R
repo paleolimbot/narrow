@@ -31,6 +31,24 @@ test_that("arrow_identity() works for primitive types", {
     from_arrow_vctr(arrow_identity(as_arrow_vctr(c(TRUE, FALSE, NA))), logical()),
     c(TRUE, FALSE, NA)
   )
+
+  # with a validity buffer that has a non byte-aligned offset
+  int_vctr <- arrow_vctr(
+    arrow_schema("i", flags = arrow_schema_flags(nullable = TRUE)),
+    arrow_array(
+      list(
+        as_arrow_bitmask(c(TRUE, FALSE, TRUE, FALSE, TRUE)),
+        1:5
+      ),
+      length = 4,
+      offset = 1
+    )
+  )
+  expect_identical(from_arrow_vctr(int_vctr, integer()), c(NA, 3L, NA, 5L))
+  expect_identical(
+    from_arrow_vctr(arrow_identity(int_vctr), integer()),
+    c(NA, 3L, NA, 5L)
+  )
 })
 
 test_that("arrow_identity() works for character", {

@@ -356,13 +356,16 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
         ((n_elements - 1) / 8 + 1) * sizeof(unsigned char)
       );
     } else {
-      // inefficient but correct!
+      // inefficient buxt correct!
+      // note that this copy doesn't zero out any bytes (the allocator
+      // must do this)
       unsigned char dst_byte, src_byte, src_value;
+
       for (uint64_t i = 0; i < n_elements; i++) {
         src_byte = validity_buffer_src[(src_offset + i) / 8];
-        src_value = src_byte >> ((src_offset + i) % 8);
+        src_value = (src_byte & (((unsigned char) 1) << ((src_offset + i) % 8))) != 0;
         dst_byte = validity_buffer_dst[(dst_offset + i) / 8];
-        dst_byte = dst_byte & (src_value << ((dst_offset + i) % 8));
+        dst_byte = dst_byte | (src_value << ((dst_offset + i) % 8));
         validity_buffer_dst[(dst_offset + i) / 8] = dst_byte;
       }
     }
@@ -481,7 +484,17 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
 
   unsigned char* validity_buffer = arrow_vector_validity_buffer(vector);
   if (vector->has_validity_buffer && validity_buffer == NULL) {
-    validity_buffer = (unsigned char*) malloc((vector->array->length - 1) / 8 + 1);
+    int64_t validity_buffer_size = (vector->array->length - 1) / 8 + 1;
+    validity_buffer = (unsigned char*) malloc(validity_buffer_size);
+
+    // not zeroing out the validity buffer here causes problems when copying
+    // because the copy might start somewhere that isn't aligned along a byte
+    // and the copy function has no way of knowing whether or not the buffer
+    // has been initialized
+    if (validity_buffer != NULL) {
+      memset(validity_buffer, 0, validity_buffer_size);
+    }
+
     alloc_succeeded = alloc_succeeded && validity_buffer != NULL;
     vector->array->buffers[0] = validity_buffer;
   }
