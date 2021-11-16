@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
+
 #include "vector.h"
 
 void arrow_vector_set_error(struct ArrowVector* vector, const char* fmt, ...) {
@@ -350,8 +351,8 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     // probably the most common case (where src_offset = 0 and dst_offset = 0)
     if (((src_offset % 8) == 0) && ((dst_offset % 8) == 0)) {
       memcpy(
-        validity_buffer_src + dst_offset,
-        validity_buffer_dst + src_offset,
+        validity_buffer_dst + dst_offset,
+        validity_buffer_src + src_offset,
         ((n_elements - 1) / 8 + 1) * sizeof(unsigned char)
       );
     } else {

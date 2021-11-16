@@ -18,7 +18,7 @@ test_that("arrow_identity() works for primitive types", {
     as.raw(1:5)
   )
 
-  skip("validity buffer isn't copied yet")
+  # with a validity buffer
   expect_identical(
     from_arrow_vctr(arrow_identity(as_arrow_vctr(c(NA, 1:5))), integer()),
     c(NA, 1:5)
