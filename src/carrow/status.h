@@ -15,7 +15,7 @@ struct ArrowStatus {
 void arrow_status_reset(struct ArrowStatus* status);
 void arrow_status_set_error(struct ArrowStatus* status, int code, const char* fmt, ...);
 
-#define ARROW_OK_OR_RETURN(_value) if ((_value)->code != 0) return code;
+#define RETURN_IF_NOT_OK(_value) if ((_value)->code != 0) return (_value)->code
 
 #ifdef __cplusplus
 }

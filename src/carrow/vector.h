@@ -163,20 +163,18 @@ struct ArrowVector {
 
   // calculated on arrow_vector_set_array()
   int has_validity_buffer;
-
-  // a null-terminated error message that may or may not be set
-  // when an error code is returned from an arrow_vector_*() function
-  char error_message[1024];
 };
 
 int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
-                      struct ArrowArray* array);
-int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema);
-int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array);
-int arrow_vector_alloc_buffers(struct ArrowVector* vector);
+                      struct ArrowArray* array, struct ArrowStatus* status);
+int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema,
+                            struct ArrowStatus* status);
+int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
+                           struct ArrowStatus* status);
+int arrow_vector_alloc_buffers(struct ArrowVector* vector, struct ArrowStatus* status);
 int arrow_vector_copy(struct ArrowVector* vector_dest, int64_t dest_offset,
                       struct ArrowVector* vector_src, int64_t src_offset,
-                      int64_t n_elements);
+                      int64_t n_elements, struct ArrowStatus* status);
 
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
   if (vector->has_validity_buffer) {

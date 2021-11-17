@@ -7,13 +7,7 @@
 #include <string.h>
 
 #include "vector.h"
-
-void arrow_vector_set_error(struct ArrowVector* vector, const char* fmt, ...) {
-  va_list args;
-  va_start(args, fmt);
-  vsnprintf(vector->error_message, 1024, fmt, args);
-  va_end(args);
-}
+#include "status.h"
 
 void arrow_vector_set_primitive(struct ArrowVector* vector, enum ArrowType type, uint64_t size) {
   vector->type = type;
@@ -24,26 +18,27 @@ void arrow_vector_set_primitive(struct ArrowVector* vector, enum ArrowType type,
 }
 
 int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
-                      struct ArrowArray* array) {
-  int result = arrow_vector_set_schema(vector, schema);
-  if (result != 0) {
-    return result;
-  }
+                      struct ArrowArray* array, struct ArrowStatus* status) {
+  arrow_status_reset(status);
 
-  result = arrow_vector_set_array(vector, array);
-  if (result != 0) {
-    return result;
-  }
+  arrow_vector_set_schema(vector, schema, status);
+  RETURN_IF_NOT_OK(status);
+
+  arrow_vector_set_array(vector, array, status);
+  RETURN_IF_NOT_OK(status);
 
   return 0;
 }
 
-int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
+int arrow_vector_init_format(struct ArrowVector* vector, const char* format, struct ArrowStatus* status) {
+  arrow_status_reset(status);
+
   int format_len = strlen(format);
   const char* end_ptr = format + strlen(format) + 1;
 
   if (format_len == 0) {
-    return EINVAL;
+    arrow_status_set_error(status, EINVAL, "`format` had zero characters");
+    RETURN_IF_NOT_OK(status);
   }
 
   switch (format[0]) {
@@ -101,7 +96,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
     char* parse_end_ptr;
     vector->element_size_bytes = strtol(format + 2, &parse_end_ptr, 10);
     if (parse_end_ptr != end_ptr || format_len <= 2) {
-      return EINVAL;
+      arrow_status_set_error(status, EINVAL, "Expected format 'w:<width>' but got 'w'");
+      RETURN_IF_NOT_OK(status);
     }
     return 0;
 
@@ -175,7 +171,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
         vector->n_buffers = 2;
         return 0;
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid union format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
     }
   }
@@ -191,7 +188,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
       case 'D':
       case 'm':
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid date format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
 
     // time of day
@@ -202,7 +200,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
       case 'u':
       case 'n':
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid time of day format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
 
     // timestamp
@@ -213,7 +212,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
       case 'u':
       case 'n':
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid timestamp format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
 
     // duration
@@ -224,7 +224,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
       case 'u':
       case 'n':
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid duration format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
 
     // interval
@@ -233,20 +234,26 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format) {
       case 'M':
       case 'D':
       default:
-        return EINVAL;
+        arrow_status_set_error(status, EINVAL, "Invalid interval format string: '%s'", format);
+        RETURN_IF_NOT_OK(status);
       }
 
     default:
-      return EINVAL;
+      arrow_status_set_error(status, EINVAL, "Invalid time format string: '%s'", format);
+      RETURN_IF_NOT_OK(status);
     }
   }
 
+  arrow_status_set_error(status, EINVAL, "Unknown format string: '%s'", format);
   return EINVAL;
 }
 
-int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema) {
+int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema,
+                            struct ArrowStatus* status) {
+  arrow_status_reset(status);
   if (vector == NULL) {
-    return EINVAL;
+    arrow_status_set_error(status, EINVAL, "`vector` is NULL");
+    RETURN_IF_NOT_OK(status);
   }
 
   // reset values
@@ -264,33 +271,35 @@ int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* sche
   vector->union_type_buffer_id = -1;
   vector->data_buffer_id = -1;
 
-  vector->error_message[0] = '\0';
+  arrow_status_reset(status);
 
   if (schema != NULL) {
     if (schema->release == NULL) {
-      arrow_vector_set_error(vector, "`schema` is released");
-      return EINVAL;
+      arrow_status_set_error(status, EINVAL, "`schema` is released");
+      RETURN_IF_NOT_OK(status);
     }
 
-    int result = arrow_vector_init_format(vector, schema->format);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init_format(vector, schema->format, status);
+    RETURN_IF_NOT_OK(status);
   }
 
   vector->schema = schema;
   return 0;
 }
 
-int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array) {
+int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
+                           struct ArrowStatus* status) {
+  arrow_status_reset(status);
+
   if (vector == NULL) {
-    return EINVAL;
+    arrow_status_set_error(status, EINVAL, "`vector` is NULL");
+    RETURN_IF_NOT_OK(status);
   }
 
   if (array != NULL) {
     if (array->release == NULL) {
-      arrow_vector_set_error(vector, "`array` is released");
-      return EINVAL;
+      arrow_status_set_error(status, EINVAL, "`array` is released");
+      RETURN_IF_NOT_OK(status);
     }
 
     if (array->n_buffers == vector->n_buffers) {
@@ -298,12 +307,12 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array)
     } else if (array->n_buffers == (vector->n_buffers + 1)) {
       vector->has_validity_buffer = 1;
     } else {
-      arrow_vector_set_error(
-        vector,
+      arrow_status_set_error(
+        status, EINVAL,
         "Expected %l or %l buffers in array but found %l",
         vector->n_buffers, vector->n_buffers + 1, array->n_buffers
       );
-      return EINVAL;
+      RETURN_IF_NOT_OK(status);
      }
   }
 
@@ -313,15 +322,24 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array)
 
 int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
                       struct ArrowVector* vector_src, int64_t src_offset,
-                      int64_t n_elements) {
-  if (vector_dst == NULL || vector_src == NULL) {
-    return EINVAL;
+                      int64_t n_elements,
+                      struct ArrowStatus* status) {
+  arrow_status_reset(status);
+
+  if (vector_dst == NULL) {
+    arrow_status_set_error(status, EINVAL, "`vector_dst` is NULL");
+    RETURN_IF_NOT_OK(status);
+  }
+
+  if (vector_src == NULL) {
+    arrow_status_set_error(status, EINVAL, "`vector_src` is NULL");
+    RETURN_IF_NOT_OK(status);
   }
 
   // dense unions aren't supported yet
   if (vector_src->type == ARROW_TYPE_DENSE_UNION) {
-    arrow_vector_set_error(vector_dst, "Dense unions are not yet supported by arrow_vector_copy()");
-    return EINVAL;
+    arrow_status_set_error(status, EINVAL, "Dense unions are not supported by arrow_vector_copy()");
+    RETURN_IF_NOT_OK(status);
   }
 
   if (n_elements <= 0) {
@@ -356,7 +374,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
         ((n_elements - 1) / 8 + 1) * sizeof(unsigned char)
       );
     } else {
-      // inefficient buxt correct!
+      // inefficient but correct!
       // note that this copy doesn't zero out any bytes (the allocator
       // must do this)
       unsigned char dst_byte, src_byte, src_value;
@@ -428,55 +446,46 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
 
   struct ArrowVector child_vector_src;
   struct ArrowVector child_vector_dst;
-  int result;
 
   // copy child vectors
   for (int64_t i = 0; i < vector_src->schema->n_children; i++) {
-    result = arrow_vector_init(&child_vector_src, vector_src->schema->children[i], vector_src->array->children[i]);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector_src, vector_src->schema->children[i], vector_src->array->children[i], status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_init(&child_vector_dst, vector_dst->schema->children[i], vector_dst->array->children[i]);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector_dst, vector_dst->schema->children[i], vector_dst->array->children[i], status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_copy(
+    arrow_vector_copy(
       &child_vector_dst, child_dst_offset,
       &child_vector_src, child_src_offset,
-      child_n_elements
+      child_n_elements,
+      status
     );
-    if (result != 0) {
-      return result;
-    }
+    RETURN_IF_NOT_OK(status);
   }
 
   // copy dictionary vector
   if (vector_src->schema->dictionary != NULL) {
-    result = arrow_vector_init(&child_vector_src, vector_src->schema->dictionary, vector_src->array->dictionary);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector_src, vector_src->schema->dictionary, vector_src->array->dictionary, status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_init(&child_vector_dst, vector_src->schema->dictionary, vector_dst->array->dictionary);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector_dst, vector_src->schema->dictionary, vector_dst->array->dictionary, status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_copy(&child_vector_dst, 0, &child_vector_src, 0, child_vector_src.array->length);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_copy(&child_vector_dst, 0, &child_vector_src, 0, child_vector_src.array->length, status);
+    RETURN_IF_NOT_OK(status);
   }
 
   return 0;
 }
 
 
-int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
+int arrow_vector_alloc_buffers(struct ArrowVector* vector, struct ArrowStatus* status) {
+  arrow_status_reset(status);
+
   if (vector == NULL) {
-    return EINVAL;
+    arrow_status_set_error(status, EINVAL, "`vector` is NULL");
+    RETURN_IF_NOT_OK(status);
   }
 
   int64_t max_offset = -1;
@@ -541,32 +550,23 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector) {
   }
 
   struct ArrowVector child_vector;
-  int result;
 
   // also allocate child vectors
   for (int64_t i = 0; i < vector->schema->n_children; i++) {
-    result = arrow_vector_init(&child_vector, vector->schema->children[i], vector->array->children[i]);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector, vector->schema->children[i], vector->array->children[i], status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_alloc_buffers(&child_vector);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_alloc_buffers(&child_vector, status);
+    RETURN_IF_NOT_OK(status);
   }
 
   // ...and dictionary vector
   if (vector->schema->dictionary != NULL) {
-    result = arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary, status);
+    RETURN_IF_NOT_OK(status);
 
-    result = arrow_vector_alloc_buffers(&child_vector);
-    if (result != 0) {
-      return result;
-    }
+    arrow_vector_alloc_buffers(&child_vector, status);
+    RETURN_IF_NOT_OK(status);
   }
 
   return 0;
