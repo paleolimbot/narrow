@@ -60,7 +60,6 @@ test_that("arrow_identity() works for character", {
 })
 
 test_that("arrow_identity() works for structs", {
-  skip("arrow_identity() doesn't work for structs")
   df <- data.frame(
     a = 1:5,
     b = as.numeric(1:5),

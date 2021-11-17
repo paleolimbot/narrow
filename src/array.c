@@ -115,6 +115,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
       SEXP children = PROTECT(Rf_allocVector(VECSXP, array->n_children));
       for (int64_t i = 0; i < array->n_children; i++) {
         SEXP child = PROTECT(R_MakeExternalPtr(array->children[i], R_NilValue, array_xptr));
+        Rf_setAttrib(child, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
         SET_VECTOR_ELT(children, i, child);
         UNPROTECT(1);
       }
@@ -124,6 +125,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
 
     if (array->dictionary != NULL) {
       SEXP dictionary = PROTECT(R_MakeExternalPtr(array->dictionary, R_NilValue, array_xptr));
+      Rf_setAttrib(dictionary, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
       SET_VECTOR_ELT(array_info, 7, dictionary);
       UNPROTECT(1);
     }
