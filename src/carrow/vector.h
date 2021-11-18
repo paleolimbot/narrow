@@ -171,10 +171,20 @@ int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* sche
                             struct ArrowStatus* status);
 int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
                            struct ArrowStatus* status);
-int arrow_vector_alloc_buffers(struct ArrowVector* vector, struct ArrowStatus* status);
+
+#define ARROW_VECTOR_BUFFER_VALIDITY 1
+#define ARROW_VECTOR_BUFFER_OFFSET 2
+#define ARROW_VECTOR_BUFFER_UNION_TYPE 4
+#define ARROW_VECTOR_BUFFER_DATA 8
+#define ARROW_VECTOR_BUFFER_CHILD 16
+#define ARROW_VECTOR_BUFFER_DICTIONARY 32
+#define ARROW_VECTOR_BUFFER_ALL 0xff
+
+int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers, struct ArrowStatus* status);
+
 int arrow_vector_copy(struct ArrowVector* vector_dest, int64_t dest_offset,
                       struct ArrowVector* vector_src, int64_t src_offset,
-                      int64_t n_elements, struct ArrowStatus* status);
+                      int64_t n_elements, int32_t buffers, struct ArrowStatus* status);
 
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
   if (vector->has_validity_buffer) {

@@ -38,8 +38,7 @@ int arrow_array_copy_ptype(struct ArrowArray* out, struct ArrowArray* array) {
 
   out->length = array->length;
   out->null_count = array->null_count;
-  // we don't want to keep the offset of the existing array here
-  out->offset = 0;
+  out->offset = array->offset;
   out->n_buffers = array->n_buffers;
   out->n_children = array->n_children;
   out->buffers = NULL;

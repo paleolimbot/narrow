@@ -45,6 +45,28 @@ int arrow_function_identity_compute_ptype(struct ArrowFunction* function, int64_
     return result;
   }
 
+  // don't keep the offset of the input!
+  ptype_out->offset = 0;
+
+  // we also need the offsets buffer returned here, or the caller won't know
+  // how much memory to allocate for the data buffer
+  struct ArrowVector vector_src;
+  arrow_vector_init(&vector_src, argument_schemas[0], argument_ptypes[0], status);
+  RETURN_IF_NOT_OK(status);
+
+  struct ArrowVector vector_dst;
+  arrow_vector_init(&vector_dst, schema_out, ptype_out, status);
+  RETURN_IF_NOT_OK(status);
+
+  arrow_vector_copy(
+    &vector_dst, 0,
+    &vector_src, argument_ptypes[0]->offset,
+    argument_ptypes[0]->length,
+    ARROW_VECTOR_BUFFER_OFFSET & ARROW_VECTOR_BUFFER_UNION_TYPE,
+    status
+  );
+  RETURN_IF_NOT_OK(status);
+
   return 0;
 }
 
@@ -59,8 +81,6 @@ int arrow_function_identity_compute(struct ArrowFunction* function, int64_t n_ar
     RETURN_IF_NOT_OK(status);
   }
 
-
-
   struct ArrowVector vector_src;
   arrow_vector_init(&vector_src, argument_schemas[0], argument_arrays[0], status);
   RETURN_IF_NOT_OK(status);
@@ -73,6 +93,7 @@ int arrow_function_identity_compute(struct ArrowFunction* function, int64_t n_ar
     &vector_dest, 0,
     &vector_src, argument_arrays[0]->offset,
     allocated_array->length,
+    ARROW_VECTOR_BUFFER_ALL,
     status
   );
   RETURN_IF_NOT_OK(status);
@@ -138,7 +159,7 @@ int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
   arrow_vector_init(&vector, schema_out, array_out, &status);
   RETURN_IF_NOT_OK(&status);
 
-  arrow_vector_alloc_buffers(&vector, &status);
+  arrow_vector_alloc_buffers(&vector, ARROW_VECTOR_BUFFER_ALL, &status);
   RETURN_IF_NOT_OK(&status);
 
   result = function->compute(
