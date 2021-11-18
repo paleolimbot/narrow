@@ -10,39 +10,39 @@
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
-SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
+SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
 
-  struct ArrowSchema* fun_result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
-  check_trivial_alloc(fun_result_schema, "struct ArrowSchema");
-  fun_result_schema->release = NULL;
-  SEXP fun_result_schema_xptr = PROTECT(R_MakeExternalPtr(fun_result_schema, R_NilValue, R_NilValue));
-  Rf_setAttrib(fun_result_schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+  struct ArrowSchema* result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
+  check_trivial_alloc(result_schema, "struct ArrowSchema");
+  result_schema->release = NULL;
+  SEXP result_schema_xptr = PROTECT(R_MakeExternalPtr(result_schema, R_NilValue, R_NilValue));
+  Rf_setAttrib(result_schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
 
-  struct ArrowArray* fun_result_array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
-  check_trivial_alloc(fun_result_schema, "struct ArrowArray");
-  fun_result_array->release = NULL;
-  SEXP fun_result_array_xptr = PROTECT(R_MakeExternalPtr(fun_result_array, R_NilValue, R_NilValue));
-  Rf_setAttrib(fun_result_array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
+  struct ArrowArray* result_array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
+  check_trivial_alloc(result_schema, "struct ArrowArray");
+  result_array->release = NULL;
+  SEXP result_array_xptr = PROTECT(R_MakeExternalPtr(result_array, R_NilValue, R_NilValue));
+  Rf_setAttrib(result_array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
 
-  int result = arrow_schema_copy(fun_result_schema, vector.schema);
+  int result = arrow_schema_copy(result_schema, vector.schema);
   if (result != 0) {
     Rf_error("arrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
 
-  result = arrow_array_copy_ptype(fun_result_array, vector.array);
+  result = arrow_array_copy_ptype(result_array, vector.array);
   if (result != 0) {
     Rf_error("arrow_array_copy_ptype failed with error [%d] %s", result, strerror(result));
   }
 
   // don't keep the offset of the input!
-  fun_result_array->offset = 0;
+  result_array->offset = 0;
 
   struct ArrowStatus status;
   struct ArrowVector vector_dst;
 
-  arrow_vector_init(&vector_dst, fun_result_schema, fun_result_array, &status);
+  arrow_vector_init(&vector_dst, result_schema, result_array, &status);
   STOP_IF_NOT_OK(status);
 
   // allocate the union type and offset buffers
@@ -81,8 +81,8 @@ SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
 
   const char* names[] = {"schema", "array", ""};
   SEXP vctr_result_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
-  SET_VECTOR_ELT(vctr_result_sexp, 0, fun_result_schema_xptr);
-  SET_VECTOR_ELT(vctr_result_sexp, 1, fun_result_array_xptr);
+  SET_VECTOR_ELT(vctr_result_sexp, 0, result_schema_xptr);
+  SET_VECTOR_ELT(vctr_result_sexp, 1, result_array_xptr);
   Rf_setAttrib(vctr_result_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_vctr"));
   UNPROTECT(3);
   return vctr_result_sexp;

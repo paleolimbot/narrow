@@ -165,12 +165,7 @@ struct ArrowVector {
   int has_validity_buffer;
 };
 
-int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
-                      struct ArrowArray* array, struct ArrowStatus* status);
-int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema,
-                            struct ArrowStatus* status);
-int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
-                           struct ArrowStatus* status);
+
 
 #define ARROW_VECTOR_BUFFER_VALIDITY 1
 #define ARROW_VECTOR_BUFFER_OFFSET 2
