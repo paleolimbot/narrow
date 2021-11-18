@@ -7,17 +7,11 @@
 #include "vctr.h"
 #include "util.h"
 
-SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
-  struct ArrowFunction fun;
-  if (arrow_function_identity(&fun) != 0) {
-    Rf_error("Failed to create function"); // # nocov
-  }
+#define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
+SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
-
-  struct ArrowSchema** argument_schemas = &vector.schema;
-  struct ArrowArray** argument_arrays = &vector.array;
 
   struct ArrowSchema* fun_result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(fun_result_schema, "struct ArrowSchema");
@@ -31,15 +25,58 @@ SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
   SEXP fun_result_array_xptr = PROTECT(R_MakeExternalPtr(fun_result_array, R_NilValue, R_NilValue));
   Rf_setAttrib(fun_result_array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
 
-  struct ArrowStatus status;
-  arrow_function_call(&fun, 1, argument_schemas, argument_arrays, fun_result_schema, fun_result_array, &status);
-  fun.release(&fun);
-
-  if (status.code != 0) {
-    SEXP last_error_char = PROTECT(Rf_mkCharCE(status.message, CE_UTF8));
-    Rf_error("Error in arrow_function_identity(): %s", Rf_translateChar0(last_error_char));
-    UNPROTECT(1); // last_error_char (technically unreachable)
+  int result = arrow_schema_copy(fun_result_schema, vector.schema);
+  if (result != 0) {
+    Rf_error("arrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
+
+  result = arrow_array_copy_ptype(fun_result_array, vector.array);
+  if (result != 0) {
+    Rf_error("arrow_array_copy_ptype failed with error [%d] %s", result, strerror(result));
+  }
+
+  // don't keep the offset of the input!
+  fun_result_array->offset = 0;
+
+  struct ArrowStatus status;
+  struct ArrowVector vector_dst;
+
+  arrow_vector_init(&vector_dst, fun_result_schema, fun_result_array, &status);
+  STOP_IF_NOT_OK(status);
+
+  // allocate the union type and offset buffers
+  arrow_vector_alloc_buffers(
+    &vector_dst,
+    ARROW_VECTOR_BUFFER_OFFSET | ARROW_VECTOR_BUFFER_UNION_TYPE |
+      ARROW_VECTOR_BUFFER_CHILD | ARROW_VECTOR_BUFFER_DICTIONARY,
+    &status
+  );
+  STOP_IF_NOT_OK(status);
+
+  // ...and copy them
+  arrow_vector_copy(
+    &vector_dst, 0,
+    &vector, vector.array->offset,
+    vector_dst.array->length,
+    ARROW_VECTOR_BUFFER_OFFSET | ARROW_VECTOR_BUFFER_UNION_TYPE |
+      ARROW_VECTOR_BUFFER_CHILD | ARROW_VECTOR_BUFFER_DICTIONARY,
+    &status
+  );
+  STOP_IF_NOT_OK(status);
+
+  // ...then allocate the rest of the buffers
+  arrow_vector_alloc_buffers(&vector_dst, ARROW_VECTOR_BUFFER_ALL, &status);
+  STOP_IF_NOT_OK(status);
+
+  // ...and copy them
+  arrow_vector_copy(
+    &vector_dst, 0,
+    &vector, vector.array->offset,
+    vector_dst.array->length,
+    ARROW_VECTOR_BUFFER_ALL,
+    &status
+  );
+  STOP_IF_NOT_OK(status);
 
   const char* names[] = {"schema", "array", ""};
   SEXP vctr_result_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
