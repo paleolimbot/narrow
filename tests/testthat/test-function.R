@@ -52,11 +52,25 @@ test_that("arrow_identity() works for primitive types", {
 })
 
 test_that("arrow_identity() works for character", {
-  # skip("arrow_identity() doesn't work for character")
   expect_identical(
     from_arrow_vctr(arrow_identity(as_arrow_vctr(c("one", "two", "three", "four")))),
     c("one", "two", "three", "four")
   )
+
+  expect_identical(
+    from_arrow_vctr(arrow_identity(as_arrow_vctr(c(NA, "one", "two", "three", "four")))),
+    c(NA, "one", "two", "three", "four")
+  )
+})
+
+test_that("arrow_identity() works for large character", {
+  # this allocs ~4 GB, so skip anywhere except locally
+  skip_on_cran()
+  skip_on_ci()
+  # 1 MB * 2048
+  l <- rep(strrep("a", 2 ^ 20), 2 ^ 11)
+  vctr <- as_arrow_vctr(l)
+  expect_identical(from_arrow_vctr(vctr), l)
 })
 
 test_that("arrow_identity() works for structs", {
@@ -64,7 +78,8 @@ test_that("arrow_identity() works for structs", {
     a = 1:5,
     b = as.numeric(1:5),
     c = as.raw(1:5),
-    d = rep_len(c(TRUE, FALSE), 5)
+    d = rep_len(c(TRUE, FALSE), 5),
+    e = c("one", "two", "three", "four", "five")
   )
 
   expect_identical(

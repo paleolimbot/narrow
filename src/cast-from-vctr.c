@@ -133,7 +133,10 @@ SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp) {
 
   void* data_buffer = arrow_vector_data_buffer(&vector);
   if (data_buffer == NULL) {
-    Rf_error("Can't convert schema format '%s' to `character()`", vector.schema->format);
+    Rf_error(
+      "Can't convert schema format '%s' to `character()` (data buffer is NULL)",
+      vector.schema->format
+    );
   }
 
   const char* char_buffer = (const char*) data_buffer;

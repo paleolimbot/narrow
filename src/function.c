@@ -39,8 +39,6 @@ SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
     SEXP last_error_char = PROTECT(Rf_mkCharCE(status.message, CE_UTF8));
     Rf_error("Error in arrow_function_identity(): %s", Rf_translateChar0(last_error_char));
     UNPROTECT(1); // last_error_char (technically unreachable)
-  } else {
-
   }
 
   const char* names[] = {"schema", "array", ""};

@@ -9,7 +9,6 @@
 #include "vector.h"
 #include "status.h"
 
-#include <R.h>
 
 void arrow_vector_set_primitive(struct ArrowVector* vector, enum ArrowType type, uint64_t size) {
   vector->type = type;
@@ -367,9 +366,6 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   void* data_buffer_src = arrow_vector_data_buffer(vector_src);
   void* data_buffer_dst = arrow_vector_data_buffer(vector_dst);
 
-  Rprintf("\noffset_buffer_src: %p; data_buffer_src: %p\n", offset_buffer_src, data_buffer_src);
-  Rprintf("\noffset_buffer_dst: %p; data_buffer_dst: %p\n", offset_buffer_dst, data_buffer_dst);
-
   if (which_buffers & ARROW_VECTOR_BUFFER_VALIDITY) {
     if (validity_buffer_src != NULL) {
       if (validity_buffer_dst == NULL) {
@@ -411,7 +407,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
       memcpy(
         offset_buffer_dst + dst_offset,
         offset_buffer_src + src_offset,
-        n_elements * sizeof(uint32_t)
+        (n_elements + 1) * sizeof(uint32_t)
       );
     }
 
@@ -424,7 +420,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
       memcpy(
         large_offset_buffer_dst + dst_offset,
         large_offset_buffer_src + src_offset,
-        n_elements * sizeof(uint64_t)
+        (n_elements + 1) * sizeof(uint64_t)
       );
     }
   }
@@ -446,14 +442,38 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
 
   // these can refer to child vectors or the data buffer (not true for dense unions)
   if (offset_buffer_src != NULL) {
+    if (offset_buffer_dst == NULL) {
+      arrow_status_set_error(
+        status, EINVAL,
+        "Can't calculate child buffer offset when destination array has offset buffer of NULL"
+      );
+      RETURN_IF_NOT_OK(status);
+    }
+
     child_n_elements = offset_buffer_src[src_offset + n_elements] - offset_buffer_src[src_offset];
     child_src_offset = offset_buffer_src[src_offset];
     child_dst_offset = offset_buffer_dst[dst_offset];
   } else if (large_offset_buffer_src != NULL) {
+    if (large_offset_buffer_src == NULL) {
+      arrow_status_set_error(
+        status, EINVAL,
+        "Can't calculate child buffer offset when destination array has large offset buffer of NULL"
+      );
+      RETURN_IF_NOT_OK(status);
+    }
+
     child_n_elements = large_offset_buffer_src[src_offset + n_elements] - large_offset_buffer_src[src_offset];
     child_src_offset = large_offset_buffer_src[src_offset];
     child_dst_offset = large_offset_buffer_dst[dst_offset];
   } else if (vector_src->type == ARROW_TYPE_FIXED_SIZE_LIST) {
+    if (vector_src->element_size_bytes == -1) {
+      arrow_status_set_error(
+        status, EINVAL,
+        "type is fixed-size list but element_size is -1"
+      );
+      RETURN_IF_NOT_OK(status);
+    }
+
     child_n_elements = n_elements * vector_src->element_size_bytes;
     child_src_offset = src_offset * vector_src->element_size_bytes;
     child_dst_offset = dst_offset * vector_src->element_size_bytes;
@@ -478,8 +498,6 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
           RETURN_IF_NOT_OK(status);
           return EINVAL;
         }
-
-        Rf_error("Made it and data_buffer_dst is %p!", data_buffer_dst);
 
         memcpy(
           ((unsigned char*) data_buffer_dst) + child_dst_offset,
@@ -571,6 +589,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
 
   if (which_buffers & ARROW_VECTOR_BUFFER_OFFSET) {
     int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
+
     if (vector->offset_buffer_id != -1 && offset_buffer == NULL) {
       offset_buffer = (int32_t*) malloc((vector->array->length + 1) * sizeof(int32_t));
 
@@ -626,17 +645,16 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     if (vector->data_buffer_id != -1 && data_buffer == NULL) {
 
       // check if we need an offset buffer to figure out how much memory to allocate
-      int needs_offset_buffer = vector->offset_buffer_id != -1 || vector->large_offset_buffer_id != -1;
+      int needs_offset_buffer = (vector->offset_buffer_id != -1) ||
+        (vector->large_offset_buffer_id != -1);
       int64_t data_buffer_size = 0;
 
       if (needs_offset_buffer && has_existing_offset_buffer) {
         int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
-        data_buffer_size = offset_buffer[vector->array->length + 1] -
-          offset_buffer[vector->array->length];
+        data_buffer_size = offset_buffer[vector->array->length] - offset_buffer[0];
       } else if (needs_offset_buffer && has_existing_large_offset_buffer) {
         int64_t* large_offset_buffer = arrow_vector_large_offset_buffer(vector);
-        data_buffer_size = large_offset_buffer[vector->array->length + 1] -
-          large_offset_buffer[vector->array->length];
+        data_buffer_size = large_offset_buffer[vector->array->length] - large_offset_buffer[0];
       } else if (!needs_offset_buffer) {
         data_buffer_size = vector->element_size_bytes * vector->array->length;
       } else {
