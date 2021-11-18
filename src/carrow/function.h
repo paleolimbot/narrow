@@ -53,7 +53,8 @@ struct ArrowFunction {
 
 int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
                         struct ArrowSchema** argument_schemas, struct ArrowArray** argument_arrays,
-                        struct ArrowSchema* schema_out, struct ArrowArray* array_out);
+                        struct ArrowSchema* schema_out, struct ArrowArray* array_out,
+                        struct ArrowStatus* status);
 int arrow_function_identity(struct ArrowFunction* out);
 
 #ifdef __cplusplus

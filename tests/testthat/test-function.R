@@ -52,7 +52,7 @@ test_that("arrow_identity() works for primitive types", {
 })
 
 test_that("arrow_identity() works for character", {
-  skip("arrow_identity() doesn't work for character")
+  # skip("arrow_identity() doesn't work for character")
   expect_identical(
     from_arrow_vctr(arrow_identity(as_arrow_vctr(c("one", "two", "three", "four")))),
     c("one", "two", "three", "four")

@@ -133,8 +133,8 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format, str
   }
 
   // try to parse nested types
-  if (format[1] == '+') {
-    switch (format[2]) {
+  if (format[0] == '+') {
+    switch (format[1]) {
 
     // list has validity + offset or offset
     case 'l':
@@ -163,7 +163,7 @@ int arrow_vector_init_format(struct ArrowVector* vector, const char* format, str
 
     // unions
     case 'u':
-      switch (format[3]) {
+      switch (format[2]) {
       case 'd':
         vector->type = ARROW_TYPE_DENSE_UNION;
         vector->n_buffers = 1;
@@ -367,8 +367,16 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   void* data_buffer_src = arrow_vector_data_buffer(vector_src);
   void* data_buffer_dst = arrow_vector_data_buffer(vector_dst);
 
+  Rprintf("\noffset_buffer_src: %p; data_buffer_src: %p\n", offset_buffer_src, data_buffer_src);
+  Rprintf("\noffset_buffer_dst: %p; data_buffer_dst: %p\n", offset_buffer_dst, data_buffer_dst);
+
   if (which_buffers & ARROW_VECTOR_BUFFER_VALIDITY) {
     if (validity_buffer_src != NULL) {
+      if (validity_buffer_dst == NULL) {
+        arrow_status_set_error(status, EINVAL, "Can't copy validity buffer to NULL");
+        RETURN_IF_NOT_OK(status);
+      }
+
       // probably the most common case (where src_offset = 0 and dst_offset = 0)
       if (((src_offset % 8) == 0) && ((dst_offset % 8) == 0)) {
         memcpy(
@@ -395,6 +403,11 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
 
   if (which_buffers & ARROW_VECTOR_BUFFER_OFFSET) {
     if (offset_buffer_src != NULL) {
+      if (offset_buffer_dst == NULL) {
+        arrow_status_set_error(status, EINVAL, "Can't copy offset buffer to NULL");
+        RETURN_IF_NOT_OK(status);
+      }
+
       memcpy(
         offset_buffer_dst + dst_offset,
         offset_buffer_src + src_offset,
@@ -403,6 +416,11 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
 
     if (large_offset_buffer_src != NULL) {
+      if (large_offset_buffer_dst == NULL) {
+        arrow_status_set_error(status, EINVAL, "Can't copy large offset buffer to NULL");
+        RETURN_IF_NOT_OK(status);
+      }
+
       memcpy(
         large_offset_buffer_dst + dst_offset,
         large_offset_buffer_src + src_offset,
@@ -412,7 +430,12 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   }
 
   if (which_buffers & ARROW_VECTOR_BUFFER_UNION_TYPE) {
-    if (union_type_buffer_src != NULL) {
+    if (union_type_buffer_dst != NULL) {
+      if (large_offset_buffer_dst == NULL) {
+        arrow_status_set_error(status, EINVAL, "Can't copy union type buffer to NULL");
+        RETURN_IF_NOT_OK(status);
+      }
+
       memcpy(
         union_type_buffer_dst + dst_offset,
         union_type_buffer_src + src_offset,
@@ -439,12 +462,25 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   if (which_buffers & ARROW_VECTOR_BUFFER_DATA) {
     if (data_buffer_src != NULL) {
       if (vector_src->element_size_bytes > 0) {
+        if (data_buffer_dst == NULL) {
+          arrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
+          RETURN_IF_NOT_OK(status);
+        }
+
         memcpy(
           ((unsigned char*) data_buffer_dst) + (dst_offset * vector_src->element_size_bytes),
           ((unsigned char*) data_buffer_src) + (src_offset * vector_src->element_size_bytes),
           n_elements * vector_src->element_size_bytes
         );
       } else if ((offset_buffer_src != NULL) || (large_offset_buffer_src != NULL)) {
+        if (data_buffer_dst == NULL) {
+          arrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
+          RETURN_IF_NOT_OK(status);
+          return EINVAL;
+        }
+
+        Rf_error("Made it and data_buffer_dst is %p!", data_buffer_dst);
+
         memcpy(
           ((unsigned char*) data_buffer_dst) + child_dst_offset,
           ((unsigned char*) data_buffer_src) + child_src_offset,
@@ -502,6 +538,12 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     arrow_status_set_error(status, EINVAL, "`vector` is NULL");
     RETURN_IF_NOT_OK(status);
   }
+
+  // before we allocate potentially missing buffers, we need to know if there
+  // are offset buffers that can allow us to then allocate a data buffer (so
+  // that we don't allocate a data buffer based on uninitialized values)
+  int has_existing_offset_buffer = arrow_vector_offset_buffer(vector) != NULL;
+  int has_existing_large_offset_buffer = arrow_vector_large_offset_buffer(vector) != NULL;
 
   if (which_buffers & ARROW_VECTOR_BUFFER_VALIDITY) {
     unsigned char* validity_buffer = arrow_vector_validity_buffer(vector);
@@ -582,14 +624,37 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
   if (which_buffers & ARROW_VECTOR_BUFFER_DATA) {
     void* data_buffer = arrow_vector_data_buffer(vector);
     if (vector->data_buffer_id != -1 && data_buffer == NULL) {
-      if (vector->element_size_bytes > 0 && vector->array->length > 0) {
-        data_buffer = malloc(vector->element_size_bytes * vector->array->length);
+
+      // check if we need an offset buffer to figure out how much memory to allocate
+      int needs_offset_buffer = vector->offset_buffer_id != -1 || vector->large_offset_buffer_id != -1;
+      int64_t data_buffer_size = 0;
+
+      if (needs_offset_buffer && has_existing_offset_buffer) {
+        int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
+        data_buffer_size = offset_buffer[vector->array->length + 1] -
+          offset_buffer[vector->array->length];
+      } else if (needs_offset_buffer && has_existing_large_offset_buffer) {
+        int64_t* large_offset_buffer = arrow_vector_large_offset_buffer(vector);
+        data_buffer_size = large_offset_buffer[vector->array->length + 1] -
+          large_offset_buffer[vector->array->length];
+      } else if (!needs_offset_buffer) {
+        data_buffer_size = vector->element_size_bytes * vector->array->length;
+      } else {
+        arrow_status_set_error(
+          status, EINVAL,
+          "Offset buffer required to allocate a data buffer for variable-length type"
+        );
+        RETURN_IF_NOT_OK(status);
+      }
+
+      if (data_buffer_size > 0) {
+        data_buffer = malloc(data_buffer_size);
 
         if (data_buffer == NULL) {
           arrow_status_set_error(
             status, ENOMEM,
             "Failed to allocate data buffer of size %ld [bytes]",
-            vector->element_size_bytes * vector->array->length
+            data_buffer_size
           );
           RETURN_IF_NOT_OK(status);
         }

@@ -9,8 +9,7 @@
 
 SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
   struct ArrowFunction fun;
-  int result = arrow_function_identity(&fun);
-  if (result != 0) {
+  if (arrow_function_identity(&fun) != 0) {
     Rf_error("Failed to create function"); // # nocov
   }
 
@@ -32,18 +31,16 @@ SEXP arrowvctrs_c_identity(SEXP vctr_sexp) {
   SEXP fun_result_array_xptr = PROTECT(R_MakeExternalPtr(fun_result_array, R_NilValue, R_NilValue));
   Rf_setAttrib(fun_result_array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
 
-  result = arrow_function_call(&fun, 1, argument_schemas, argument_arrays, fun_result_schema, fun_result_array);
-  if (result != 0) {
-    const char* last_error = fun.get_last_error(&fun);
-    if (last_error != NULL) {
-      SEXP last_error_char = PROTECT(Rf_mkCharCE(last_error, CE_UTF8));
-      Rf_error("Error in arrow_function_identity(): %s", Rf_translateChar0(last_error_char));
-      UNPROTECT(1); // last_error_char (technically unreachable)
-    } else {
-      Rf_error("arrow_function_identity() failed with signal %d (%s)", result, strerror(result));
-    }
+  struct ArrowStatus status;
+  arrow_function_call(&fun, 1, argument_schemas, argument_arrays, fun_result_schema, fun_result_array, &status);
+  fun.release(&fun);
+
+  if (status.code != 0) {
+    SEXP last_error_char = PROTECT(Rf_mkCharCE(status.message, CE_UTF8));
+    Rf_error("Error in arrow_function_identity(): %s", Rf_translateChar0(last_error_char));
+    UNPROTECT(1); // last_error_char (technically unreachable)
   } else {
-    fun.release(&fun);
+
   }
 
   const char* names[] = {"schema", "array", ""};

@@ -1,6 +1,7 @@
 
 #include <stdlib.h>
 #include <errno.h>
+#include <string.h>
 
 #include "function.h"
 #include "schema.h"
@@ -21,7 +22,12 @@ void arrow_function_release_internal(struct ArrowFunction* function) {
 }
 
 const char* arrow_function_identity_get_last_error(struct ArrowFunction* function) {
-  return NULL;
+  struct ArrowStatus* status = (struct ArrowStatus*) (function->private_data);
+  if (status->code != 0) {
+    return status->message;
+  } else {
+    return NULL;
+  }
 }
 
 int arrow_function_identity_compute_ptype(struct ArrowFunction* function, int64_t n_arguments,
@@ -48,24 +54,33 @@ int arrow_function_identity_compute_ptype(struct ArrowFunction* function, int64_
   // don't keep the offset of the input!
   ptype_out->offset = 0;
 
-  // we also need the offsets buffer returned here, or the caller won't know
-  // how much memory to allocate for the data buffer
-  struct ArrowVector vector_src;
-  arrow_vector_init(&vector_src, argument_schemas[0], argument_ptypes[0], status);
-  RETURN_IF_NOT_OK(status);
-
-  struct ArrowVector vector_dst;
-  arrow_vector_init(&vector_dst, schema_out, ptype_out, status);
-  RETURN_IF_NOT_OK(status);
-
-  arrow_vector_copy(
-    &vector_dst, 0,
-    &vector_src, argument_ptypes[0]->offset,
-    argument_ptypes[0]->length,
-    ARROW_VECTOR_BUFFER_OFFSET & ARROW_VECTOR_BUFFER_UNION_TYPE,
-    status
-  );
-  RETURN_IF_NOT_OK(status);
+  // We also need the offsets buffer included in the ptype for now
+  // because without it the caller doesn't know how much memory to allocate
+  // for the data buffer. It's difficult to generalize this pattern recursively
+  // but there is probably a better way.
+  // struct ArrowVector vector_src;
+  // arrow_vector_init(&vector_src, argument_schemas[0], argument_ptypes[0], status);
+  // RETURN_IF_NOT_OK(status);
+  //
+  // struct ArrowVector vector_dst;
+  // arrow_vector_init(&vector_dst, schema_out, ptype_out, status);
+  // RETURN_IF_NOT_OK(status);
+  //
+  // arrow_vector_alloc_buffers(
+  //   &vector_dst,
+  //   ARROW_VECTOR_BUFFER_OFFSET & ARROW_VECTOR_BUFFER_UNION_TYPE,
+  //   status
+  // );
+  // RETURN_IF_NOT_OK(status);
+  //
+  // arrow_vector_copy(
+  //   &vector_dst, 0,
+  //   &vector_src, argument_ptypes[0]->offset,
+  //   argument_ptypes[0]->length,
+  //   ARROW_VECTOR_BUFFER_OFFSET & ARROW_VECTOR_BUFFER_UNION_TYPE,
+  //   status
+  // );
+  // RETURN_IF_NOT_OK(status);
 
   return 0;
 }
@@ -117,7 +132,8 @@ int arrow_function_identity(struct ArrowFunction* out) {
 
 int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
                         struct ArrowSchema** argument_schemas, struct ArrowArray** argument_arrays,
-                        struct ArrowSchema* schema_out, struct ArrowArray* array_out) {
+                        struct ArrowSchema* schema_out, struct ArrowArray* array_out,
+                        struct ArrowStatus* status) {
 
   struct ArrowSchema ptype_schema;
   ptype_schema.release = NULL;
@@ -131,21 +147,33 @@ int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
   if (result != 0) {
     if (ptype_schema.release != NULL) ptype_schema.release(&ptype_schema);
     if (ptype_array.release != NULL) ptype_array.release(&ptype_array);
-    return result;
+
+    const char* error_message = function->get_last_error(function);
+    if (error_message == NULL) {
+      arrow_status_set_error(status, result, "[%d] %s", result, strerror(result));
+    } else {
+      arrow_status_set_error(status, result, "%s", error_message);
+    }
+
+    RETURN_IF_NOT_OK(status);
   }
 
   result = arrow_schema_copy(schema_out, &ptype_schema);
   if (result != 0) {
     if (ptype_schema.release != NULL) ptype_schema.release(&ptype_schema);
     if (ptype_array.release != NULL) ptype_array.release(&ptype_array);
-    return result;
+
+    arrow_status_set_error(status, result, "[%d] %s", result, strerror(result));
+    RETURN_IF_NOT_OK(status);
   }
 
   result = arrow_array_copy_ptype(array_out, &ptype_array);
   if (result != 0) {
     if (ptype_schema.release != NULL) ptype_schema.release(&ptype_schema);
     if (ptype_array.release != NULL) ptype_array.release(&ptype_array);
-    return result;
+
+    arrow_status_set_error(status, result, "[%d] %s", result, strerror(result));
+    RETURN_IF_NOT_OK(status);
   }
 
   // we're now done with the schema and array we allocated
@@ -154,18 +182,18 @@ int arrow_function_call(struct ArrowFunction* function, int64_t n_arguments,
 
   // use vector implementation to allocate buffers to the output
   struct ArrowVector vector;
-  struct ArrowStatus status;
 
-  arrow_vector_init(&vector, schema_out, array_out, &status);
-  RETURN_IF_NOT_OK(&status);
+  arrow_vector_init(&vector, schema_out, array_out, status);
+  RETURN_IF_NOT_OK(status);
 
-  arrow_vector_alloc_buffers(&vector, ARROW_VECTOR_BUFFER_ALL, &status);
-  RETURN_IF_NOT_OK(&status);
+  arrow_vector_alloc_buffers(&vector, ARROW_VECTOR_BUFFER_ALL, status);
+  RETURN_IF_NOT_OK(status);
 
   result = function->compute(
     function, n_arguments,
     argument_schemas, argument_arrays,
-    schema_out, array_out);
+    schema_out, array_out
+  );
 
   return result;
 }
