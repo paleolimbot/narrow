@@ -79,7 +79,7 @@ test_that("arrow_identity() works for structs", {
     b = as.numeric(1:5),
     c = as.raw(1:5),
     d = rep_len(c(TRUE, FALSE), 5),
-    e = c("one", "two", "three", "four", "five")
+    e = c("one", "two", "three", "four", NA)
   )
 
   expect_identical(
