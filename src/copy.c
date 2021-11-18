@@ -2,6 +2,7 @@
 #include <R.h>
 #include <Rinternals.h>
 #include <errno.h>
+#include <string.h>
 
 #include "carrow/carrow.h"
 #include "vctr.h"
