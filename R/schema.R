@@ -80,6 +80,17 @@ as.list.arrowvctrs_schema <- function(x, ..., recursive = FALSE) {
       result$dictionary <- as.list(result$dictionary)
     }
   }
+
+  if (!is.null(result$children)) {
+    names(result$children) <- vapply(
+      result$children,
+      function(x) x$name %||% "",
+      character(1)
+    )
+  } else {
+    result$children <- list()
+  }
+
   result
 }
 
@@ -133,6 +144,19 @@ names.arrowvctrs_schema <- function(x, ...) {
 #' @export
 `$.arrowvctrs_schema` <- function(x, i, ...) {
   as.list(x)[[i]]
+}
+
+#' @export
+`[[<-.arrowvctrs_schema` <- function(x, i, value) {
+  info <- as.list(x)
+  info[[i]] <- value
+  do.call(arrow_schema, info)
+}
+
+#' @export
+`$<-.arrowvctrs_schema` <- function(x, name, value) {
+  x[[name]] <- value
+  x
 }
 
 #' @export

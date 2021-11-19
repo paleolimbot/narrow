@@ -6,7 +6,7 @@ test_that("arrow_schema() works with mostly defaults", {
   expect_identical(s_data$format, "i")
   expect_identical(s_data$flags, 0L)
   expect_null(s_data$metadata)
-  expect_null(s_data$children)
+  expect_identical(s_data$children, list())
   expect_null(s_data$dictionary)
   expect_null(s_data$name)
 
@@ -113,4 +113,18 @@ test_that("arrow_schema() list interface works", {
   expect_identical(s[["format"]], "i")
   expect_identical(names(s), names(as.list(s)))
   expect_identical(length(s), length(as.list(s)))
+})
+
+test_that("arrow_schema() subset assignment works", {
+  # check simple case
+  s <- arrow_schema("+s")
+  expect_identical(s$format, "+s")
+  s$format <- "+us"
+  expect_s3_class(s, "arrowvctrs_schema")
+  expect_identical(s$format, "+us")
+
+  # check subset assignment for nested items
+  s$children <- list(arrow_schema("i", name = "col1"), arrow_schema("i", name = "col2"))
+  s$children$col2$format <- "I"
+  expect_identical(s$children$col2$format, "I")
 })
