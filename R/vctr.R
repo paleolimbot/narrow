@@ -40,14 +40,14 @@ as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
 }
 
 #' @export
-`[[<-.arrowvctrs_vctr` <- function(x, i, value, ...) {
+`[[<-.arrowvctrs_vctr` <- function(x, i, ..., value) {
   x <- unclass(x)
   x[[i]] <- value
   do.call(arrow_vctr, x)
 }
 
 #' @export
-`$<-.arrowvctrs_vctr` <- function(x, name, value, ...) {
+`$<-.arrowvctrs_vctr` <- function(x, name, ..., value) {
   x[[name]] <- value
   x
 }
