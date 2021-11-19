@@ -77,7 +77,7 @@ void arrow_schema_reset_internal(struct ArrowSchema* schema) {
   schema->release = &arrow_schema_release_internal;
 }
 
-int arrow_schema_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
+int arrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
   if (out == NULL || schema == NULL) {
     return EINVAL;
   }
@@ -113,6 +113,8 @@ int arrow_schema_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
   out->flags = schema->flags;
   out->n_children = schema->n_children;
 
+  int result = 0;
+
   if (out->n_children > 0) {
     out->children = (struct ArrowSchema**) malloc(sizeof(struct ArrowSchema*) * out->n_children);
     if (out->children == NULL) {
@@ -127,7 +129,11 @@ int arrow_schema_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
         return ENOMEM;
       }
 
-      arrow_schema_copy(out->children[i], schema->children[i]);
+      result = arrow_schema_deep_copy(out->children[i], schema->children[i]);
+      if (result != 0) {
+        out->release(out);
+        return result;
+      }
     }
   }
 
@@ -138,7 +144,11 @@ int arrow_schema_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
       return ENOMEM;
     }
 
-    arrow_schema_copy(out->dictionary, schema->dictionary);
+    result = arrow_schema_deep_copy(out->dictionary, schema->dictionary);
+    if (result != 0) {
+      out->release(out);
+      return result;
+    }
   }
 
   return 0;

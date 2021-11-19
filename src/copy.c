@@ -25,7 +25,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   result_array->release = NULL;
   SEXP result_array_xptr = PROTECT(array_xptr_new(result_array));
 
-  int result = arrow_schema_copy(result_schema, vector.schema);
+  int result = arrow_schema_deep_copy(result_schema, vector.schema);
   if (result != 0) {
     Rf_error("arrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
