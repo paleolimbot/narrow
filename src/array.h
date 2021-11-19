@@ -32,4 +32,11 @@ static inline struct ArrowArray* nullable_array_from_xptr(SEXP array_xptr, const
   }
 }
 
+static inline SEXP array_xptr_new(struct ArrowArray* array) {
+  SEXP array_xptr = PROTECT(R_MakeExternalPtr(array, R_NilValue, R_NilValue));
+  Rf_setAttrib(array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
+  UNPROTECT(1);
+  return array_xptr;
+}
+
 #endif

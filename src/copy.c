@@ -23,8 +23,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowArray* result_array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(result_schema, "struct ArrowArray");
   result_array->release = NULL;
-  SEXP result_array_xptr = PROTECT(R_MakeExternalPtr(result_array, R_NilValue, R_NilValue));
-  Rf_setAttrib(result_array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
+  SEXP result_array_xptr = PROTECT(array_xptr_new(result_array));
 
   int result = arrow_schema_copy(result_schema, vector.schema);
   if (result != 0) {

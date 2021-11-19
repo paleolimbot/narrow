@@ -32,9 +32,9 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   array->dictionary = NULL;
   array->release = &finalize_array;
 
-  SEXP array_xptr = PROTECT(R_MakeExternalPtr(array, array_prot, R_NilValue));
-  UNPROTECT(1);
+  SEXP array_xptr = PROTECT(array_xptr_new(array));
   R_RegisterCFinalizer(array_xptr, finalize_array_xptr);
+  R_SetExternalPtrTag(array_xptr, array_prot);
 
   array->length = scalar_int64_from_sexp(length_sexp, "length");
   array->null_count = scalar_int64_from_sexp(null_count_sexp, "null_count");
@@ -54,7 +54,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
       case LGLSXP:
       case CPLXSXP:
       case RAWSXP:
-        array->buffers[i] = DATAPTR(item);
+        array->buffers[i] = DATAPTR_RO(item);
         break;
       default:
         Rf_error("Can't extract buffer pointer from buffers[%ld]", i);
@@ -70,8 +70,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
 
   array->dictionary = nullable_array_from_xptr(dictionary_xptr, "dictionary");
 
-  Rf_setAttrib(array_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
-  UNPROTECT(1);
+  UNPROTECT(2);
   return array_xptr;
 }
 
@@ -99,7 +98,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_prot, 2)); // dictionary
   } else {
     // if we didn't alloc it ourselves, we have to surface some of this stuff
-    // that currently only exists in C
+    // that currently only exists in C. Child and dictionary arrays are just
+    // "views" of the pointers that keep a reference to the original.
     if (array->n_buffers > 0) {
       SEXP buffers = PROTECT(Rf_allocVector(VECSXP, array->n_buffers));
       for (int64_t i = 0; i < array->n_buffers; i++) {
@@ -114,8 +114,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     if (array->n_children > 0) {
       SEXP children = PROTECT(Rf_allocVector(VECSXP, array->n_children));
       for (int64_t i = 0; i < array->n_children; i++) {
-        SEXP child = PROTECT(R_MakeExternalPtr(array->children[i], R_NilValue, array_xptr));
-        Rf_setAttrib(child, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
+        SEXP child = PROTECT(array_xptr_new(array->children[i]));
+        R_SetExternalPtrProtected(child, array_xptr);
         SET_VECTOR_ELT(children, i, child);
         UNPROTECT(1);
       }
@@ -124,8 +124,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     }
 
     if (array->dictionary != NULL) {
-      SEXP dictionary = PROTECT(R_MakeExternalPtr(array->dictionary, R_NilValue, array_xptr));
-      Rf_setAttrib(dictionary, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
+      SEXP dictionary = PROTECT(array_xptr_new(array->dictionary));
+      R_SetExternalPtrProtected(dictionary, array_xptr);
       SET_VECTOR_ELT(array_info, 7, dictionary);
       UNPROTECT(1);
     }

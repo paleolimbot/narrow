@@ -107,19 +107,17 @@ SEXP arrowvctrs_c_schema_data(SEXP schema_xptr) {
     SET_VECTOR_ELT(result, 1, R_NilValue);
   }
 
-  // TODO parse metadata
   SET_VECTOR_ELT(result, 2, sexp_from_metadata((unsigned char*) schema->metadata));
-
   SET_VECTOR_ELT(result, 3, Rf_ScalarInteger(schema->flags));
 
-  // these may not have been created by us, so borrow the pointers
+  // These may not have been created by us, so borrow the pointers
   // and keep a reference to `schema_xptr` to make sure they stay
   // valid.
   if (schema->n_children > 0) {
     SEXP children_sexp = PROTECT(Rf_allocVector(VECSXP, schema->n_children));
     for (R_xlen_t i = 0; i < schema->n_children; i++) {
-      SEXP child_xptr = PROTECT(R_MakeExternalPtr(schema->children[i], schema_xptr, R_NilValue));
-      Rf_setAttrib(child_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+      SEXP child_xptr = PROTECT(schema_xptr_new(schema->children[i]));
+      R_SetExternalPtrProtected(child_xptr, schema_xptr);
       SET_VECTOR_ELT(children_sexp, i, child_xptr);
       UNPROTECT(1);
     }
@@ -130,8 +128,8 @@ SEXP arrowvctrs_c_schema_data(SEXP schema_xptr) {
   }
 
   if (schema->dictionary != NULL) {
-    SEXP dictionary_xptr = PROTECT(R_MakeExternalPtr(schema->dictionary, schema_xptr, R_NilValue));
-    Rf_setAttrib(dictionary_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+    SEXP dictionary_xptr = PROTECT(schema_xptr_new(schema->dictionary));
+    R_SetExternalPtrProtected(dictionary_xptr, schema_xptr);
     SET_VECTOR_ELT(result, 5, dictionary_xptr);
     UNPROTECT(1);
   } else {
