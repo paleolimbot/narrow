@@ -31,7 +31,7 @@ void arrow_array_release_internal(struct ArrowArray* array) {
   array->release = NULL;
 }
 
-int arrow_array_copy_ptype(struct ArrowArray* out, struct ArrowArray* array) {
+int arrow_array_copy_structure(struct ArrowArray* out, struct ArrowArray* array) {
   if (array == NULL || array->release == NULL) {
     return EINVAL;
   }
@@ -77,7 +77,7 @@ int arrow_array_copy_ptype(struct ArrowArray* out, struct ArrowArray* array) {
         return ENOMEM;
       }
 
-      arrow_array_copy_ptype(out->children[i], array->children[i]);
+      arrow_array_copy_structure(out->children[i], array->children[i]);
     }
   }
 
@@ -88,7 +88,7 @@ int arrow_array_copy_ptype(struct ArrowArray* out, struct ArrowArray* array) {
       return ENOMEM;
     }
 
-    arrow_array_copy_ptype(out->dictionary, array->dictionary);
+    arrow_array_copy_structure(out->dictionary, array->dictionary);
   }
 
   return 0;
