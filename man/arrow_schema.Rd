@@ -7,6 +7,7 @@
 \alias{as_arrow_schema}
 \alias{as_arrow_schema.arrowvctrs_schema}
 \alias{as_arrow_schema.character}
+\alias{arrow_schema_info}
 \title{Create Arrow Schema objects}
 \usage{
 arrow_schema(
@@ -31,6 +32,8 @@ as_arrow_schema(x, ...)
 \method{as_arrow_schema}{arrowvctrs_schema}(x, ...)
 
 \method{as_arrow_schema}{character}(x, ...)
+
+arrow_schema_info(x, ..., recursive = FALSE)
 }
 \arguments{
 \item{format}{A
@@ -58,6 +61,8 @@ containing key/value metadata.}
 \item{x}{An object to convert to an \code{\link[=arrow_schema]{arrow_schema()}}}
 
 \item{...}{Passed to S3 methods}
+
+\item{recursive}{Use \code{TRUE} to serialize the schema recursively}
 }
 \value{
 An external pointer with class 'arrowvctrs_schema'

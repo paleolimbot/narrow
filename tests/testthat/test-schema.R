@@ -2,10 +2,10 @@
 test_that("arrow_schema() works with mostly defaults", {
   s <- arrow_schema("i")
   expect_s3_class(s, "arrowvctrs_schema")
-  s_data <- as.list(s)
+  s_data <- arrow_schema_info(s)
   expect_identical(s_data$format, "i")
   expect_identical(s_data$flags, 0L)
-  expect_null(s_data$metadata)
+  expect_identical(s_data$metadata, list())
   expect_identical(s_data$children, list())
   expect_null(s_data$dictionary)
   expect_null(s_data$name)
@@ -17,7 +17,7 @@ test_that("arrow_schema() works with mostly defaults", {
 test_that("as_arrow_schema() works", {
   s <- arrow_schema("i")
   expect_identical(as_arrow_schema(s), s)
-  expect_identical(as.list(as_arrow_schema("i")), as.list(s))
+  expect_identical(arrow_schema_info(as_arrow_schema("i")), arrow_schema_info(s))
 })
 
 test_that("arrow_schema() errors for arguments with bad types", {
@@ -38,7 +38,7 @@ test_that("arrow_schema() works with values for all memebers", {
     children = list(arrow_schema("d"))
   )
 
-  s_data <- as.list(s)
+  s_data <- arrow_schema_info(s)
 
   expect_identical(s_data$format, "i")
   expect_identical(s_data$flags, 1L)
@@ -52,7 +52,7 @@ test_that("arrow_schema() works with values for all memebers", {
 test_that("arrow_schema_deep_copy() works", {
   original <- arrow_schema("i")
   copy <- arrow_schema_deep_copy(original)
-  expect_identical(as.list(original), as.list(copy))
+  expect_identical(arrow_schema_info(original), arrow_schema_info(copy))
 
   original <- arrow_schema(
     "i",
@@ -63,15 +63,15 @@ test_that("arrow_schema_deep_copy() works", {
     children = list(arrow_schema("d"))
   )
   copy <- arrow_schema_deep_copy(original)
-  expect_identical(as.list(original, recursive = TRUE), as.list(copy, recursive = TRUE))
+  expect_identical(arrow_schema_info(original, recursive = TRUE), arrow_schema_info(copy, recursive = TRUE))
 })
 
 test_that("metadata field can be serialized and deserialized", {
   s <- arrow_schema("i", metadata = list(key1 = "value1", key2 = "value2"))
   expect_identical(s$metadata, list(key1 = "value1", key2 = "value2"))
 
-  expect_identical(arrow_schema("i", metadata = list())$metadata, NULL)
-  expect_identical(arrow_schema("i", metadata = NULL)$metadata, NULL)
+  expect_identical(arrow_schema("i", metadata = list())$metadata, list())
+  expect_identical(arrow_schema("i", metadata = NULL)$metadata, list())
   expect_identical(
     arrow_schema("i", metadata = list(a = as.raw(0x00)))$metadata,
     list(a = as.raw(0x00))
@@ -111,8 +111,8 @@ test_that("arrow_schema() list interface works", {
   s <- arrow_schema("i")
   expect_identical(s$format, "i")
   expect_identical(s[["format"]], "i")
-  expect_identical(names(s), names(as.list(s)))
-  expect_identical(length(s), length(as.list(s)))
+  expect_identical(names(s), names(arrow_schema_info(s)))
+  expect_identical(length(s), length(arrow_schema_info(s)))
 })
 
 test_that("arrow_schema() subset assignment works", {

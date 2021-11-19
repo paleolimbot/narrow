@@ -12,6 +12,7 @@
 #' @param dictionary_ordered `TRUE` if the `dictionary` array is ordered
 #' @param nullable `TRUE` if the type is semantically nullable
 #' @param map_keys_sorted `TRUE` if the keys for a map have been sorted
+#' @param recursive Use `TRUE` to serialize the schema recursively
 #' @param x An object to convert to an [arrow_schema()]
 #' @param ... Passed to S3 methods
 #'
@@ -67,17 +68,18 @@ as_arrow_schema.character <- function(x, ...) {
   arrow_schema(x)
 }
 
+#' @rdname arrow_schema
 #' @export
-as.list.arrowvctrs_schema <- function(x, ..., recursive = FALSE) {
+arrow_schema_info <- function(x, ..., recursive = FALSE) {
   result <- .Call(arrowvctrs_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
   if (recursive) {
     if (!is.null(result$children)) {
-      result$children <- lapply(result$children, as.list, recursive = TRUE)
+      result$children <- lapply(result$children, arrow_schema_info, recursive = TRUE)
     }
 
     if (!is.null(result$dictionary)) {
-      result$dictionary <- as.list(result$dictionary)
+      result$dictionary <- arrow_schema_info(result$dictionary)
     }
   }
 
@@ -112,7 +114,7 @@ metadata_to_list_of_raw <- function(metadata) {
 
 list_of_raw_to_metadata <- function(metadata) {
   if (is.null(metadata)) {
-    return(metadata)
+    return(list())
   }
 
   lapply(metadata, function(x) {
@@ -128,27 +130,27 @@ list_of_raw_to_metadata <- function(metadata) {
 
 #' @export
 length.arrowvctrs_schema <- function(x, ...) {
-  length(as.list(x))
+  length(arrow_schema_info(x))
 }
 
 #' @export
 names.arrowvctrs_schema <- function(x, ...) {
-  names(as.list(x))
+  names(arrow_schema_info(x))
 }
 
 #' @export
 `[[.arrowvctrs_schema` <- function(x, i, ...) {
-  as.list(x)[[i]]
+  arrow_schema_info(x)[[i]]
 }
 
 #' @export
 `$.arrowvctrs_schema` <- function(x, i, ...) {
-  as.list(x)[[i]]
+  arrow_schema_info(x)[[i]]
 }
 
 #' @export
 `[[<-.arrowvctrs_schema` <- function(x, i, value) {
-  info <- as.list(x)
+  info <- arrow_schema_info(x)
   info[[i]] <- value
   do.call(arrow_schema, info)
 }
@@ -161,13 +163,13 @@ names.arrowvctrs_schema <- function(x, ...) {
 
 #' @export
 format.arrowvctrs_schema <- function(x, ...) {
-  sprintf("<arrow_schema '%s' at %s>", as.list(x)$format, xptr_addr(x))
+  sprintf("<arrow_schema '%s' at %s>", arrow_schema_info(x)$format, xptr_addr(x))
 }
 
 #' @export
 print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
   cat(paste0(indent.str, format(x), "\n"))
-  info <- as.list(x)
+  info <- arrow_schema_info(x)
   for (nm in c("format", "name")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }
@@ -212,6 +214,6 @@ print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
 #' @importFrom utils str
 str.arrowvctrs_schema <- function(object, ...) {
   cat(paste0(format(object), " "))
-  str(as.list(object), ...)
+  str(arrow_schema_info(object), ...)
   invisible(object)
 }

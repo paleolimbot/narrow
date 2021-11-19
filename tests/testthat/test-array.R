@@ -38,6 +38,6 @@ test_that("arrow_array() list interface works", {
   a <- arrow_array()
   expect_identical(a$length, as_arrow_int64(0))
   expect_identical(a[["length"]], as_arrow_int64(0))
-  expect_identical(names(a), names(as.list(a)))
-  expect_identical(length(a), length(as.list(a)))
+  expect_identical(names(a), names(arrow_array_info(a)))
+  expect_identical(length(a), length(arrow_array_info(a)))
 })

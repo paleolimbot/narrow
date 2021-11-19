@@ -2,6 +2,7 @@
 % Please edit documentation in R/array.R
 \name{arrow_array}
 \alias{arrow_array}
+\alias{arrow_array_info}
 \alias{as_arrow_array}
 \alias{as_arrow_array.arrowvctrs_array}
 \alias{as_arrow_buffer}
@@ -16,6 +17,8 @@ arrow_array(
   children = NULL,
   dictionary = NULL
 )
+
+arrow_array_info(x, ...)
 
 as_arrow_array(x, ...)
 

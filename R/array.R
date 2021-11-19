@@ -41,8 +41,9 @@ arrow_array <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
   )
 }
 
+#' @rdname arrow_array
 #' @export
-as.list.arrowvctrs_array <- function(x, ...) {
+arrow_array_info <- function(x, ...) {
   .Call(arrowvctrs_c_array_info, x)
 }
 
@@ -74,22 +75,22 @@ as_arrow_buffer.default <- function(x, ...) {
 
 #' @export
 length.arrowvctrs_array <- function(x, ...) {
-  length(as.list(x))
+  length(arrow_array_info(x))
 }
 
 #' @export
 names.arrowvctrs_array <- function(x, ...) {
-  names(as.list(x))
+  names(arrow_array_info(x))
 }
 
 #' @export
 `[[.arrowvctrs_array` <- function(x, i, ...) {
-  as.list(x)[[i]]
+  arrow_array_info(x)[[i]]
 }
 
 #' @export
 `$.arrowvctrs_array` <- function(x, i, ...) {
-  as.list(x)[[i]]
+  arrow_array_info(x)[[i]]
 }
 
 #' @export
@@ -100,7 +101,7 @@ format.arrowvctrs_array <- function(x, ...) {
 #' @export
 print.arrowvctrs_array <- function(x, ..., indent.str = "") {
   cat(sprintf("%s%s\n", indent.str, format(x)))
-  info <- as.list(x)
+  info <- arrow_array_info(x)
   for (nm in c("length", "null_count", "offset")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }
