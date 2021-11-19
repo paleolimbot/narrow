@@ -28,14 +28,13 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
   // keep references other external pointers needed for this object to be valid
   const char* names_prot[] = {"children", "dictionary", ""};
   SEXP schema_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
-  SET_VECTOR_ELT(schema_prot, 0, Rf_shallow_duplicate(children_sexp));
+  SET_VECTOR_ELT(schema_prot, 0, children_sexp);
   SET_VECTOR_ELT(schema_prot, 1, dictionary_xptr);
   Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_schema_prot"));
 
   // wrap in external ptr early to ensure deletion
   SEXP result_xptr = PROTECT(schema_xptr_new(result));
   R_SetExternalPtrTag(result_xptr, schema_prot);
-  Rf_setAttrib(result_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
   R_RegisterCFinalizer(result_xptr, &finalize_schema_xptr);
 
   // these pointers are only valid during .Call(), so copy the data
