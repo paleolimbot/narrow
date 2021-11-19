@@ -14,7 +14,7 @@ test_that("arrow_schema() works with mostly defaults", {
   gc()
 })
 
-test_that("as_arrow_schemea() works", {
+test_that("as_arrow_schema() works", {
   s <- arrow_schema("i")
   expect_identical(as_arrow_schema(s), s)
   expect_identical(as.list(as_arrow_schema("i")), as.list(s))
