@@ -31,7 +31,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
     Rf_error("arrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
 
-  result = arrow_array_copy_structure(result_array, vector.array);
+  result = arrow_array_copy_structure(result_array, vector.array, ARROW_BUFFER_ALL);
   if (result != 0) {
     Rf_error("arrow_array_copy_structure failed with error [%d] %s", result, strerror(result));
   }

@@ -9,7 +9,8 @@ extern "C" {
 
 #include "abi.h"
 
-int arrow_array_copy_structure(struct ArrowArray* out, struct ArrowArray* array);
+int arrow_array_copy_structure(struct ArrowArray* out, struct ArrowArray* array,
+                               int32_t which_buffers);
 
 #ifdef __cplusplus
 }
