@@ -78,11 +78,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   );
   STOP_IF_NOT_OK(status);
 
-  const char* names[] = {"schema", "array", ""};
-  SEXP vctr_result_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
-  SET_VECTOR_ELT(vctr_result_sexp, 0, result_schema_xptr);
-  SET_VECTOR_ELT(vctr_result_sexp, 1, result_array_xptr);
-  Rf_setAttrib(vctr_result_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_vctr"));
+  SEXP vctr_result_sexp = PROTECT(vctr_sexp_new(result_schema_xptr, result_array_xptr));
   UNPROTECT(3);
   return vctr_result_sexp;
 }
