@@ -10,7 +10,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr);
 SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr);
 SEXP arrowvctrs_c_schema_data(SEXP schema_xptr);
-SEXP arrowvctrs_c_schema_copy(SEXP schema_xptr);
+SEXP arrowvctrs_c_schema_deep_copy(SEXP schema_xptr);
 
 SEXP arrowvctrs_c_logical_from_bitmask(SEXP pkd, SEXP start_sexp, SEXP end_sexp);
 SEXP arrowvctrs_c_bitmask_from_logical(SEXP lgl_sexp);
@@ -36,7 +36,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_array_info", (DL_FUNC) &arrowvctrs_c_array_info, 1},
   {"arrowvctrs_c_schema_xptr_new", (DL_FUNC) &arrowvctrs_c_schema_xptr_new, 6},
   {"arrowvctrs_c_schema_data", (DL_FUNC) &arrowvctrs_c_schema_data, 1},
-  {"arrowvctrs_c_schema_copy", (DL_FUNC) &arrowvctrs_c_schema_copy, 1},
+  {"arrowvctrs_c_schema_deep_copy", (DL_FUNC) &arrowvctrs_c_schema_deep_copy, 1},
   {"arrowvctrs_c_logical_from_bitmask", (DL_FUNC) &arrowvctrs_c_logical_from_bitmask, 3},
   {"arrowvctrs_c_bitmask_from_logical", (DL_FUNC) &arrowvctrs_c_bitmask_from_logical, 1},
   {"arrowvctrs_c_int64_from_double", (DL_FUNC) &arrowvctrs_c_int64_from_double, 1},

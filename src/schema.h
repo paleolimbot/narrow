@@ -39,6 +39,11 @@ static inline struct ArrowSchema* nullable_schema_from_xptr(SEXP schema_xptr, co
   }
 }
 
-
+static inline SEXP schema_xptr_new(struct ArrowSchema* schema) {
+  SEXP schema_xptr = PROTECT(R_MakeExternalPtr(schema, R_NilValue, R_NilValue));
+  Rf_setAttrib(schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+  UNPROTECT(1);
+  return schema_xptr;
+}
 
 #endif

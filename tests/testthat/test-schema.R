@@ -49,9 +49,9 @@ test_that("arrow_schema() works with values for all memebers", {
   expect_identical(s_data$name, "name")
 })
 
-test_that("arrow_schema_copy() works", {
+test_that("arrow_schema_deep_copy() works", {
   original <- arrow_schema("i")
-  copy <- arrow_schema_copy(original)
+  copy <- arrow_schema_deep_copy(original)
   expect_identical(as.list(original), as.list(copy))
 
   original <- arrow_schema(
@@ -62,7 +62,7 @@ test_that("arrow_schema_copy() works", {
     flags = 1L,
     children = list(arrow_schema("d"))
   )
-  copy <- arrow_schema_copy(original)
+  copy <- arrow_schema_deep_copy(original)
   expect_identical(as.list(original, recursive = TRUE), as.list(copy, recursive = TRUE))
 })
 

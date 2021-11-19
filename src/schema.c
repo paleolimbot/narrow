@@ -68,16 +68,15 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
   return result_xptr;
 }
 
-SEXP arrowvctrs_c_schema_copy(SEXP schema_xptr) {
+SEXP arrowvctrs_c_schema_deep_copy(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   struct ArrowSchema* new_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(new_schema, "struct ArrowSchema");
   new_schema->release = NULL;
 
-  SEXP new_schema_xptr = PROTECT(R_MakeExternalPtr(new_schema, R_NilValue, R_NilValue));
+  SEXP new_schema_xptr = PROTECT(schema_xptr_new(new_schema));
   R_RegisterCFinalizer(new_schema_xptr, &finalize_schema_xptr);
-  Rf_setAttrib(new_schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
 
   int result = arrow_schema_copy(new_schema, schema);
   if (result != 0) {

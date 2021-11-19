@@ -45,8 +45,8 @@ arrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
 
 #' @rdname arrow_schema
 #' @export
-arrow_schema_copy <- function(schema) {
-  .Call(arrowvctrs_c_schema_copy, as_arrow_schema(schema))
+arrow_schema_deep_copy <- function(schema) {
+  .Call(arrowvctrs_c_schema_deep_copy, as_arrow_schema(schema))
 }
 
 #' @rdname arrow_schema

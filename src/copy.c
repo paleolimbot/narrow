@@ -6,6 +6,7 @@
 
 #include "carrow/carrow.h"
 #include "vctr.h"
+#include "schema.h"
 #include "util.h"
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
@@ -17,8 +18,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowSchema* result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(result_schema, "struct ArrowSchema");
   result_schema->release = NULL;
-  SEXP result_schema_xptr = PROTECT(R_MakeExternalPtr(result_schema, R_NilValue, R_NilValue));
-  Rf_setAttrib(result_schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+  SEXP result_schema_xptr = PROTECT(schema_xptr_new(result_schema));
 
   struct ArrowArray* result_array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(result_schema, "struct ArrowArray");

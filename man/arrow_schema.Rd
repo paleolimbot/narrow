@@ -3,7 +3,7 @@
 \name{arrow_schema}
 \alias{arrow_schema}
 \alias{arrow_schema_flags}
-\alias{arrow_schema_copy}
+\alias{arrow_schema_deep_copy}
 \alias{as_arrow_schema}
 \alias{as_arrow_schema.arrowvctrs_schema}
 \alias{as_arrow_schema.character}
@@ -24,7 +24,7 @@ arrow_schema_flags(
   map_keys_sorted = FALSE
 )
 
-arrow_schema_copy(schema)
+arrow_schema_deep_copy(schema)
 
 as_arrow_schema(x, ...)
 
