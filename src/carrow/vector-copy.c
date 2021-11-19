@@ -6,6 +6,7 @@
 
 #include "status.h"
 #include "vector.h"
+#include "buffer.h"
 #include "vector-init.h"
 #include "vector-copy.h"
 
@@ -54,7 +55,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   void* data_buffer_src = arrow_vector_data_buffer(vector_src);
   void* data_buffer_dst = arrow_vector_data_buffer(vector_dst);
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_VALIDITY) {
+  if (which_buffers & ARROW_BUFFER_VALIDITY) {
     if (validity_buffer_src != NULL) {
       if (validity_buffer_dst == NULL) {
         arrow_status_set_error(status, EINVAL, "Can't copy validity buffer to NULL");
@@ -85,7 +86,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_OFFSET) {
+  if (which_buffers & ARROW_BUFFER_OFFSET) {
     if (offset_buffer_src != NULL) {
       if (offset_buffer_dst == NULL) {
         arrow_status_set_error(status, EINVAL, "Can't copy offset buffer to NULL");
@@ -113,7 +114,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_UNION_TYPE) {
+  if (which_buffers & ARROW_BUFFER_UNION_TYPE) {
     if (union_type_buffer_dst != NULL) {
       if (large_offset_buffer_dst == NULL) {
         arrow_status_set_error(status, EINVAL, "Can't copy union type buffer to NULL");
@@ -167,7 +168,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     child_dst_offset = dst_offset * vector_src->element_size_bytes;
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_DATA) {
+  if (which_buffers & ARROW_BUFFER_DATA) {
     if (data_buffer_src != NULL) {
       if (vector_src->element_size_bytes > 0) {
         if (data_buffer_dst == NULL) {
@@ -199,7 +200,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   struct ArrowVector child_vector_src;
   struct ArrowVector child_vector_dst;
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_CHILD) {
+  if (which_buffers & ARROW_BUFFER_CHILD) {
     // copy child vectors
     for (int64_t i = 0; i < vector_src->schema->n_children; i++) {
       arrow_vector_init(&child_vector_src, vector_src->schema->children[i], vector_src->array->children[i], status);
@@ -219,7 +220,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_DICTIONARY) {
+  if (which_buffers & ARROW_BUFFER_DICTIONARY) {
     // copy dictionary vector (the whole dictionary vector)
     if (vector_src->schema->dictionary != NULL) {
       arrow_vector_init(&child_vector_src, vector_src->schema->dictionary, vector_src->array->dictionary, status);

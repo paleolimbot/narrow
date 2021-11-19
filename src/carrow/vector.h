@@ -165,14 +165,6 @@ struct ArrowVector {
   int has_validity_buffer;
 };
 
-#define ARROW_VECTOR_BUFFER_VALIDITY 1
-#define ARROW_VECTOR_BUFFER_OFFSET 2
-#define ARROW_VECTOR_BUFFER_UNION_TYPE 4
-#define ARROW_VECTOR_BUFFER_DATA 8
-#define ARROW_VECTOR_BUFFER_CHILD 16
-#define ARROW_VECTOR_BUFFER_DICTIONARY 32
-#define ARROW_VECTOR_BUFFER_ALL 0xff
-
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
   if (vector->has_validity_buffer) {
     return (unsigned char*) vector->array->buffers[0];

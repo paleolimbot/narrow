@@ -6,6 +6,7 @@
 
 #include "status.h"
 #include "vector.h"
+#include "buffer.h"
 #include "vector-init.h"
 #include "vector-alloc.h"
 
@@ -23,7 +24,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
   int has_existing_offset_buffer = arrow_vector_offset_buffer(vector) != NULL;
   int has_existing_large_offset_buffer = arrow_vector_large_offset_buffer(vector) != NULL;
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_VALIDITY) {
+  if (which_buffers & ARROW_BUFFER_VALIDITY) {
     unsigned char* validity_buffer = arrow_vector_validity_buffer(vector);
     if (vector->has_validity_buffer && validity_buffer == NULL) {
       int64_t validity_buffer_size = (vector->array->length - 1) / 8 + 1;
@@ -47,7 +48,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_OFFSET) {
+  if (which_buffers & ARROW_BUFFER_OFFSET) {
     int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
 
     if (vector->offset_buffer_id != -1 && offset_buffer == NULL) {
@@ -82,7 +83,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_UNION_TYPE) {
+  if (which_buffers & ARROW_BUFFER_UNION_TYPE) {
     char* union_type_buffer = arrow_vector_union_type_buffer(vector);
     if (vector->union_type_buffer_id != -1 && union_type_buffer == NULL) {
       union_type_buffer = (char*) malloc(vector->array->length * sizeof(char));
@@ -100,7 +101,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_DATA) {
+  if (which_buffers & ARROW_BUFFER_DATA) {
     void* data_buffer = arrow_vector_data_buffer(vector);
     if (vector->data_buffer_id != -1 && data_buffer == NULL) {
 
@@ -144,7 +145,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
 
   struct ArrowVector child_vector;
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_CHILD) {
+  if (which_buffers & ARROW_BUFFER_CHILD) {
     // also allocate child vectors
     for (int64_t i = 0; i < vector->schema->n_children; i++) {
       arrow_vector_init(&child_vector, vector->schema->children[i], vector->array->children[i], status);
@@ -155,7 +156,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     }
   }
 
-  if (which_buffers & ARROW_VECTOR_BUFFER_DICTIONARY) {
+  if (which_buffers & ARROW_BUFFER_DICTIONARY) {
     // ...and dictionary vector
     if (vector->schema->dictionary != NULL) {
       arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary, status);

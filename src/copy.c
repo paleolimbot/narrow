@@ -48,8 +48,8 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   // allocate the union type and offset buffers
   arrow_vector_alloc_buffers(
     &vector_dst,
-    ARROW_VECTOR_BUFFER_OFFSET | ARROW_VECTOR_BUFFER_UNION_TYPE |
-      ARROW_VECTOR_BUFFER_CHILD | ARROW_VECTOR_BUFFER_DICTIONARY,
+    ARROW_BUFFER_OFFSET | ARROW_BUFFER_UNION_TYPE |
+      ARROW_BUFFER_CHILD | ARROW_BUFFER_DICTIONARY,
     &status
   );
   STOP_IF_NOT_OK(status);
@@ -59,14 +59,14 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
     &vector_dst, 0,
     &vector, vector.array->offset,
     vector_dst.array->length,
-    ARROW_VECTOR_BUFFER_OFFSET | ARROW_VECTOR_BUFFER_UNION_TYPE |
-      ARROW_VECTOR_BUFFER_CHILD | ARROW_VECTOR_BUFFER_DICTIONARY,
+    ARROW_BUFFER_OFFSET | ARROW_BUFFER_UNION_TYPE |
+      ARROW_BUFFER_CHILD | ARROW_BUFFER_DICTIONARY,
     &status
   );
   STOP_IF_NOT_OK(status);
 
   // ...then allocate the rest of the buffers
-  arrow_vector_alloc_buffers(&vector_dst, ARROW_VECTOR_BUFFER_ALL, &status);
+  arrow_vector_alloc_buffers(&vector_dst, ARROW_BUFFER_ALL, &status);
   STOP_IF_NOT_OK(status);
 
   // ...and copy them
@@ -74,7 +74,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
     &vector_dst, 0,
     &vector, vector.array->offset,
     vector_dst.array->length,
-    ARROW_VECTOR_BUFFER_ALL,
+    ARROW_BUFFER_ALL,
     &status
   );
   STOP_IF_NOT_OK(status);
