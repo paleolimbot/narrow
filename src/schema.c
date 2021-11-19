@@ -25,9 +25,16 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
   result->private_data = NULL;
   result->release = &finalize_schema;
 
+  // keep references other external pointers needed for this object to be valid
+  const char* names_prot[] = {"children", "dictionary", ""};
+  SEXP schema_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
+  SET_VECTOR_ELT(schema_prot, 0, Rf_shallow_duplicate(children_sexp));
+  SET_VECTOR_ELT(schema_prot, 1, dictionary_xptr);
+  Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_schema_prot"));
+
   // wrap in external ptr early to ensure deletion
-  // keep references to other externalptr(struct ArrowSchema)
-  SEXP result_xptr = PROTECT(R_MakeExternalPtr(result, children_sexp, dictionary_xptr));
+  SEXP result_xptr = PROTECT(schema_xptr_new(result));
+  R_SetExternalPtrTag(result_xptr, schema_prot);
   Rf_setAttrib(result_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
   R_RegisterCFinalizer(result_xptr, &finalize_schema_xptr);
 
@@ -54,7 +61,7 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
     result->children[i] = NULL;
   }
 
-  char arg[100];
+  char arg[100]; // for the error message
   for (int i = 0; i < result->n_children; i++) {
     SEXP item = VECTOR_ELT(children_sexp, i);
     memset(arg, 0, 100);
@@ -64,7 +71,7 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
 
   result->metadata = (char*) metadata_from_sexp(metadata_sexp, "metadata");
 
-  UNPROTECT(1);
+  UNPROTECT(2);
   return result_xptr;
 }
 
@@ -110,30 +117,38 @@ SEXP arrowvctrs_c_schema_data(SEXP schema_xptr) {
   SET_VECTOR_ELT(result, 2, sexp_from_metadata((unsigned char*) schema->metadata));
   SET_VECTOR_ELT(result, 3, Rf_ScalarInteger(schema->flags));
 
-  // These may not have been created by us, so borrow the pointers
-  // and keep a reference to `schema_xptr` to make sure they stay
-  // valid.
-  if (schema->n_children > 0) {
-    SEXP children_sexp = PROTECT(Rf_allocVector(VECSXP, schema->n_children));
-    for (R_xlen_t i = 0; i < schema->n_children; i++) {
-      SEXP child_xptr = PROTECT(schema_xptr_new(schema->children[i]));
-      R_SetExternalPtrProtected(child_xptr, schema_xptr);
-      SET_VECTOR_ELT(children_sexp, i, child_xptr);
+  // Try to return external pointers that were passed to schema_xptr_new to
+  // reduce the chance of circular references
+  SEXP schema_prot = R_ExternalPtrProtected(schema_xptr);
+  if (Rf_inherits(schema_prot, "arrowvctrs_schema_prot")) {
+    SET_VECTOR_ELT(result, 4, VECTOR_ELT(schema_prot, 0));
+    SET_VECTOR_ELT(result, 5, VECTOR_ELT(schema_prot, 1));
+  } else {
+    // These were not created in R so borrow the pointers
+    // and keep a reference to `schema_xptr` to make sure they stay
+    // valid.
+    if (schema->n_children > 0) {
+      SEXP children_sexp = PROTECT(Rf_allocVector(VECSXP, schema->n_children));
+      for (R_xlen_t i = 0; i < schema->n_children; i++) {
+        SEXP child_xptr = PROTECT(schema_xptr_new(schema->children[i]));
+        R_SetExternalPtrProtected(child_xptr, schema_xptr);
+        SET_VECTOR_ELT(children_sexp, i, child_xptr);
+        UNPROTECT(1);
+      }
+      SET_VECTOR_ELT(result, 4, children_sexp);
       UNPROTECT(1);
+    } else {
+      SET_VECTOR_ELT(result, 4, R_NilValue);
     }
-    SET_VECTOR_ELT(result, 4, children_sexp);
-    UNPROTECT(1);
-  } else {
-    SET_VECTOR_ELT(result, 4, R_NilValue);
-  }
 
-  if (schema->dictionary != NULL) {
-    SEXP dictionary_xptr = PROTECT(schema_xptr_new(schema->dictionary));
-    R_SetExternalPtrProtected(dictionary_xptr, schema_xptr);
-    SET_VECTOR_ELT(result, 5, dictionary_xptr);
-    UNPROTECT(1);
-  } else {
-    SET_VECTOR_ELT(result, 5, R_NilValue);
+    if (schema->dictionary != NULL) {
+      SEXP dictionary_xptr = PROTECT(schema_xptr_new(schema->dictionary));
+      R_SetExternalPtrProtected(dictionary_xptr, schema_xptr);
+      SET_VECTOR_ELT(result, 5, dictionary_xptr);
+      UNPROTECT(1);
+    } else {
+      SET_VECTOR_ELT(result, 5, R_NilValue);
+    }
   }
 
   UNPROTECT(1);
