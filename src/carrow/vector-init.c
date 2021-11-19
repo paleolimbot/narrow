@@ -82,7 +82,7 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
     } else {
       arrow_status_set_error(
         status, EINVAL,
-        "Expected %l or %l buffers in array but found %l",
+        "Expected %ld or %ld buffers in array but found %ld",
         vector->n_buffers, vector->n_buffers + 1, array->n_buffers
       );
       RETURN_IF_NOT_OK(status);

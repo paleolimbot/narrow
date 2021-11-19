@@ -10,3 +10,4 @@
 #include "vector-init.h"
 #include "vector-alloc.h"
 #include "vector-copy.h"
+#include "vector-validate.h"

@@ -46,6 +46,9 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
     for (int64_t i = 0; i < array->n_buffers; i++) {
       SEXP item = VECTOR_ELT(buffers_sexp, i);
       switch (TYPEOF(item)) {
+      case NILSXP:
+        array->buffers[i] = NULL;
+        break;
       case EXTPTRSXP:
         array->buffers[i] = R_ExternalPtrAddr(item);
         break;

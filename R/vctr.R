@@ -15,7 +15,16 @@
 arrow_vctr <- function(schema = arrow_schema("n"), array = arrow_array()) {
   schema <- as_arrow_schema(schema)
   arrays <- as_arrow_array(array)
-  structure(list(schema = schema, array = array), class = "arrowvctrs_vctr")
+  vctr <- structure(list(schema = schema, array = array), class = "arrowvctrs_vctr")
+  arrow_vctr_validate(vctr)
+  vctr
+}
+
+#' @rdname arrow_vctr
+#' @export
+arrow_vctr_validate <- function(x) {
+  .Call(arrowvctrs_c_vctr_validate, x)
+  invisible(x)
 }
 
 #' @rdname arrow_vctr
@@ -27,6 +36,19 @@ as_arrow_vctr <- function(x, ...) {
 #' @rdname arrow_vctr
 #' @export
 as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
+  x
+}
+
+#' @export
+`[[<-.arrowvctrs_vctr` <- function(x, i, value, ...) {
+  x <- unclass(x)
+  x[[i]] <- value
+  do.call(arrow_vctr, x)
+}
+
+#' @export
+`$<-.arrowvctrs_vctr` <- function(x, name, value, ...) {
+  x[[name]] <- value
   x
 }
 

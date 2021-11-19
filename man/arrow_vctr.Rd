@@ -2,11 +2,14 @@
 % Please edit documentation in R/vctr.R
 \name{arrow_vctr}
 \alias{arrow_vctr}
+\alias{arrow_vctr_validate}
 \alias{as_arrow_vctr}
 \alias{as_arrow_vctr.arrowvctrs_vctr}
 \title{Create arrow vectors}
 \usage{
 arrow_vctr(schema = arrow_schema("n"), array = arrow_array())
+
+arrow_vctr_validate(x)
 
 as_arrow_vctr(x, ...)
 

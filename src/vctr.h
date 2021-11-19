@@ -9,6 +9,8 @@
 #include "schema.h"
 #include "array.h"
 
+#define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
+
 static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, const char* arg) {
   if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
     Rf_error("`x` must be an `arrow_vctr()`");

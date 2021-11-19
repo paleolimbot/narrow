@@ -28,6 +28,7 @@ SEXP arrowvctrs_c_raw_from_vctr(SEXP vctr_sexp);
 SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp);
 
 SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp);
+SEXP arrowvctrs_c_vctr_validate(SEXP vctr_sexp);
 
 SEXP arrowvctrs_c_xptr_addr(SEXP xptr);
 
@@ -49,6 +50,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_raw_from_vctr", (DL_FUNC) &arrowvctrs_c_raw_from_vctr, 1},
   {"arrowvctrs_c_character_from_vctr", (DL_FUNC) &arrowvctrs_c_character_from_vctr, 1},
   {"arrowvctrs_c_deep_copy", (DL_FUNC) &arrowvctrs_c_deep_copy, 1},
+  {"arrowvctrs_c_vctr_validate", (DL_FUNC) &arrowvctrs_c_vctr_validate, 1},
   {"arrowvctrs_c_xptr_addr", (DL_FUNC) &arrowvctrs_c_xptr_addr, 1},
   {NULL, NULL, 0}
 };
