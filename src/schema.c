@@ -162,6 +162,10 @@ void finalize_schema_xptr(SEXP schema_xptr) {
   if (schema != NULL && schema->release != NULL) {
     schema->release(schema);
   }
+
+  if (schema != NULL) {
+    free(schema);
+  }
 }
 
 // for ArrowSchema* that were created by arrowvctrs_c_schema_xptr_new()

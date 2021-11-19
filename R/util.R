@@ -3,10 +3,6 @@ xptr_addr <- function(x) {
   .Call(arrowvctrs_c_xptr_addr, x);
 }
 
-xptr_addr_double <- function(x) {
-  .Call(arrowvctrs_c_xptr_addr_double, x);
-}
-
 `%||%` <- function(rhs, lhs) {
   if (is.null(rhs)) lhs else rhs
 }

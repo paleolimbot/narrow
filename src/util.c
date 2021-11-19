@@ -11,8 +11,3 @@ SEXP arrowvctrs_c_xptr_addr(SEXP xptr) {
   snprintf(buf, 1024, "%p", R_ExternalPtrAddr(xptr));
   return Rf_mkString(buf);
 }
-
-SEXP arrowvctrs_c_xptr_addr_double(SEXP xptr) {
-  uintptr_t pointer_int = (uintptr_t) R_ExternalPtrAddr(xptr);
-  return Rf_ScalarReal((double) pointer_int);
-}

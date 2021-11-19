@@ -140,12 +140,16 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
 
 
 // call the release() callback and set the release callback to NULL
-// this could be a pointer to an ArrowArray created by us or some other
-// package
+// the pointer to an ArrowArray is always created by us but its release
+// callback might have been defined by some other package
 void finalize_array_xptr(SEXP array_xptr) {
   struct ArrowArray* array = (struct ArrowArray*) R_ExternalPtrAddr(array_xptr);
   if (array != NULL && array->release != NULL) {
     array->release(array);
+  }
+
+  if (array != NULL) {
+    free(array);
   }
 }
 
@@ -162,6 +166,7 @@ void finalize_array(struct ArrowArray* array) {
     // which will get garbage collected and freed according to the pointers
     if (array->buffers != NULL) free(array->buffers);
     if (array->children != NULL) free(array->children);
-    free(array);
+
+    // don't free(array)!
   }
 }

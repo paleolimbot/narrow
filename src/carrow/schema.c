@@ -27,6 +27,7 @@ void arrow_schema_release_internal(struct ArrowSchema* schema) {
   }
 
   schema->release = NULL;
+  // don't free(schema)!
 }
 
 int64_t arrow_schema_metadata_size(const char* metadata) {

@@ -30,6 +30,7 @@ void arrow_array_release_internal(struct ArrowArray* array) {
   }
 
   array->release = NULL;
+  // don't free(array)!
 }
 
 int arrow_array_copy_structure(struct ArrowArray* out, struct ArrowArray* array,

@@ -1,7 +1,7 @@
 
 #' Convert to and from arrow package types
 #'
-#' @param x An object to conver to or from 'arrow' package types
+#' @param x An object to convert to or from 'arrow' package types
 #' @inheritParams from_arrow_vctr
 #' @param ... Passed to S3 methods
 #'
@@ -61,4 +61,6 @@ as_arrow_vctr.RecordBatch <- function(x, ...) {
   stop("Not implemented")
 }
 
-
+xptr_addr_double <- function(x) {
+  .Call(arrowvctrs_c_xptr_addr_double, x);
+}
