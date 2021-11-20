@@ -56,6 +56,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   void* data_buffer_dst = arrow_vector_data_buffer(vector_dst);
 
   if (which_buffers & ARROW_BUFFER_VALIDITY) {
+    // note that the validity buffer can be NULL if the null count is 0
     if (validity_buffer_src != NULL) {
       if (validity_buffer_dst == NULL) {
         arrow_status_set_error(status, EINVAL, "Can't copy validity buffer to NULL");

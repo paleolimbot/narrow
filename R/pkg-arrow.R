@@ -33,34 +33,54 @@ from_arrow_vctr.R6ClassGenerator <- function(x, ptype, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_schema.Type <- function(x, ...) {
-  stop("Not implemented")
+as_arrow_schema.DataType <- function(x, ...) {
+  schema <- blank_invalid_schema()
+  x$export_to_c(xptr_addr_double(schema))
+  schema
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_arrow_schema.Field <- function(x, ...) {
-  stop("Not implemented")
+  schema <- blank_invalid_schema()
+  x$export_to_c(xptr_addr_double(schema))
+  schema
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_arrow_schema.Schema <- function(x, ...) {
-  stop("Not implemented")
+  schema <- blank_invalid_schema()
+  x$export_to_c(xptr_addr_double(schema))
+  schema
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_arrow_vctr.Array <- function(x, ...) {
-  stop("Not implemented")
+  schema <- blank_invalid_schema()
+  array <- blank_invalid_array()
+  x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
+  arrow_vctr(schema, array)
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_arrow_vctr.RecordBatch <- function(x, ...) {
-  stop("Not implemented")
+  schema <- blank_invalid_schema()
+  array <- blank_invalid_array()
+  x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
+  arrow_vctr(schema, array)
 }
 
 xptr_addr_double <- function(x) {
   .Call(arrowvctrs_c_xptr_addr_double, x);
+}
+
+blank_invalid_schema <- function() {
+  .Call(arrowvctrs_c_schema_blank)
+}
+
+blank_invalid_array <- function() {
+  .Call(arrowvctrs_c_array_blank)
 }

@@ -81,7 +81,7 @@ int arrow_vector_validate(struct ArrowVector* vector, struct ArrowStatus* status
 
   // check that buffers that should exist are not NULL
   if (vector->array->length > 0) {
-    if (vector->has_validity_buffer && arrow_vector_validity_buffer(vector) == NULL) {
+    if (vector->has_validity_buffer && vector->array->null_count != 0 && arrow_vector_validity_buffer(vector) == NULL) {
       arrow_status_set_error(status, EINVAL, "Expected validity buffer but found NULL");
       RETURN_IF_NOT_OK(status);
     }

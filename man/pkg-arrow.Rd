@@ -3,7 +3,7 @@
 \name{from_arrow_vctr.Array}
 \alias{from_arrow_vctr.Array}
 \alias{from_arrow_vctr.R6ClassGenerator}
-\alias{as_arrow_schema.Type}
+\alias{as_arrow_schema.DataType}
 \alias{as_arrow_schema.Field}
 \alias{as_arrow_schema.Schema}
 \alias{as_arrow_vctr.Array}
@@ -14,7 +14,7 @@
 
 \method{from_arrow_vctr}{R6ClassGenerator}(x, ptype, ...)
 
-\method{as_arrow_schema}{Type}(x, ...)
+\method{as_arrow_schema}{DataType}(x, ...)
 
 \method{as_arrow_schema}{Field}(x, ...)
 
@@ -25,7 +25,7 @@
 \method{as_arrow_vctr}{RecordBatch}(x, ...)
 }
 \arguments{
-\item{x}{An object to conver to or from 'arrow' package types}
+\item{x}{An object to convert to or from 'arrow' package types}
 
 \item{ptype}{An R object to use as a prototype}
 
