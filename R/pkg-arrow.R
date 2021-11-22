@@ -23,8 +23,14 @@ from_arrow_vctr.Array <- function(x, ptype, ...) {
 from_arrow_vctr.R6ClassGenerator <- function(x, ptype, ...) {
   switch(
     ptype$classname,
+    RecordBatch =,
     Array = arrow::Array$import_from_c(
       xptr_addr_double(.Call(arrowvctrs_c_exportable_array, x$array)),
+      xptr_addr_double(.Call(arrowvctrs_c_exportable_schema, x$schema))
+    ),
+    DataType =,
+    Field =,
+    Schema = ptype$import_from_c(
       xptr_addr_double(.Call(arrowvctrs_c_exportable_schema, x$schema))
     ),
     stop(sprintf("Can't convert from arrow_vctr to R6 type '%s'", ptype$classname))

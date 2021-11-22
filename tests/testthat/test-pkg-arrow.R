@@ -8,6 +8,29 @@ test_that("vctr to Array works", {
   expect_identical(as.character(b), as.character(arrow::Array$create(c("one", "two"))))
 })
 
+test_that("vctr to RecordBatch works", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(a = 1:5, b = letters[1:5])
+  expect_identical(
+    as.data.frame(from_arrow_vctr(as_arrow_vctr(df), arrow::RecordBatch)),
+    as.data.frame(arrow::RecordBatch$create(a = 1:5, b = letters[1:5]))
+  )
+})
+
+test_that("vctr to DataType/Field/Schema works", {
+  skip_if_not_installed("arrow")
+
+  a <- from_arrow_vctr(as_arrow_vctr(1:5), get("DataType", asNamespace("arrow")))
+  expect_true(a == arrow::int32())
+
+  a <- from_arrow_vctr(as_arrow_vctr(c(NA, 1:5), name = "fieldname"), arrow:::Field)
+  expect_true(a == arrow::Field$create("fieldname", arrow::int32()))
+
+  a <- from_arrow_vctr(as_arrow_vctr(data.frame(intcol = c(NA, 1:5))), arrow:::Schema)
+  expect_true(a == arrow::schema(intcol = arrow::int32()))
+})
+
 test_that("Type to schema works", {
   skip_if_not_installed("arrow")
 
