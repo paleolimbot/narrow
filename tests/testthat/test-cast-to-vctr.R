@@ -13,7 +13,7 @@ test_that("logical(0) to vctr works", {
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], l)
+  expect_identical(vctr$array$buffers[[2]], l)
 })
 
 test_that("NA to vctr works", {
@@ -33,7 +33,7 @@ test_that("integer(0) to vctr works", {
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], l)
+  expect_identical(vctr$array$buffers[[2]], l)
 })
 
 test_that("NA_integer_ to vctr works", {
@@ -53,7 +53,7 @@ test_that("double(0) to vctr works", {
   expect_identical(vctr$schema$format, "g")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], l)
+  expect_identical(vctr$array$buffers[[2]], l)
 })
 
 test_that("NA_real_ to vctr works", {
@@ -73,8 +73,8 @@ test_that("character(0) to vctr works", {
   expect_identical(vctr$schema$format, "u")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], 0L)
-  expect_identical(vctr$array$buffers[[2]], raw())
+  expect_identical(vctr$array$buffers[[2]], 0L)
+  expect_identical(vctr$array$buffers[[3]], raw())
 })
 
 test_that("NA_character_ to vctr works", {
@@ -95,11 +95,11 @@ test_that("small character(0) to vctr works", {
   expect_identical(vctr$schema$format, "u")
   expect_identical(vctr$array$length, as_arrow_int64(3))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], c(0L, 1L, 3L, 6L))
-  expect_identical(vctr$array$buffers[[2]], charToRaw("abcdef"))
+  expect_identical(vctr$array$buffers[[2]], c(0L, 1L, 3L, 6L))
+  expect_identical(vctr$array$buffers[[3]], charToRaw("abcdef"))
 })
 
-test_that("large character(0) to vctr works", {
+test_that("large character() to vctr works", {
   # this allocs ~4 GB, so skip anywhere except locally
   skip_on_cran()
   skip_on_ci()
@@ -109,7 +109,7 @@ test_that("large character(0) to vctr works", {
   expect_identical(vctr$schema$format, "U")
   expect_identical(vctr$array$length, as_arrow_int64(2 ^ 11))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(length(vctr$array$buffers[[2]]), 2 ^ 31)
+  expect_identical(length(vctr$array$buffers[[3]]), 2 ^ 31)
 })
 
 test_that("factor() to vctr works", {
@@ -121,8 +121,8 @@ test_that("factor() to vctr works", {
   expect_identical(vctr$array$null_count, as_arrow_int64(1))
   expect_identical(vctr$array$buffers[[1]], as_arrow_bitmask(!is.na(l)))
   expect_equal(unclass(vctr$array$buffers[[2]]), c(NA, 0:25, 0:25), ignore_attr = TRUE)
-  expect_equal(vctr$array$dictionary$buffers[[1]], c(0L, 1:26))
-  expect_equal(vctr$array$dictionary$buffers[[2]], charToRaw(paste(letters, collapse = "")))
+  expect_equal(vctr$array$dictionary$buffers[[2]], c(0L, 1:26))
+  expect_equal(vctr$array$dictionary$buffers[[3]], charToRaw(paste(letters, collapse = "")))
 })
 
 test_that("raw(0) to vctr works", {
@@ -131,7 +131,7 @@ test_that("raw(0) to vctr works", {
   expect_identical(vctr$schema$format, "C")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], l)
+  expect_identical(vctr$array$buffers[[2]], l)
 })
 
 test_that("as.raw(0xff) to vctr works", {
@@ -140,7 +140,7 @@ test_that("as.raw(0xff) to vctr works", {
   expect_identical(vctr$schema$format, "C")
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
-  expect_identical(vctr$array$buffers[[1]], l)
+  expect_identical(vctr$array$buffers[[2]], l)
 })
 
 test_that("data.frame to vctr works", {
@@ -151,7 +151,7 @@ test_that("data.frame to vctr works", {
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
   # won't be true for character() since these are represented differently
   expect_identical(
-    lapply(vctr$array$children, function(x) x$buffers[[1]]),
+    lapply(vctr$array$children, function(x) x$buffers[[2]]),
     lapply(l, identity)
   )
 })

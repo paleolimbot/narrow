@@ -32,7 +32,7 @@ as_arrow_vctr.logical <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -47,7 +47,7 @@ as_arrow_vctr.integer <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -62,7 +62,7 @@ as_arrow_vctr.double <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("g", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else x,
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -86,6 +86,8 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
 
   if (any(x_is_na)) {
     buffers <- c(list(as_arrow_bitmask(!x_is_na)), buffers)
+  } else {
+    buffers <- c(list(NULL), buffers)
   }
 
   arrow_vctr(
@@ -118,7 +120,7 @@ as_arrow_vctr.factor <- function(x, ..., name = NULL) {
       dictionary = dictionary_vctr$schema
     ),
     arrow_array(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), indices) else indices,
+      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), indices) else list(NULL, indices),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0,
@@ -133,7 +135,7 @@ as_arrow_vctr.raw <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("C", name),
     arrow_array(
-      buffers = list(x),
+      buffers = list(NULL, x),
       length = length(x),
       null_count = 0,
       offset = 0
@@ -151,7 +153,7 @@ as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
     arrow_array(
-      buffers = list(),
+      buffers = list(NULL),
       length = nrow(x),
       null_count = 0,
       children = arrays

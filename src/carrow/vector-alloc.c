@@ -26,7 +26,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
 
   if (which_buffers & ARROW_BUFFER_VALIDITY) {
     unsigned char* validity_buffer = arrow_vector_validity_buffer(vector);
-    if (vector->has_validity_buffer && validity_buffer == NULL) {
+    if (vector->array->null_count != 0 && validity_buffer == NULL) {
       int64_t validity_buffer_size = (vector->array->length - 1) / 8 + 1;
       validity_buffer = (unsigned char*) malloc(validity_buffer_size);
 
@@ -63,7 +63,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->offset_buffer_id + vector->has_validity_buffer] = offset_buffer;
+      vector->array->buffers[vector->offset_buffer_id] = offset_buffer;
     }
 
     int64_t* large_offset_buffer = arrow_vector_large_offset_buffer(vector);
@@ -79,7 +79,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->large_offset_buffer_id + vector->has_validity_buffer] = large_offset_buffer;
+      vector->array->buffers[vector->large_offset_buffer_id] = large_offset_buffer;
     }
   }
 
@@ -97,7 +97,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->union_type_buffer_id + vector->has_validity_buffer] = union_type_buffer;
+      vector->array->buffers[vector->union_type_buffer_id] = union_type_buffer;
     }
   }
 
@@ -138,7 +138,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
           RETURN_IF_NOT_OK(status);
         }
 
-        vector->array->buffers[vector->data_buffer_id + vector->has_validity_buffer] = data_buffer;
+        vector->array->buffers[vector->data_buffer_id] = data_buffer;
       }
     }
   }

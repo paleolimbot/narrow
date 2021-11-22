@@ -10,8 +10,8 @@
 void arrow_vector_set_primitive(struct ArrowVector* vector, enum ArrowType type, uint64_t size) {
   vector->type = type;
   vector->data_buffer_type = vector->type;
-  vector->n_buffers = 1;
-  vector->data_buffer_id = 0;
+  vector->n_buffers = 2;
+  vector->data_buffer_id = 1;
   vector->element_size_bytes = size;
 }
 
@@ -31,13 +31,14 @@ int arrow_vector_parse_format(struct ArrowVector* vector, const char* format, st
   // null type with no buffers
   case 'n':
     vector->type = ARROW_TYPE_NA;
+    vector->n_buffers = 0;
     return 0;
 
     // types with data or validity + data buffers
   case 'b':
     vector->type = ARROW_TYPE_BOOL;
-    vector->n_buffers = 1;
-    vector->data_buffer_id = 0;
+    vector->n_buffers = 2;
+    vector->data_buffer_id = 1;
     return 0;
   case 'c':
     arrow_vector_set_primitive(vector, ARROW_TYPE_INT8, sizeof(int8_t));
@@ -89,29 +90,29 @@ int arrow_vector_parse_format(struct ArrowVector* vector, const char* format, st
     // types with validity + offset + data or offset + data
   case 'z':
     vector->type = ARROW_TYPE_BINARY;
-    vector->n_buffers = 2;
-    vector->offset_buffer_id = 0;
-    vector->data_buffer_id = 1;
+    vector->n_buffers = 3;
+    vector->offset_buffer_id = 1;
+    vector->data_buffer_id = 2;
     return 0;
   case 'u':
     vector->type = ARROW_TYPE_STRING;
-    vector->n_buffers = 2;
-    vector->offset_buffer_id = 0;
-    vector->data_buffer_id = 1;
+    vector->n_buffers = 3;
+    vector->offset_buffer_id = 1;
+    vector->data_buffer_id = 2;
     return 0;
 
     // types with validity + large_offset + data or large_offset + data
   case 'Z':
     vector->type = ARROW_TYPE_LARGE_BINARY;
-    vector->n_buffers = 2;
-    vector->large_offset_buffer_id = 0;
-    vector->data_buffer_id = 1;
+    vector->n_buffers = 3;
+    vector->large_offset_buffer_id = 1;
+    vector->data_buffer_id = 2;
     return 0;
   case 'U':
     vector->type = ARROW_TYPE_LARGE_STRING;
-    vector->n_buffers = 2;
-    vector->large_offset_buffer_id = 0;
-    vector->data_buffer_id = 1;
+    vector->n_buffers = 3;
+    vector->large_offset_buffer_id = 1;
+    vector->data_buffer_id = 2;
     return 0;
   }
 
@@ -122,15 +123,15 @@ int arrow_vector_parse_format(struct ArrowVector* vector, const char* format, st
     // list has validity + offset or offset
     case 'l':
       vector->type = ARROW_TYPE_LIST;
-      vector->n_buffers = 1;
-      vector->offset_buffer_id = 0;
+      vector->n_buffers = 2;
+      vector->offset_buffer_id = 1;
       return 0;
 
       // large list has validity + large_offset or large_offset
     case 'L':
       vector->type = ARROW_TYPE_LARGE_LIST;
-      vector->n_buffers = 1;
-      vector->large_offset_buffer_id = 0;
+      vector->n_buffers = 2;
+      vector->large_offset_buffer_id = 1;
       return 0;
 
       // if these types have a buffer, it's a validity buffer
@@ -149,11 +150,14 @@ int arrow_vector_parse_format(struct ArrowVector* vector, const char* format, st
       switch (format[2]) {
       case 'd':
         vector->type = ARROW_TYPE_DENSE_UNION;
-        vector->n_buffers = 1;
+        vector->n_buffers = 3;
+        vector->union_type_buffer_id = 1;
+        vector->offset_buffer_id = 2;
         return 0;
       case 's':
         vector->type = ARROW_TYPE_SPARSE_UNION;
         vector->n_buffers = 2;
+        vector->union_type_buffer_id = 1;
         return 0;
       default:
         arrow_status_set_error(status, EINVAL, "Invalid union format string: '%s'", format);

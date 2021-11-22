@@ -13,7 +13,7 @@ test_that("arrow_vctr_validate works", {
 
   expect_error(
     arrow_vctr(arrow_schema("i"), arrow_array()),
-    "Expected 1 or 2 buffers"
+    "Expected 2 buffers"
   )
 
   expect_error(
@@ -24,24 +24,24 @@ test_that("arrow_vctr_validate works", {
   expect_error(
     arrow_vctr(
       arrow_schema("+s", children = list(arrow_schema("u"))),
-      arrow_array(children = list(arrow_array()))
+      arrow_array(buffers = list(NULL), children = list(arrow_array()))
     ),
-    "Expected 2 or 3 buffers"
+    "Expected 3 buffers"
   )
 
   expect_error(
     arrow_vctr(
       arrow_schema("i", dictionary = arrow_schema("u")),
-      arrow_array(buffers = list(1L), dictionary = arrow_array())
+      arrow_array(buffers = list(NULL, 1L), dictionary = arrow_array())
     ),
-    "Expected 2 or 3 buffers"
+    "Expected 3 buffers"
   )
 
-  expect_silent(arrow_vctr(arrow_schema("i"), arrow_array(buffers = list(NULL))))
+  expect_silent(arrow_vctr(arrow_schema("i"), arrow_array(buffers = list(NULL, NULL))))
 })
 
 test_that("subset-assign on a vctr does validation", {
-  v <- arrow_vctr(arrow_schema("i"), arrow_array(buffers = list(1L), length = 1))
+  v <- arrow_vctr(arrow_schema("i"), arrow_array(buffers = list(NULL, 1L), null_count = 0, length = 1))
   expect_silent(v$schema <- arrow_schema("i"))
-  expect_error(v$schema <- arrow_schema("u"), "Expected 2 or 3 buffers")
+  expect_error(v$schema <- arrow_schema("u"), "Expected 3 buffers")
 })

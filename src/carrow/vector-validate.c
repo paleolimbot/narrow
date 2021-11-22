@@ -49,11 +49,6 @@ int arrow_vector_validate(struct ArrowVector* vector, struct ArrowStatus* status
     RETURN_IF_NOT_OK(status);
   }
 
-  if (vector_copy.has_validity_buffer != vector->has_validity_buffer) {
-    arrow_status_set_error(status, EINVAL, "vector->has_validity_buffer is outdated");
-    RETURN_IF_NOT_OK(status);
-  }
-
   if (vector_copy.large_offset_buffer_id != vector->large_offset_buffer_id) {
     arrow_status_set_error(status, EINVAL, "vector->large_offset_buffer_id is outdated");
     RETURN_IF_NOT_OK(status);
@@ -81,7 +76,7 @@ int arrow_vector_validate(struct ArrowVector* vector, struct ArrowStatus* status
 
   // check that buffers that should exist are not NULL
   if (vector->array->length > 0) {
-    if (vector->has_validity_buffer && vector->array->null_count != 0 && arrow_vector_validity_buffer(vector) == NULL) {
+    if (vector->array->null_count != 0 && arrow_vector_validity_buffer(vector) == NULL) {
       arrow_status_set_error(status, EINVAL, "Expected validity buffer but found NULL");
       RETURN_IF_NOT_OK(status);
     }

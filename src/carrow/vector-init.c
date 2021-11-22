@@ -35,10 +35,9 @@ int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* sche
   vector->type = ARROW_TYPE_MAX_ID;
   vector->data_buffer_type = ARROW_TYPE_MAX_ID;
   vector->args = "";
-  vector->n_buffers = 0;
+  vector->n_buffers = 1;
   vector->element_size_bytes = -1;
 
-  vector->has_validity_buffer = 0;
   vector->offset_buffer_id = -1;
   vector->large_offset_buffer_id = -1;
   vector->union_type_buffer_id = -1;
@@ -75,15 +74,11 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
       RETURN_IF_NOT_OK(status);
     }
 
-    if (array->n_buffers == vector->n_buffers) {
-      vector->has_validity_buffer = 0;
-    } else if (array->n_buffers == (vector->n_buffers + 1)) {
-      vector->has_validity_buffer = 1;
-    } else {
+    if (array->n_buffers != vector->n_buffers) {
       arrow_status_set_error(
         status, EINVAL,
-        "Expected %ld or %ld buffers in array but found %ld",
-        vector->n_buffers, vector->n_buffers + 1, array->n_buffers
+        "Expected %ld buffers for schema type '%s' but found %ld buffers in array",
+        vector->n_buffers, vector->schema->format, array->n_buffers
       );
       RETURN_IF_NOT_OK(status);
      }

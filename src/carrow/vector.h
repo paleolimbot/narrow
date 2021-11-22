@@ -155,22 +155,15 @@ struct ArrowVector {
   int n_buffers;
   int64_t element_size_bytes;
 
-  // index of array->buffer[], not including validity buffer
+  // index of array->buffer[], including validity buffer
   int offset_buffer_id;
   int large_offset_buffer_id;
   int union_type_buffer_id;
   int data_buffer_id;
-
-  // calculated on arrow_vector_set_array()
-  int has_validity_buffer;
 };
 
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
-  if (vector->has_validity_buffer) {
-    return (unsigned char*) vector->array->buffers[0];
-  } else {
-    return 0;
-  }
+  return (unsigned char*) vector->array->buffers[0];
 }
 
 static inline int32_t* arrow_vector_offset_buffer(struct ArrowVector* vector) {
@@ -178,7 +171,7 @@ static inline int32_t* arrow_vector_offset_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (int32_t*) vector->array->buffers[vector->offset_buffer_id + vector->has_validity_buffer];
+  return (int32_t*) vector->array->buffers[vector->offset_buffer_id];
 }
 
 static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vector) {
@@ -186,7 +179,7 @@ static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vect
     return 0;
   }
 
-  return (int64_t*) vector->array->buffers[vector->large_offset_buffer_id + vector->has_validity_buffer];
+  return (int64_t*) vector->array->buffers[vector->large_offset_buffer_id];
 }
 
 static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
@@ -194,7 +187,7 @@ static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (char*) vector->array->buffers[vector->union_type_buffer_id + vector->has_validity_buffer];
+  return (char*) vector->array->buffers[vector->union_type_buffer_id];
 }
 
 static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
@@ -202,7 +195,7 @@ static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (void*) vector->array->buffers[vector->data_buffer_id + vector->has_validity_buffer];
+  return (void*) vector->array->buffers[vector->data_buffer_id];
 }
 
 #ifdef __cplusplus
