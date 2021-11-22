@@ -4,7 +4,7 @@
 
 #include "carrow/carrow.h"
 #include "schema.h"
-#include "array.h"
+#include "array-data.h"
 #include "util.h"
 
 SEXP arrowvctrs_c_xptr_addr_double(SEXP xptr) {

@@ -5,7 +5,7 @@
 #include "carrow/carrow.h"
 #include "vctr.h"
 #include "schema.h"
-#include "array.h"
+#include "array-data.h"
 #include "bitmask.h"
 #include "int64.h"
 

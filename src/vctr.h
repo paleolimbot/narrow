@@ -7,7 +7,7 @@
 
 #include "carrow/carrow.h"
 #include "schema.h"
-#include "array.h"
+#include "array-data.h"
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 

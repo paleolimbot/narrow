@@ -4,7 +4,7 @@
 #include <string.h>
 #include "int64.h"
 #include "carrow/carrow.h"
-#include "array.h"
+#include "array-data.h"
 #include "util.h"
 
 void finalize_array_xptr(SEXP array_xptr);
