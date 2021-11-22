@@ -9,13 +9,13 @@
 #include "status.h"
 
 int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
-                      struct ArrowArray* array, struct ArrowStatus* status) {
+                      struct ArrowArray* array_data, struct ArrowStatus* status) {
   arrow_status_reset(status);
 
   arrow_vector_set_schema(vector, schema, status);
   RETURN_IF_NOT_OK(status);
 
-  arrow_vector_set_array(vector, array, status);
+  arrow_vector_set_array(vector, array_data, status);
   RETURN_IF_NOT_OK(status);
 
   return 0;
@@ -31,7 +31,7 @@ int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* sche
 
   // reset values
   vector->schema = NULL;
-  vector->array = NULL;
+  vector->array_data = NULL;
   vector->type = ARROW_TYPE_MAX_ID;
   vector->data_buffer_type = ARROW_TYPE_MAX_ID;
   vector->args = "";
@@ -59,7 +59,7 @@ int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* sche
   return 0;
 }
 
-int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
+int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array_data,
                            struct ArrowStatus* status) {
   arrow_status_reset(status);
 
@@ -68,22 +68,22 @@ int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array,
     RETURN_IF_NOT_OK(status);
   }
 
-  if (array != NULL) {
-    if (array->release == NULL) {
+  if (array_data != NULL) {
+    if (array_data->release == NULL) {
       arrow_status_set_error(status, EINVAL, "`array` is released");
       RETURN_IF_NOT_OK(status);
     }
 
-    if (array->n_buffers != vector->n_buffers) {
+    if (array_data->n_buffers != vector->n_buffers) {
       arrow_status_set_error(
         status, EINVAL,
         "Expected %ld buffers for schema type '%s' but found %ld buffers in array",
-        vector->n_buffers, vector->schema->format, array->n_buffers
+        vector->n_buffers, vector->schema->format, array_data->n_buffers
       );
       RETURN_IF_NOT_OK(status);
      }
   }
 
-  vector->array = array;
+  vector->array_data = array_data;
   return 0;
 }

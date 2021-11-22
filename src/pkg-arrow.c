@@ -25,11 +25,11 @@ SEXP arrowvctrs_c_schema_blank() {
 }
 
 SEXP arrowvctrs_c_array_blank() {
-  struct ArrowArray* array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
-  check_trivial_alloc(array, "struct ArrowArray");
-  array->release = NULL;
+  struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
+  check_trivial_alloc(array_data, "struct ArrowArray");
+  array_data->release = NULL;
 
-  SEXP array_data_xptr = PROTECT(array_data_xptr_new(array));
+  SEXP array_data_xptr = PROTECT(array_data_xptr_new(array_data));
   R_RegisterCFinalizer(array_data_xptr, finalize_array_data_xptr);
   UNPROTECT(1);
 
@@ -50,15 +50,15 @@ void release_exportable_schema(struct ArrowSchema* schema) {
   schema->release = NULL;
 }
 
-void release_exportable_array(struct ArrowArray* array) {
-  SEXP array_data_xptr = (SEXP) array->private_data;
+void release_exportable_array(struct ArrowArray* array_data) {
+  SEXP array_data_xptr = (SEXP) array_data->private_data;
   R_ReleaseObject(array_data_xptr);
 
   // there's a thing here where callers can get some of the child
   // arrays too and I'm not sure how to support that here
   // https://arrow.apache.org/docs/format/CDataInterface.html#moving-child-arrays
 
-  array->release = NULL;
+  array_data->release = NULL;
 }
 
 SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr) {
@@ -78,18 +78,17 @@ SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr) {
 }
 
 SEXP arrowvctrs_c_exportable_array(SEXP array_data_xptr) {
-  struct ArrowArray* array = array_from_xptr(array_data_xptr, "array");
-  struct ArrowArray* array_copy = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
-  check_trivial_alloc(array_copy, "struct ArrowArray");
+  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
+  struct ArrowArray* array_data_copy = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
+  check_trivial_alloc(array_data_copy, "struct ArrowArray");
 
   // keep all the pointers but use the R_PreserveObject mechanism to keep
   // the original data valid (R_ReleaseObject is called from the release callback)
-  memcpy(array_copy, array, sizeof(struct ArrowArray));
-  array_copy->private_data = array_data_xptr;
-  array_copy->release = &release_exportable_array;
+  memcpy(array_data_copy, array_data, sizeof(struct ArrowArray));
+  array_data_copy->private_data = array_data_xptr;
+  array_data_copy->release = &release_exportable_array;
   R_PreserveObject(array_data_xptr);
 
   // this object has no finalizer so it has to be passed somewhere that does!
-  return R_MakeExternalPtr(array_copy, R_NilValue, R_NilValue);
+  return R_MakeExternalPtr(array_data_copy, R_NilValue, R_NilValue);
 }
-

@@ -26,8 +26,8 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
 
   if (which_buffers & ARROW_BUFFER_VALIDITY) {
     unsigned char* validity_buffer = arrow_vector_validity_buffer(vector);
-    if (vector->array->null_count != 0 && validity_buffer == NULL) {
-      int64_t validity_buffer_size = (vector->array->length - 1) / 8 + 1;
+    if (vector->array_data->null_count != 0 && validity_buffer == NULL) {
+      int64_t validity_buffer_size = (vector->array_data->length - 1) / 8 + 1;
       validity_buffer = (unsigned char*) malloc(validity_buffer_size);
 
       if (validity_buffer == NULL) {
@@ -44,7 +44,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
       // and the copy function has no way of knowing whether or not the buffer
       // has been initialized
       memset(validity_buffer, 0, validity_buffer_size);
-      vector->array->buffers[0] = validity_buffer;
+      vector->array_data->buffers[0] = validity_buffer;
     }
   }
 
@@ -52,52 +52,52 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
     int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
 
     if (vector->offset_buffer_id != -1 && offset_buffer == NULL) {
-      offset_buffer = (int32_t*) malloc((vector->array->length + 1) * sizeof(int32_t));
+      offset_buffer = (int32_t*) malloc((vector->array_data->length + 1) * sizeof(int32_t));
 
       if (offset_buffer == NULL) {
         arrow_status_set_error(
           status, ENOMEM,
           "Failed to allocate offset buffer of size %ld [bytes]",
-          (vector->array->length + 1) * sizeof(int32_t)
+          (vector->array_data->length + 1) * sizeof(int32_t)
         );
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->offset_buffer_id] = offset_buffer;
+      vector->array_data->buffers[vector->offset_buffer_id] = offset_buffer;
     }
 
     int64_t* large_offset_buffer = arrow_vector_large_offset_buffer(vector);
     if (vector->large_offset_buffer_id != -1 && large_offset_buffer == NULL) {
-      large_offset_buffer = (int64_t*) malloc((vector->array->length + 1) * sizeof(int64_t));
+      large_offset_buffer = (int64_t*) malloc((vector->array_data->length + 1) * sizeof(int64_t));
 
       if (large_offset_buffer == NULL) {
         arrow_status_set_error(
           status, ENOMEM,
           "Failed to allocate large offset buffer of size %ld [bytes]",
-          (vector->array->length + 1) * sizeof(int64_t)
+          (vector->array_data->length + 1) * sizeof(int64_t)
         );
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->large_offset_buffer_id] = large_offset_buffer;
+      vector->array_data->buffers[vector->large_offset_buffer_id] = large_offset_buffer;
     }
   }
 
   if (which_buffers & ARROW_BUFFER_UNION_TYPE) {
     char* union_type_buffer = arrow_vector_union_type_buffer(vector);
     if (vector->union_type_buffer_id != -1 && union_type_buffer == NULL) {
-      union_type_buffer = (char*) malloc(vector->array->length * sizeof(char));
+      union_type_buffer = (char*) malloc(vector->array_data->length * sizeof(char));
 
       if (union_type_buffer == NULL) {
         arrow_status_set_error(
           status, ENOMEM,
           "Failed to allocate union type buffer of size %ld [bytes]",
-          (vector->array->length + 1) * sizeof(int64_t)
+          (vector->array_data->length + 1) * sizeof(int64_t)
         );
         RETURN_IF_NOT_OK(status);
       }
 
-      vector->array->buffers[vector->union_type_buffer_id] = union_type_buffer;
+      vector->array_data->buffers[vector->union_type_buffer_id] = union_type_buffer;
     }
   }
 
@@ -112,12 +112,12 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
 
       if (needs_offset_buffer && has_existing_offset_buffer) {
         int32_t* offset_buffer = arrow_vector_offset_buffer(vector);
-        data_buffer_size = offset_buffer[vector->array->length] - offset_buffer[0];
+        data_buffer_size = offset_buffer[vector->array_data->length] - offset_buffer[0];
       } else if (needs_offset_buffer && has_existing_large_offset_buffer) {
         int64_t* large_offset_buffer = arrow_vector_large_offset_buffer(vector);
-        data_buffer_size = large_offset_buffer[vector->array->length] - large_offset_buffer[0];
+        data_buffer_size = large_offset_buffer[vector->array_data->length] - large_offset_buffer[0];
       } else if (!needs_offset_buffer) {
-        data_buffer_size = vector->element_size_bytes * vector->array->length;
+        data_buffer_size = vector->element_size_bytes * vector->array_data->length;
       } else {
         arrow_status_set_error(
           status, EINVAL,
@@ -138,7 +138,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
           RETURN_IF_NOT_OK(status);
         }
 
-        vector->array->buffers[vector->data_buffer_id] = data_buffer;
+        vector->array_data->buffers[vector->data_buffer_id] = data_buffer;
       }
     }
   }
@@ -148,7 +148,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
   if (which_buffers & ARROW_BUFFER_CHILD) {
     // also allocate child vectors
     for (int64_t i = 0; i < vector->schema->n_children; i++) {
-      arrow_vector_init(&child_vector, vector->schema->children[i], vector->array->children[i], status);
+      arrow_vector_init(&child_vector, vector->schema->children[i], vector->array_data->children[i], status);
       RETURN_IF_NOT_OK(status);
 
       arrow_vector_alloc_buffers(&child_vector, which_buffers, status);
@@ -159,7 +159,7 @@ int arrow_vector_alloc_buffers(struct ArrowVector* vector, int32_t which_buffers
   if (which_buffers & ARROW_BUFFER_DICTIONARY) {
     // ...and dictionary vector
     if (vector->schema->dictionary != NULL) {
-      arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array->dictionary, status);
+      arrow_vector_init(&child_vector, vector->schema->dictionary, vector->array_data->dictionary, status);
       RETURN_IF_NOT_OK(status);
 
       arrow_vector_alloc_buffers(&child_vector, which_buffers, status);

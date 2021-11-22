@@ -17,7 +17,7 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
   }
 
   struct ArrowSchema* schema = schema_from_xptr(VECTOR_ELT(vctr_sexp, 0), arg);
-  struct ArrowArray* array = array_from_xptr(VECTOR_ELT(vctr_sexp, 1), arg);
+  struct ArrowArray* array_data = array_data_from_xptr(VECTOR_ELT(vctr_sexp, 1), arg);
 
   struct ArrowStatus status;
 
@@ -25,7 +25,7 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 
-  if (arrow_vector_set_array(vector, array, &status) != 0) {
+  if (arrow_vector_set_array(vector, array_data, &status) != 0) {
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 }

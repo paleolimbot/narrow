@@ -144,7 +144,7 @@ enum ArrowType {
 // its schema and array members.
 struct ArrowVector {
   struct ArrowSchema* schema;
-  struct ArrowArray* array;
+  struct ArrowArray* array_data;
 
   // arrow_vector_set_schema() parses schema->format to obtain a few
   // useful outputs that reduce the amount of parsing needed to
@@ -155,7 +155,7 @@ struct ArrowVector {
   int n_buffers;
   int64_t element_size_bytes;
 
-  // index of array->buffer[], including validity buffer
+  // index of array_data->buffer[], including validity buffer
   int offset_buffer_id;
   int large_offset_buffer_id;
   int union_type_buffer_id;
@@ -163,7 +163,7 @@ struct ArrowVector {
 };
 
 static inline unsigned char* arrow_vector_validity_buffer(struct ArrowVector* vector) {
-  return (unsigned char*) vector->array->buffers[0];
+  return (unsigned char*) vector->array_data->buffers[0];
 }
 
 static inline int32_t* arrow_vector_offset_buffer(struct ArrowVector* vector) {
@@ -171,7 +171,7 @@ static inline int32_t* arrow_vector_offset_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (int32_t*) vector->array->buffers[vector->offset_buffer_id];
+  return (int32_t*) vector->array_data->buffers[vector->offset_buffer_id];
 }
 
 static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vector) {
@@ -179,7 +179,7 @@ static inline int64_t* arrow_vector_large_offset_buffer(struct ArrowVector* vect
     return 0;
   }
 
-  return (int64_t*) vector->array->buffers[vector->large_offset_buffer_id];
+  return (int64_t*) vector->array_data->buffers[vector->large_offset_buffer_id];
 }
 
 static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
@@ -187,7 +187,7 @@ static inline char* arrow_vector_union_type_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (char*) vector->array->buffers[vector->union_type_buffer_id];
+  return (char*) vector->array_data->buffers[vector->union_type_buffer_id];
 }
 
 static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
@@ -195,7 +195,7 @@ static inline void* arrow_vector_data_buffer(struct ArrowVector* vector) {
     return 0;
   }
 
-  return (void*) vector->array->buffers[vector->data_buffer_id];
+  return (void*) vector->array_data->buffers[vector->data_buffer_id];
 }
 
 #ifdef __cplusplus

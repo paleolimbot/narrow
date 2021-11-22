@@ -7,33 +7,33 @@
 
 void finalize_array_data_xptr(SEXP array_data_xptr);
 
-static inline struct ArrowArray* array_from_xptr(SEXP array_data_xptr, const char* arg) {
+static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
   if (!Rf_inherits(array_data_xptr, "arrowvctrs_array")) {
     Rf_error("`%s` must be an object created with arrow_array()", arg);
   }
 
-  struct ArrowArray* array = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
-  if (array == NULL) {
+  struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
+  if (array_data == NULL) {
     Rf_error("`%s` is an external pointer to NULL", arg); // # nocov
   }
 
-  if (array->release == NULL) {
+  if (array_data->release == NULL) {
     Rf_error("`%s` has already been released and is no longer valid", arg); // # nocov
   }
 
-  return array;
+  return array_data;
 }
 
-static inline struct ArrowArray* nullable_array_from_xptr(SEXP array_data_xptr, const char* arg) {
+static inline struct ArrowArray* nullable_array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
   if (array_data_xptr == R_NilValue) {
     return NULL;
   } else {
-    return array_from_xptr(array_data_xptr, arg);
+    return array_data_from_xptr(array_data_xptr, arg);
   }
 }
 
-static inline SEXP array_data_xptr_new(struct ArrowArray* array) {
-  SEXP array_data_xptr = PROTECT(R_MakeExternalPtr(array, R_NilValue, R_NilValue));
+static inline SEXP array_data_xptr_new(struct ArrowArray* array_data) {
+  SEXP array_data_xptr = PROTECT(R_MakeExternalPtr(array_data, R_NilValue, R_NilValue));
   Rf_setAttrib(array_data_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_array"));
   UNPROTECT(1);
   return array_data_xptr;

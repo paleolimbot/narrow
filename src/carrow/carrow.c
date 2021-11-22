@@ -1,7 +1,7 @@
 
 #include "status.c"
 #include "schema.c"
-#include "array.c"
+#include "array-data.c"
 #include "vector-init.c"
 #include "vector-parse-format.c"
 #include "vector-alloc.c"

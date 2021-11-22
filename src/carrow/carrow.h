@@ -5,7 +5,7 @@
 #include "status.h"
 #include "buffer.h"
 #include "schema.h"
-#include "array.h"
+#include "array-data.h"
 #include "vector.h"
 #include "vector-init.h"
 #include "vector-alloc.h"
