@@ -2,9 +2,10 @@
 test_that("vctr to Array works", {
   skip_if_not_installed("arrow")
 
-  # currently segfaults
-  from_arrow_vctr(as_arrow_vctr(c(NA, 1:5), name = NULL), arrow::Array)
-  from_arrow_vctr(as_arrow_vctr(c(NA, "one", "two")), arrow::Array)
+  a <- from_arrow_vctr(as_arrow_vctr(1:5), arrow::Array)
+  expect_identical(as.integer(a), as.integer(arrow::Array$create(1:5)))
+  b <- from_arrow_vctr(as_arrow_vctr(c("one", "two")), arrow::Array)
+  expect_identical(as.character(b), as.character(arrow::Array$create(c("one", "two"))))
 })
 
 test_that("Type to schema works", {

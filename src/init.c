@@ -35,6 +35,8 @@ SEXP arrowvctrs_c_xptr_addr(SEXP xptr);
 SEXP arrowvctrs_c_xptr_addr_double(SEXP xptr);
 SEXP arrowvctrs_c_schema_blank();
 SEXP arrowvctrs_c_array_blank();
+SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr);
+SEXP arrowvctrs_c_exportable_array(SEXP array_xptr);
 
 static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_array_from_sexp", (DL_FUNC) &arrowvctrs_c_array_from_sexp, 6},
@@ -60,6 +62,8 @@ static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_xptr_addr_double", (DL_FUNC) &arrowvctrs_c_xptr_addr_double, 1},
   {"arrowvctrs_c_schema_blank", (DL_FUNC) &arrowvctrs_c_schema_blank, 0},
   {"arrowvctrs_c_array_blank", (DL_FUNC) &arrowvctrs_c_array_blank, 0},
+  {"arrowvctrs_c_exportable_schema", (DL_FUNC) &arrowvctrs_c_exportable_schema, 1},
+  {"arrowvctrs_c_exportable_array", (DL_FUNC) &arrowvctrs_c_exportable_array, 1},
   {NULL, NULL, 0}
 };
 
