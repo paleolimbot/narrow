@@ -3,9 +3,9 @@
 \name{from_carrow_array.Array}
 \alias{from_carrow_array.Array}
 \alias{from_carrow_array.R6ClassGenerator}
-\alias{as_arrow_schema.DataType}
-\alias{as_arrow_schema.Field}
-\alias{as_arrow_schema.Schema}
+\alias{as_carrow_schema.DataType}
+\alias{as_carrow_schema.Field}
+\alias{as_carrow_schema.Schema}
 \alias{as_carrow_array.Array}
 \alias{as_carrow_array.RecordBatch}
 \title{Convert to and from arrow package types}
@@ -14,11 +14,11 @@
 
 \method{from_carrow_array}{R6ClassGenerator}(x, ptype, ...)
 
-\method{as_arrow_schema}{DataType}(x, ...)
+\method{as_carrow_schema}{DataType}(x, ...)
 
-\method{as_arrow_schema}{Field}(x, ...)
+\method{as_carrow_schema}{Field}(x, ...)
 
-\method{as_arrow_schema}{Schema}(x, ...)
+\method{as_carrow_schema}{Schema}(x, ...)
 
 \method{as_carrow_array}{Array}(x, ...)
 

@@ -23,9 +23,9 @@ SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
   result_array_data->release = NULL;
   SEXP result_array_data_xptr = PROTECT(array_data_xptr_new(result_array_data));
 
-  int result = arrow_schema_deep_copy(result_schema, vector.schema);
+  int result = carrow_schema_deep_copy(result_schema, vector.schema);
   if (result != 0) {
-    Rf_error("arrow_schema_copy failed with error [%d] %s", result, strerror(result));
+    Rf_error("carrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
 
   result = arrow_array_copy_structure(result_array_data, vector.array_data, ARROW_BUFFER_ALL);

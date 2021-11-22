@@ -39,7 +39,7 @@ from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_schema.DataType <- function(x, ...) {
+as_carrow_schema.DataType <- function(x, ...) {
   schema <- blank_invalid_schema()
   x$export_to_c(xptr_addr_double(schema))
   schema
@@ -47,7 +47,7 @@ as_arrow_schema.DataType <- function(x, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_schema.Field <- function(x, ...) {
+as_carrow_schema.Field <- function(x, ...) {
   schema <- blank_invalid_schema()
   x$export_to_c(xptr_addr_double(schema))
   schema
@@ -55,7 +55,7 @@ as_arrow_schema.Field <- function(x, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_schema.Schema <- function(x, ...) {
+as_carrow_schema.Schema <- function(x, ...) {
   schema <- blank_invalid_schema()
   x$export_to_c(xptr_addr_double(schema))
   schema

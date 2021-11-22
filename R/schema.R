@@ -4,31 +4,31 @@
 #' @inheritParams parse_format
 #' @param metadata A named character vector of [list()] of [raw()]
 #'   containing key/value metadata.
-#' @param schema A schema created with [arrow_schema()]
+#' @param schema A schema created with [carrow_schema()]
 #' @param name An optional name
-#' @param flags Flags to set on input (see [arrow_schema_flags()])
-#' @param children A [list()] of objects created using [arrow_schema()].
-#' @param dictionary An [arrow_schema()] if this is a dictionary type.
+#' @param flags Flags to set on input (see [carrow_schema_flags()])
+#' @param children A [list()] of objects created using [carrow_schema()].
+#' @param dictionary An [carrow_schema()] if this is a dictionary type.
 #' @param dictionary_ordered `TRUE` if the `dictionary` array is ordered
 #' @param nullable `TRUE` if the type is semantically nullable
 #' @param map_keys_sorted `TRUE` if the keys for a map have been sorted
 #' @param recursive Use `TRUE` to serialize the schema recursively
-#' @param x An object to convert to an [arrow_schema()]
+#' @param x An object to convert to an [carrow_schema()]
 #' @param ... Passed to S3 methods
 #'
 #' @return An external pointer with class 'arrowvctrs_schema'
 #' @export
 #'
-arrow_schema <- function(format, name = NULL, metadata = NULL,
-                         flags = arrow_schema_flags(),
+carrow_schema <- function(format, name = NULL, metadata = NULL,
+                         flags = carrow_schema_flags(),
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)
   .Call(carrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-arrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
+carrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
                                map_keys_sorted = FALSE) {
   flags <- 0L
   if (dictionary_ordered) {
@@ -44,42 +44,42 @@ arrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
   flags
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-arrow_schema_deep_copy <- function(schema) {
-  .Call(carrow_c_schema_deep_copy, as_arrow_schema(schema))
+carrow_schema_deep_copy <- function(schema) {
+  .Call(carrow_c_schema_deep_copy, as_carrow_schema(schema))
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-as_arrow_schema <- function(x, ...) {
-  UseMethod("as_arrow_schema")
+as_carrow_schema <- function(x, ...) {
+  UseMethod("as_carrow_schema")
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-as_arrow_schema.arrowvctrs_schema <- function(x, ...) {
+as_carrow_schema.arrowvctrs_schema <- function(x, ...) {
   x
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-as_arrow_schema.character <- function(x, ...) {
-  arrow_schema(x)
+as_carrow_schema.character <- function(x, ...) {
+  carrow_schema(x)
 }
 
-#' @rdname arrow_schema
+#' @rdname carrow_schema
 #' @export
-arrow_schema_info <- function(x, ..., recursive = FALSE) {
+carrow_schema_info <- function(x, ..., recursive = FALSE) {
   result <- .Call(carrow_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
   if (recursive) {
     if (!is.null(result$children)) {
-      result$children <- lapply(result$children, arrow_schema_info, recursive = TRUE)
+      result$children <- lapply(result$children, carrow_schema_info, recursive = TRUE)
     }
 
     if (!is.null(result$dictionary)) {
-      result$dictionary <- arrow_schema_info(result$dictionary)
+      result$dictionary <- carrow_schema_info(result$dictionary)
     }
   }
 
@@ -130,29 +130,29 @@ list_of_raw_to_metadata <- function(metadata) {
 
 #' @export
 length.arrowvctrs_schema <- function(x, ...) {
-  length(arrow_schema_info(x))
+  length(carrow_schema_info(x))
 }
 
 #' @export
 names.arrowvctrs_schema <- function(x, ...) {
-  names(arrow_schema_info(x))
+  names(carrow_schema_info(x))
 }
 
 #' @export
 `[[.arrowvctrs_schema` <- function(x, i, ...) {
-  arrow_schema_info(x)[[i]]
+  carrow_schema_info(x)[[i]]
 }
 
 #' @export
 `$.arrowvctrs_schema` <- function(x, i, ...) {
-  arrow_schema_info(x)[[i]]
+  carrow_schema_info(x)[[i]]
 }
 
 #' @export
 `[[<-.arrowvctrs_schema` <- function(x, i, value) {
-  info <- arrow_schema_info(x)
+  info <- carrow_schema_info(x)
   info[[i]] <- value
-  do.call(arrow_schema, info)
+  do.call(carrow_schema, info)
 }
 
 #' @export
@@ -163,13 +163,13 @@ names.arrowvctrs_schema <- function(x, ...) {
 
 #' @export
 format.arrowvctrs_schema <- function(x, ...) {
-  sprintf("<arrow_schema '%s' at %s>", arrow_schema_info(x)$format, xptr_addr(x))
+  sprintf("<carrow_schema '%s' at %s>", carrow_schema_info(x)$format, xptr_addr(x))
 }
 
 #' @export
 print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
   cat(paste0(indent.str, format(x), "\n"))
-  info <- arrow_schema_info(x)
+  info <- carrow_schema_info(x)
   for (nm in c("format", "name")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }
@@ -214,6 +214,6 @@ print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
 #' @importFrom utils str
 str.arrowvctrs_schema <- function(object, ...) {
   cat(paste0(format(object), " "))
-  str(arrow_schema_info(object), ...)
+  str(carrow_schema_info(object), ...)
   invisible(object)
 }

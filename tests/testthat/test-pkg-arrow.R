@@ -34,23 +34,23 @@ test_that("vctr to DataType/Field/Schema works", {
 test_that("Type to schema works", {
   skip_if_not_installed("arrow")
 
-  s <- as_arrow_schema(arrow::int32())
+  s <- as_carrow_schema(arrow::int32())
   expect_identical(
-    arrow_schema_info(s),
-    arrow_schema_info(arrow_schema("i", name = "", flags = arrow_schema_flags(nullable = TRUE)))
+    carrow_schema_info(s),
+    carrow_schema_info(carrow_schema("i", name = "", flags = carrow_schema_flags(nullable = TRUE)))
   )
 })
 
 test_that("Field to schema works", {
   skip_if_not_installed("arrow")
 
-  s <- as_arrow_schema(arrow::Field$create("field_name", arrow::int32()))
+  s <- as_carrow_schema(arrow::Field$create("field_name", arrow::int32()))
   expect_identical(
-    arrow_schema_info(s),
-    arrow_schema_info(
-      arrow_schema(
+    carrow_schema_info(s),
+    carrow_schema_info(
+      carrow_schema(
         "i", name = "field_name",
-        flags = arrow_schema_flags(nullable = TRUE)
+        flags = carrow_schema_flags(nullable = TRUE)
       )
     )
   )
@@ -59,16 +59,16 @@ test_that("Field to schema works", {
 test_that("Schema to schema works", {
   skip_if_not_installed("arrow")
 
-  s <- as_arrow_schema(arrow::schema(field_name = arrow::int32()))
+  s <- as_carrow_schema(arrow::schema(field_name = arrow::int32()))
   expect_identical(
-    arrow_schema_info(s, recursive = TRUE),
-    arrow_schema_info(
-      arrow_schema(
+    carrow_schema_info(s, recursive = TRUE),
+    carrow_schema_info(
+      carrow_schema(
         "+s", name = "",
         children = list(
-          arrow_schema(
+          carrow_schema(
             "i", name = "field_name",
-            flags = arrow_schema_flags(nullable = TRUE)
+            flags = carrow_schema_flags(nullable = TRUE)
           )
         )
       ),

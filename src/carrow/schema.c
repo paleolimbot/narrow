@@ -7,7 +7,7 @@
 
 #include "schema.h"
 
-void arrow_schema_release_internal(struct ArrowSchema* schema) {
+void carrow_schema_release_internal(struct ArrowSchema* schema) {
   if (schema == NULL || schema->release == NULL) {
     return;
   }
@@ -18,19 +18,19 @@ void arrow_schema_release_internal(struct ArrowSchema* schema) {
 
   if (schema->children != NULL) {
     for (uint64_t i = 0; i < schema->n_children; i++) {
-      arrow_schema_release_internal(schema->children[i]);
+      carrow_schema_release_internal(schema->children[i]);
     }
   }
 
   if (schema->dictionary != NULL) {
-    arrow_schema_release_internal(schema->dictionary);
+    carrow_schema_release_internal(schema->dictionary);
   }
 
   schema->release = NULL;
   // don't free(schema)!
 }
 
-int64_t arrow_schema_metadata_size(const char* metadata) {
+int64_t carrow_schema_metadata_size(const char* metadata) {
   if (metadata == NULL) {
     return 0;
   }
@@ -66,7 +66,7 @@ int64_t arrow_schema_metadata_size(const char* metadata) {
   return pos;
 }
 
-void arrow_schema_reset_internal(struct ArrowSchema* schema) {
+void carrow_schema_reset_internal(struct ArrowSchema* schema) {
   schema->format = NULL;
   schema->name = NULL;
   schema->metadata = NULL;
@@ -75,15 +75,15 @@ void arrow_schema_reset_internal(struct ArrowSchema* schema) {
   schema->children = NULL;
   schema->dictionary = NULL;
   schema->private_data = NULL;
-  schema->release = &arrow_schema_release_internal;
+  schema->release = &carrow_schema_release_internal;
 }
 
-int arrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
+int carrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) {
   if (out == NULL || schema == NULL) {
     return EINVAL;
   }
 
-  arrow_schema_reset_internal(out);
+  carrow_schema_reset_internal(out);
 
   out->format = (const char*) malloc(strlen(schema->format) + 1);
   memcpy((void*) out->format, schema->format, strlen(schema->format) + 1);
@@ -101,7 +101,7 @@ int arrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) 
     memcpy((void*) out->name, schema->name, strlen(schema->name) + 1);
   }
 
-  int64_t metadata_size = arrow_schema_metadata_size(schema->metadata);
+  int64_t metadata_size = carrow_schema_metadata_size(schema->metadata);
   if (metadata_size > 0) {
     out->metadata = (const char*) malloc(metadata_size);
     if (out->metadata == NULL) {
@@ -130,7 +130,7 @@ int arrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) 
         return ENOMEM;
       }
 
-      result = arrow_schema_deep_copy(out->children[i], schema->children[i]);
+      result = carrow_schema_deep_copy(out->children[i], schema->children[i]);
       if (result != 0) {
         out->release(out);
         return result;
@@ -145,7 +145,7 @@ int arrow_schema_deep_copy(struct ArrowSchema* out, struct ArrowSchema* schema) 
       return ENOMEM;
     }
 
-    result = arrow_schema_deep_copy(out->dictionary, schema->dictionary);
+    result = carrow_schema_deep_copy(out->dictionary, schema->dictionary);
     if (result != 0) {
       out->release(out);
       return result;

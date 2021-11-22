@@ -84,9 +84,9 @@ SEXP carrow_c_schema_deep_copy(SEXP schema_xptr) {
   SEXP new_schema_xptr = PROTECT(schema_xptr_new(new_schema));
   R_RegisterCFinalizer(new_schema_xptr, &finalize_schema_xptr);
 
-  int result = arrow_schema_deep_copy(new_schema, schema);
+  int result = carrow_schema_deep_copy(new_schema, schema);
   if (result != 0) {
-    Rf_error("arrow_schema_copy() failed with code %d (%s)", result, strerror(result));
+    Rf_error("carrow_schema_copy() failed with code %d (%s)", result, strerror(result));
   }
 
   UNPROTECT(1);

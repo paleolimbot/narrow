@@ -7,7 +7,7 @@
 #' to UTF-8 and serialized as a single [raw()] vector.
 #'
 #' @inheritParams carrow_array
-#' @inheritParams arrow_schema
+#' @inheritParams carrow_schema
 #'
 #' @return An [carrow_array()]
 #' @export
@@ -22,7 +22,7 @@
 #' as_carrow_array(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
 as_carrow_array.NULL <- function(x, ..., name = NULL) {
-  carrow_array(arrow_schema("n", name), arrow_array_data(null_count = 0))
+  carrow_array(carrow_schema("n", name), arrow_array_data(null_count = 0))
 }
 
 #' @export
@@ -30,7 +30,7 @@ as_carrow_array.NULL <- function(x, ..., name = NULL) {
 as_carrow_array.logical <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   carrow_array(
-    arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
+    carrow_schema("i", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -45,7 +45,7 @@ as_carrow_array.logical <- function(x, ..., name = NULL) {
 as_carrow_array.integer <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   carrow_array(
-    arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
+    carrow_schema("i", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -60,7 +60,7 @@ as_carrow_array.integer <- function(x, ..., name = NULL) {
 as_carrow_array.double <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   carrow_array(
-    arrow_schema("g", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
+    carrow_schema("g", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -91,7 +91,7 @@ as_carrow_array.character <- function(x, ..., name = NULL) {
   }
 
   carrow_array(
-    arrow_schema(format, name, flags = arrow_schema_flags(nullable = any(x_is_na))),
+    carrow_schema(format, name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = buffers,
       length = length(x),
@@ -114,9 +114,9 @@ as_carrow_array.factor <- function(x, ..., name = NULL) {
   indices <- unclass(x) - 1L
 
   carrow_array(
-    arrow_schema(
+    carrow_schema(
       "i", name,
-      flags = arrow_schema_flags(nullable = any(x_is_na)),
+      flags = carrow_schema_flags(nullable = any(x_is_na)),
       dictionary = dictionary_vctr$schema
     ),
     arrow_array_data(
@@ -133,7 +133,7 @@ as_carrow_array.factor <- function(x, ..., name = NULL) {
 #' @rdname as_carrow_array.NULL
 as_carrow_array.raw <- function(x, ..., name = NULL) {
   carrow_array(
-    arrow_schema("C", name),
+    carrow_schema("C", name),
     arrow_array_data(
       buffers = list(NULL, x),
       length = length(x),
@@ -151,7 +151,7 @@ as_carrow_array.data.frame <- function(x, ..., name = NULL) {
   arrays <- lapply(vctrs, "[[", "array")
 
   carrow_array(
-    arrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
+    carrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
     arrow_array_data(
       buffers = list(NULL),
       length = nrow(x),

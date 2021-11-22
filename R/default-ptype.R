@@ -1,15 +1,15 @@
 
 #' Guess prototypes for Arrow schemas
 #'
-#' @param schema An [arrow_schema()]
+#' @param schema An [carrow_schema()]
 #'
 #' @return A zero-length vctr prototype
 #' @export
 #'
 #' @examples
-#' arrow_default_ptype(arrow_schema("n"))
+#' arrow_default_ptype(carrow_schema("n"))
 #' arrow_default_ptype(
-#'   arrow_schema("+s", children = list(arrow_schema("i", "colname")))
+#'   carrow_schema("+s", children = list(carrow_schema("i", "colname")))
 #' )
 #'
 arrow_default_ptype <- function(schema) {

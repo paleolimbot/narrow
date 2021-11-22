@@ -1,7 +1,7 @@
 
 #' Create arrow vectors
 #'
-#' @param schema An [arrow_schema()]
+#' @param schema An [carrow_schema()]
 #' @param array An [arrow_array_data()]
 #' @param x An object to convert to an [carrow_array()]
 #' @param ... Passed to S3 methods
@@ -12,8 +12,8 @@
 #' @examples
 #' carrow_array()
 #'
-carrow_array <- function(schema = arrow_schema("n"), array = arrow_array_data()) {
-  schema <- as_arrow_schema(schema)
+carrow_array <- function(schema = carrow_schema("n"), array = arrow_array_data()) {
+  schema <- as_carrow_schema(schema)
   arrays <- as_arrow_array_data(array)
   vctr <- structure(list(schema = schema, array = array), class = "carrow_array")
   carrow_array_validate(vctr)

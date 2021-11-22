@@ -7,7 +7,7 @@
 arrow_default_ptype(schema)
 }
 \arguments{
-\item{schema}{An \code{\link[=arrow_schema]{arrow_schema()}}}
+\item{schema}{An \code{\link[=carrow_schema]{carrow_schema()}}}
 }
 \value{
 A zero-length vctr prototype
@@ -16,9 +16,9 @@ A zero-length vctr prototype
 Guess prototypes for Arrow schemas
 }
 \examples{
-arrow_default_ptype(arrow_schema("n"))
+arrow_default_ptype(carrow_schema("n"))
 arrow_default_ptype(
-  arrow_schema("+s", children = list(arrow_schema("i", "colname")))
+  carrow_schema("+s", children = list(carrow_schema("i", "colname")))
 )
 
 }

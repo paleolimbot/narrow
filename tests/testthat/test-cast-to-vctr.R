@@ -20,7 +20,7 @@ test_that("NA to vctr works", {
   l <- NA
   vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
-  expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
+  expect_identical(vctr$schema$flags, carrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(1))
   expect_identical(vctr$array$buffers[[1]], as_arrow_bitmask(FALSE))
@@ -40,7 +40,7 @@ test_that("NA_integer_ to vctr works", {
   l <- NA_integer_
   vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
-  expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
+  expect_identical(vctr$schema$flags, carrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(1))
   expect_identical(vctr$array$buffers[[1]], as_arrow_bitmask(FALSE))
@@ -60,7 +60,7 @@ test_that("NA_real_ to vctr works", {
   l <- NA_real_
   vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "g")
-  expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
+  expect_identical(vctr$schema$flags, carrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(1))
   expect_identical(vctr$array$buffers[[1]], as_arrow_bitmask(FALSE))
@@ -81,7 +81,7 @@ test_that("NA_character_ to vctr works", {
   l <- NA_character_
   vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "u")
-  expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
+  expect_identical(vctr$schema$flags, carrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(1))
   expect_identical(vctr$array$buffers[[1]], as_arrow_bitmask(FALSE))

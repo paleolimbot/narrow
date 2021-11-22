@@ -16,7 +16,7 @@ SEXP sexp_from_metadata(unsigned char* metadata);
 
 static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char* arg) {
   if (!Rf_inherits(schema_xptr, "arrowvctrs_schema")) {
-    Rf_error("`%s` must be an object created with arrow_schema()", arg);
+    Rf_error("`%s` must be an object created with carrow_schema()", arg);
   }
 
   struct ArrowSchema* schema = (struct ArrowSchema*) R_ExternalPtrAddr(schema_xptr);
