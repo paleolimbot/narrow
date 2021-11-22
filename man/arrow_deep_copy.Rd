@@ -7,15 +7,15 @@
 arrow_deep_copy(x)
 }
 \arguments{
-\item{x}{An \code{\link[=arrow_vctr]{arrow_vctr()}}.}
+\item{x}{An \code{\link[=carrow_array]{carrow_array()}}.}
 }
 \value{
-An \code{\link[=arrow_vctr]{arrow_vctr()}}
+An \code{\link[=carrow_array]{carrow_array()}}
 }
 \description{
 Create copies of Arrow vectors
 }
 \examples{
-arrow_deep_copy(as_arrow_vctr(1:5))
+arrow_deep_copy(as_carrow_array(1:5))
 
 }

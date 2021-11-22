@@ -38,9 +38,9 @@ This is a basic example which shows you how to solve a common problem:
 
 ```{r example}
 library(arrowvctrs)
-(vctr <- as_arrow_vctr(ggplot2::mpg))
+(vctr <- as_carrow_array(ggplot2::mpg))
 ```
 
 ```{r}
-tibble::as_tibble(from_arrow_vctr(vctr))
+tibble::as_tibble(from_carrow_array(vctr))
 ```

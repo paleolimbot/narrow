@@ -36,90 +36,90 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(arrowvctrs)
-(vctr <- as_arrow_vctr(ggplot2::mpg))
-#> <arrow_vctr +s[234]>
+(vctr <- as_carrow_array(ggplot2::mpg))
+#> <carrow_array +s[234]>
 #> - schema:
 #>   <arrow_schema '+s' at 0x14fe45020>
 #>   - format: +s
 #>   - name: NULL
-#>   - flags: 
+#>   - flags:
 #>   - metadata: NULL
 #>   - dictionary: NULL
 #>   - children[11]:
 #>     <arrow_schema 'u' at 0x14fe36ef0>
 #>     - format: u
 #>     - name: manufacturer
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'u' at 0x14fe89160>
 #>     - format: u
 #>     - name: model
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'g' at 0x14fe9ace0>
 #>     - format: g
 #>     - name: displ
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'i' at 0x14fe6d010>
 #>     - format: i
 #>     - name: year
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'i' at 0x14fe0de30>
 #>     - format: i
 #>     - name: cyl
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'u' at 0x14fe472c0>
 #>     - format: u
 #>     - name: trans
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'u' at 0x14fe36c00>
 #>     - format: u
 #>     - name: drv
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'i' at 0x14fe0a4f0>
 #>     - format: i
 #>     - name: cty
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'i' at 0x14fe50970>
 #>     - format: i
 #>     - name: hwy
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'u' at 0x14fe7c4b0>
 #>     - format: u
 #>     - name: fl
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
 #>     <arrow_schema 'u' at 0x14fe0d960>
 #>     - format: u
 #>     - name: class
-#>     - flags: 
+#>     - flags:
 #>     - metadata: NULL
 #>     - dictionary: NULL
 #>     - children[0]:
@@ -228,7 +228,7 @@ library(arrowvctrs)
 ```
 
 ``` r
-tibble::as_tibble(from_arrow_vctr(vctr))
+tibble::as_tibble(from_carrow_array(vctr))
 #> # A tibble: 234 × 11
 #>    manufacturer model      displ  year   cyl trans drv     cty   hwy fl    class
 #>    <chr>        <chr>      <dbl> <int> <int> <chr> <chr> <int> <int> <chr> <chr>

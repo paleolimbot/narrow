@@ -1,9 +1,9 @@
 
 #' Convert Arrow vectors to R objects
 #'
-#' Note that [from_arrow_vctr()] dispatches on `ptype`
+#' Note that [from_carrow_array()] dispatches on `ptype`
 #'
-#' @param x An [arrow_vctr()]
+#' @param x An [carrow_array()]
 #' @param ptype An R object to use as a prototype
 #' @param ... Passed to S3 methods
 #'
@@ -11,22 +11,22 @@
 #' @export
 #'
 #' @examples
-#' from_arrow_vctr(as_arrow_vctr(c(TRUE, FALSE, NA)), logical())
+#' from_carrow_array(as_carrow_array(c(TRUE, FALSE, NA)), logical())
 #'
-from_arrow_vctr <- function(x, ptype = arrow_default_ptype(x$schema), ...) {
-  UseMethod("from_arrow_vctr", ptype)
+from_carrow_array <- function(x, ptype = arrow_default_ptype(x$schema), ...) {
+  UseMethod("from_carrow_array", ptype)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.default <- function(x, ptype, ...) {
-  assert_x_arrow_vctr(x)
+from_carrow_array.default <- function(x, ptype, ...) {
+  assert_x_carrow_array(x)
   stop_cant_convert(x, ptype)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.NULL <- function(x, ptype, ...) {
+from_carrow_array.NULL <- function(x, ptype, ...) {
   if (!inherits(x, "arrowvctrs_vctr")) {
     NextMethod()
   }
@@ -41,54 +41,54 @@ from_arrow_vctr.NULL <- function(x, ptype, ...) {
   NULL
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.logical <- function(x, ptype, ...) {
+from_carrow_array.logical <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_logical_from_vctr, x)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.integer <- function(x, ptype, ...) {
+from_carrow_array.integer <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_integer_from_vctr, x)
 }
 
-from_arrow_vctr_integer <- function(x) {
+from_carrow_array_integer <- function(x) {
   .Call(arrowvctrs_c_integer_from_vctr, x)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.double <- function(x, ptype, ...) {
+from_carrow_array.double <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_double_from_vctr, x)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.raw <- function(x, ptype, ...) {
+from_carrow_array.raw <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
   .Call(arrowvctrs_c_raw_from_vctr, x)
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.character <- function(x, ptype, ...) {
+from_carrow_array.character <- function(x, ptype, ...) {
   if (is.null(x$schema$dictionary)) {
     .Call(arrowvctrs_c_character_from_vctr, x)
   } else {
-    indices <- from_arrow_vctr_integer(x) + 1L
-    dictionary <- arrow_vctr(x$schema$dictionary, x$array$dictionary)
-    from_arrow_vctr(dictionary, character())[indices]
+    indices <- from_carrow_array_integer(x) + 1L
+    dictionary <- carrow_array(x$schema$dictionary, x$array$dictionary)
+    from_carrow_array(dictionary, character())[indices]
   }
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.factor <- function(x, ptype, ...) {
-  assert_x_arrow_vctr(x)
+from_carrow_array.factor <- function(x, ptype, ...) {
+  assert_x_carrow_array(x)
   stopifnot(!is.null(x$schema$dictionary))
 
   # because of weirdness with UseMethod()
@@ -97,13 +97,13 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
   }
 
   # get indices
-  indices <- from_arrow_vctr_integer(x) + 1L
+  indices <- from_carrow_array_integer(x) + 1L
 
   # try to detect levels if none were given
   levels <- levels(ptype)
   if (identical(levels, character())) {
-    dictionary <- arrow_vctr(x$schema$dictionary, x$array$dictionary)
-    levels <- from_arrow_vctr(dictionary, character())
+    dictionary <- carrow_array(x$schema$dictionary, x$array$dictionary)
+    levels <- from_carrow_array(dictionary, character())
   }
 
   class(indices) <- "factor"
@@ -111,10 +111,10 @@ from_arrow_vctr.factor <- function(x, ptype, ...) {
   indices
 }
 
-#' @rdname from_arrow_vctr
+#' @rdname from_carrow_array
 #' @export
-from_arrow_vctr.data.frame <- function(x, ptype, ...) {
-  assert_x_arrow_vctr(x)
+from_carrow_array.data.frame <- function(x, ptype, ...) {
+  assert_x_carrow_array(x)
   stopifnot(is.null(x$schema$dictionary))
 
   # because of weirdness with UseMethod()
@@ -131,16 +131,16 @@ from_arrow_vctr.data.frame <- function(x, ptype, ...) {
   }
 
   child_arrays <- x$array$children
-  child_vctrs <- Map(arrow_vctr, child_schemas, child_arrays)
-  result <- Map(from_arrow_vctr, child_vctrs, ptype)
+  child_vctrs <- Map(carrow_array, child_schemas, child_arrays)
+  result <- Map(from_carrow_array, child_vctrs, ptype)
   names(result) <- names(ptype)
   new_data_frame(result, nrow = as.integer(as.numeric(x$array$length)))
 }
 
 
-assert_x_arrow_vctr <- function(x) {
+assert_x_carrow_array <- function(x) {
   if (!inherits(x, "arrowvctrs_vctr")) {
-    stop("`x` is not an `arrow_vctr()`", call. = FALSE)
+    stop("`x` is not an `carrow_array()`", call. = FALSE)
   }
 }
 

@@ -2,14 +2,14 @@
 #' Convert to and from arrow package types
 #'
 #' @param x An object to convert to or from 'arrow' package types
-#' @inheritParams from_arrow_vctr
+#' @inheritParams from_carrow_array
 #' @param ... Passed to S3 methods
 #'
 #' @export
 #' @rdname pkg-arrow
 #'
-from_arrow_vctr.Array <- function(x, ptype, ...) {
- arrow_arr <- from_arrow_vctr(x, arrow::Array)
+from_carrow_array.Array <- function(x, ptype, ...) {
+ arrow_arr <- from_carrow_array(x, arrow::Array)
 
  if (arrow_arr$type == ptype$type) {
    arrow_arr
@@ -20,7 +20,7 @@ from_arrow_vctr.Array <- function(x, ptype, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-from_arrow_vctr.R6ClassGenerator <- function(x, ptype, ...) {
+from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
   switch(
     ptype$classname,
     RecordBatch =,
@@ -33,7 +33,7 @@ from_arrow_vctr.R6ClassGenerator <- function(x, ptype, ...) {
     Schema = ptype$import_from_c(
       xptr_addr_double(.Call(arrowvctrs_c_exportable_schema, x$schema))
     ),
-    stop(sprintf("Can't convert from arrow_vctr to R6 type '%s'", ptype$classname))
+    stop(sprintf("Can't convert from carrow_array to R6 type '%s'", ptype$classname))
   )
 }
 
@@ -63,20 +63,20 @@ as_arrow_schema.Schema <- function(x, ...) {
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_vctr.Array <- function(x, ...) {
+as_carrow_array.Array <- function(x, ...) {
   schema <- blank_invalid_schema()
   array <- blank_invalid_array()
   x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
-  arrow_vctr(schema, array)
+  carrow_array(schema, array)
 }
 
 #' @rdname pkg-arrow
 #' @export
-as_arrow_vctr.RecordBatch <- function(x, ...) {
+as_carrow_array.RecordBatch <- function(x, ...) {
   schema <- blank_invalid_schema()
   array <- blank_invalid_array()
   x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
-  arrow_vctr(schema, array)
+  carrow_array(schema, array)
 }
 
 xptr_addr_double <- function(x) {

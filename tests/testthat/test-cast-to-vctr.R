@@ -1,6 +1,6 @@
 
 test_that("NULL to vctr works", {
-  vctr <- as_arrow_vctr(NULL)
+  vctr <- as_carrow_array(NULL)
   expect_identical(vctr$schema$format, "n")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -9,7 +9,7 @@ test_that("NULL to vctr works", {
 
 test_that("logical(0) to vctr works", {
   l <- logical(0)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -18,7 +18,7 @@ test_that("logical(0) to vctr works", {
 
 test_that("NA to vctr works", {
   l <- NA
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
@@ -29,7 +29,7 @@ test_that("NA to vctr works", {
 
 test_that("integer(0) to vctr works", {
   l <- integer(0)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -38,7 +38,7 @@ test_that("integer(0) to vctr works", {
 
 test_that("NA_integer_ to vctr works", {
   l <- NA_integer_
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
@@ -49,7 +49,7 @@ test_that("NA_integer_ to vctr works", {
 
 test_that("double(0) to vctr works", {
   l <- double(0)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "g")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -58,7 +58,7 @@ test_that("double(0) to vctr works", {
 
 test_that("NA_real_ to vctr works", {
   l <- NA_real_
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "g")
   expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
@@ -69,7 +69,7 @@ test_that("NA_real_ to vctr works", {
 
 test_that("character(0) to vctr works", {
   l <- character(0)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "u")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -79,7 +79,7 @@ test_that("character(0) to vctr works", {
 
 test_that("NA_character_ to vctr works", {
   l <- NA_character_
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "u")
   expect_identical(vctr$schema$flags, arrow_schema_flags(nullable = TRUE))
   expect_identical(vctr$array$length, as_arrow_int64(1))
@@ -91,7 +91,7 @@ test_that("NA_character_ to vctr works", {
 
 test_that("small character(0) to vctr works", {
   l <- c("a", "bc", "def")
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "u")
   expect_identical(vctr$array$length, as_arrow_int64(3))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -105,7 +105,7 @@ test_that("large character() to vctr works", {
   skip_on_ci()
   # 1 MB * 2048
   l <- rep(strrep("a", 2 ^ 20), 2 ^ 11)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "U")
   expect_identical(vctr$array$length, as_arrow_int64(2 ^ 11))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -114,7 +114,7 @@ test_that("large character() to vctr works", {
 
 test_that("factor() to vctr works", {
   l <- factor(c(NA, rep(letters, 2)))
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "i")
   expect_identical(vctr$schema$dictionary$format, "u")
   expect_identical(vctr$array$length, as_arrow_int64(26 * 2 + 1))
@@ -127,7 +127,7 @@ test_that("factor() to vctr works", {
 
 test_that("raw(0) to vctr works", {
   l <- raw(0)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "C")
   expect_identical(vctr$array$length, as_arrow_int64(0))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -136,7 +136,7 @@ test_that("raw(0) to vctr works", {
 
 test_that("as.raw(0xff) to vctr works", {
   l <- as.raw(0xff)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "C")
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))
@@ -145,7 +145,7 @@ test_that("as.raw(0xff) to vctr works", {
 
 test_that("data.frame to vctr works", {
   l <- data.frame(a = TRUE, b = 1L, c = 1)
-  vctr <- as_arrow_vctr(l)
+  vctr <- as_carrow_array(l)
   expect_identical(vctr$schema$format, "+s")
   expect_identical(vctr$array$length, as_arrow_int64(1))
   expect_identical(vctr$array$null_count, as_arrow_int64(0))

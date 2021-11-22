@@ -2,9 +2,9 @@
 test_that("vctr to Array works", {
   skip_if_not_installed("arrow")
 
-  a <- from_arrow_vctr(as_arrow_vctr(1:5), arrow::Array)
+  a <- from_carrow_array(as_carrow_array(1:5), arrow::Array)
   expect_identical(as.integer(a), as.integer(arrow::Array$create(1:5)))
-  b <- from_arrow_vctr(as_arrow_vctr(c("one", "two")), arrow::Array)
+  b <- from_carrow_array(as_carrow_array(c("one", "two")), arrow::Array)
   expect_identical(as.character(b), as.character(arrow::Array$create(c("one", "two"))))
 })
 
@@ -13,7 +13,7 @@ test_that("vctr to RecordBatch works", {
 
   df <- data.frame(a = 1:5, b = letters[1:5])
   expect_identical(
-    as.data.frame(from_arrow_vctr(as_arrow_vctr(df), arrow::RecordBatch)),
+    as.data.frame(from_carrow_array(as_carrow_array(df), arrow::RecordBatch)),
     as.data.frame(arrow::RecordBatch$create(a = 1:5, b = letters[1:5]))
   )
 })
@@ -21,13 +21,13 @@ test_that("vctr to RecordBatch works", {
 test_that("vctr to DataType/Field/Schema works", {
   skip_if_not_installed("arrow")
 
-  a <- from_arrow_vctr(as_arrow_vctr(1:5), get("DataType", asNamespace("arrow")))
+  a <- from_carrow_array(as_carrow_array(1:5), get("DataType", asNamespace("arrow")))
   expect_true(a == arrow::int32())
 
-  a <- from_arrow_vctr(as_arrow_vctr(c(NA, 1:5), name = "fieldname"), arrow:::Field)
+  a <- from_carrow_array(as_carrow_array(c(NA, 1:5), name = "fieldname"), arrow:::Field)
   expect_true(a == arrow::Field$create("fieldname", arrow::int32()))
 
-  a <- from_arrow_vctr(as_arrow_vctr(data.frame(intcol = c(NA, 1:5))), arrow:::Schema)
+  a <- from_carrow_array(as_carrow_array(data.frame(intcol = c(NA, 1:5))), arrow:::Schema)
   expect_true(a == arrow::schema(intcol = arrow::int32()))
 })
 
@@ -80,14 +80,14 @@ test_that("Schema to schema works", {
 test_that("Array to vctr works", {
   skip_if_not_installed("arrow")
 
-  v <- as_arrow_vctr(arrow::Array$create(1:5))
-  expect_identical(from_arrow_vctr(v, integer()), 1:5)
+  v <- as_carrow_array(arrow::Array$create(1:5))
+  expect_identical(from_carrow_array(v, integer()), 1:5)
 })
 
 test_that("RecordBatch to vctr works", {
   skip_if_not_installed("arrow")
 
   rb <- arrow::record_batch(a = 1L, b = 2, c = "three")
-  v <- as_arrow_vctr(rb)
-  expect_identical(from_arrow_vctr(v), data.frame(a = 1L, b = 2, c = "three"))
+  v <- as_carrow_array(rb)
+  expect_identical(from_carrow_array(v), data.frame(a = 1L, b = 2, c = "three"))
 })

@@ -3,39 +3,39 @@
 #'
 #' @param schema An [arrow_schema()]
 #' @param array An [arrow_array_data()]
-#' @param x An object to convert to an [arrow_vctr()]
+#' @param x An object to convert to an [carrow_array()]
 #' @param ... Passed to S3 methods
 #'
 #' @return An object of class "arrowvctrs_vctr"
 #' @export
 #'
 #' @examples
-#' arrow_vctr()
+#' carrow_array()
 #'
-arrow_vctr <- function(schema = arrow_schema("n"), array = arrow_array_data()) {
+carrow_array <- function(schema = arrow_schema("n"), array = arrow_array_data()) {
   schema <- as_arrow_schema(schema)
   arrays <- as_arrow_array_data(array)
   vctr <- structure(list(schema = schema, array = array), class = "arrowvctrs_vctr")
-  arrow_vctr_validate(vctr)
+  carrow_array_validate(vctr)
   vctr
 }
 
-#' @rdname arrow_vctr
+#' @rdname carrow_array
 #' @export
-arrow_vctr_validate <- function(x) {
+carrow_array_validate <- function(x) {
   .Call(arrowvctrs_c_vctr_validate, x)
   invisible(x)
 }
 
-#' @rdname arrow_vctr
+#' @rdname carrow_array
 #' @export
-as_arrow_vctr <- function(x, ...) {
-  UseMethod("as_arrow_vctr")
+as_carrow_array <- function(x, ...) {
+  UseMethod("as_carrow_array")
 }
 
-#' @rdname arrow_vctr
+#' @rdname carrow_array
 #' @export
-as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
+as_carrow_array.arrowvctrs_vctr <- function(x, ...) {
   x
 }
 
@@ -43,7 +43,7 @@ as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
 `[[<-.arrowvctrs_vctr` <- function(x, i, ..., value) {
   x <- unclass(x)
   x[[i]] <- value
-  do.call(arrow_vctr, x)
+  do.call(carrow_array, x)
 }
 
 #' @export
@@ -55,7 +55,7 @@ as_arrow_vctr.arrowvctrs_vctr <- function(x, ...) {
 #' @export
 format.arrowvctrs_vctr <- function(x, ...) {
   total_length <- x$array$length
-  sprintf("<arrow_vctr %s[%s]>", x$schema$format, format(total_length))
+  sprintf("<carrow_array %s[%s]>", x$schema$format, format(total_length))
 }
 
 #' @export

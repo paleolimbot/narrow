@@ -1,35 +1,35 @@
 
 #' Convert R objects to Arrow vectors
 #'
-#' These methods return an [arrow_vctr()] for R objects that don't involve
+#' These methods return an [carrow_array()] for R objects that don't involve
 #' copying or unnecessary allocating. Two excpetions are (1) ALTREP objects,
 #' which will be expanded, and (2) character vectors, which will be converted
 #' to UTF-8 and serialized as a single [raw()] vector.
 #'
-#' @inheritParams arrow_vctr
+#' @inheritParams carrow_array
 #' @inheritParams arrow_schema
 #'
-#' @return An [arrow_vctr()]
+#' @return An [carrow_array()]
 #' @export
 #'
 #' @examples
-#' as_arrow_vctr(NULL)
-#' as_arrow_vctr(c(TRUE, FALSE, NA))
-#' as_arrow_vctr(1:10)
-#' as_arrow_vctr(c(1.1, 2.2))
-#' as_arrow_vctr(as.raw(0x00))
-#' as_arrow_vctr("fish")
-#' as_arrow_vctr(data.frame(x = 1:10, y = as.raw(1:10)))
+#' as_carrow_array(NULL)
+#' as_carrow_array(c(TRUE, FALSE, NA))
+#' as_carrow_array(1:10)
+#' as_carrow_array(c(1.1, 2.2))
+#' as_carrow_array(as.raw(0x00))
+#' as_carrow_array("fish")
+#' as_carrow_array(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
-as_arrow_vctr.NULL <- function(x, ..., name = NULL) {
-  arrow_vctr(arrow_schema("n", name), arrow_array_data(null_count = 0))
+as_carrow_array.NULL <- function(x, ..., name = NULL) {
+  carrow_array(arrow_schema("n", name), arrow_array_data(null_count = 0))
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.logical <- function(x, ..., name = NULL) {
+#' @rdname as_carrow_array.NULL
+as_carrow_array.logical <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
-  arrow_vctr(
+  carrow_array(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
@@ -41,10 +41,10 @@ as_arrow_vctr.logical <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.integer <- function(x, ..., name = NULL) {
+#' @rdname as_carrow_array.NULL
+as_carrow_array.integer <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
-  arrow_vctr(
+  carrow_array(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
@@ -56,10 +56,10 @@ as_arrow_vctr.integer <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.double <- function(x, ..., name = NULL) {
+#' @rdname as_carrow_array.NULL
+as_carrow_array.double <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
-  arrow_vctr(
+  carrow_array(
     arrow_schema("g", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
@@ -71,8 +71,8 @@ as_arrow_vctr.double <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.character <- function(x, ..., name = NULL) {
+#' @rdname as_carrow_array.NULL
+as_carrow_array.character <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
 
   # flatten and check for long data vector
@@ -90,7 +90,7 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
     buffers <- c(list(NULL), buffers)
   }
 
-  arrow_vctr(
+  carrow_array(
     arrow_schema(format, name, flags = arrow_schema_flags(nullable = any(x_is_na))),
     arrow_array_data(
       buffers = buffers,
@@ -102,18 +102,18 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.factor <- function(x, ..., name = NULL) {
+#' @rdname as_carrow_array.NULL
+as_carrow_array.factor <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
 
   # indices are 1-based and Arrow needs 0-based
   # could also add a factor level here to avoid copying the
   # indices vector but this makes it harder
   # to round-trip a factor() and a little disingenuous
-  dictionary_vctr <- as_arrow_vctr(levels(x))
+  dictionary_vctr <- as_carrow_array(levels(x))
   indices <- unclass(x) - 1L
 
-  arrow_vctr(
+  carrow_array(
     arrow_schema(
       "i", name,
       flags = arrow_schema_flags(nullable = any(x_is_na)),
@@ -130,9 +130,9 @@ as_arrow_vctr.factor <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.raw <- function(x, ..., name = NULL) {
-  arrow_vctr(
+#' @rdname as_carrow_array.NULL
+as_carrow_array.raw <- function(x, ..., name = NULL) {
+  carrow_array(
     arrow_schema("C", name),
     arrow_array_data(
       buffers = list(NULL, x),
@@ -144,13 +144,13 @@ as_arrow_vctr.raw <- function(x, ..., name = NULL) {
 }
 
 #' @export
-#' @rdname as_arrow_vctr.NULL
-as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
-  vctrs <- Map(as_arrow_vctr, x, name = names(x))
+#' @rdname as_carrow_array.NULL
+as_carrow_array.data.frame <- function(x, ..., name = NULL) {
+  vctrs <- Map(as_carrow_array, x, name = names(x))
   # this only works if all array sizes are length 1
   arrays <- lapply(vctrs, "[[", "array")
 
-  arrow_vctr(
+  carrow_array(
     arrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
     arrow_array_data(
       buffers = list(NULL),

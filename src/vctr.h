@@ -13,7 +13,7 @@
 
 static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, const char* arg) {
   if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
-    Rf_error("`x` must be an `arrow_vctr()`");
+    Rf_error("`x` must be an `carrow_array()`");
   }
 
   struct ArrowSchema* schema = schema_from_xptr(VECTOR_ELT(vctr_sexp, 0), arg);
