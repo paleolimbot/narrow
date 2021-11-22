@@ -12,7 +12,7 @@
 #' @param x An object to convert to an arrow_array
 #' @param ... Passed to S3 Methods
 #'
-#' @return An object of class "arrowvctrs_array"
+#' @return An object of class "arrowvctrs_array_data"
 #' @export
 #'
 #' @examples
@@ -55,7 +55,7 @@ as_arrow_array <- function(x, ...) {
 
 #' @rdname arrow_array
 #' @export
-as_arrow_array.arrowvctrs_array <- function(x, ...) {
+as_arrow_array.arrowvctrs_array_data <- function(x, ...) {
   x
 }
 
@@ -74,32 +74,32 @@ as_arrow_buffer.default <- function(x, ...) {
 
 
 #' @export
-length.arrowvctrs_array <- function(x, ...) {
+length.arrowvctrs_array_data <- function(x, ...) {
   length(arrow_array_info(x))
 }
 
 #' @export
-names.arrowvctrs_array <- function(x, ...) {
+names.arrowvctrs_array_data <- function(x, ...) {
   names(arrow_array_info(x))
 }
 
 #' @export
-`[[.arrowvctrs_array` <- function(x, i, ...) {
+`[[.arrowvctrs_array_data` <- function(x, i, ...) {
   arrow_array_info(x)[[i]]
 }
 
 #' @export
-`$.arrowvctrs_array` <- function(x, i, ...) {
+`$.arrowvctrs_array_data` <- function(x, i, ...) {
   arrow_array_info(x)[[i]]
 }
 
 #' @export
-format.arrowvctrs_array <- function(x, ...) {
+format.arrowvctrs_array_data <- function(x, ...) {
   sprintf("<arrow_array at %s>", xptr_addr(x))
 }
 
 #' @export
-print.arrowvctrs_array <- function(x, ..., indent.str = "") {
+print.arrowvctrs_array_data <- function(x, ..., indent.str = "") {
   cat(sprintf("%s%s\n", indent.str, format(x)))
   info <- arrow_array_info(x)
   for (nm in c("length", "null_count", "offset")) {

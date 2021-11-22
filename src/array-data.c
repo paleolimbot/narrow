@@ -17,7 +17,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   SET_VECTOR_ELT(array_prot, 0, buffers_sexp);
   SET_VECTOR_ELT(array_prot, 1, children_sexp);
   SET_VECTOR_ELT(array_prot, 2, dictionary_xptr);
-  Rf_setAttrib(array_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_array_prot"));
+  Rf_setAttrib(array_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_array_data_prot"));
 
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data, "struct ArrowArray");
@@ -95,7 +95,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_data_xptr) {
 
   // if we alloced this ourselves (from R's C API),
   // it will have the SEXPs attached
-  if (array_prot != R_NilValue && Rf_inherits(array_prot, "arrowvctrs_array_prot")) {
+  if (array_prot != R_NilValue && Rf_inherits(array_prot, "arrowvctrs_array_data_prot")) {
     SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_prot, 0)); // buffers
     SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_prot, 1)); // children
     SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_prot, 2)); // dictionary
