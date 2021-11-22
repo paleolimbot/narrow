@@ -22,7 +22,7 @@ carrow_default_ptype <- function(schema) {
     info$abbreviation,
     n =, b = logical(),
     c =, C =, s =, S =, i = integer(),
-    I =, l = as_arrow_int64(double()),
+    I =, l = as_carrow_int64(double()),
     L =, e =, f =, g = double(),
     u =, U = character(),
     `+s` = {

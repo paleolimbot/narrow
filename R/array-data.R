@@ -7,7 +7,7 @@
 #' @param null_count The number of NULL values or -1 if this hasn't been
 #'   computed yet.
 #' @param offset The number of elements to skip at the front of the array.
-#' @param children Child vectors as a [list()] coerced by [as_arrow_array_data()]
+#' @param children Child vectors as a [list()] coerced by [as_carrow_array_data()]
 #' @param dictionary Dictionary array for dictionary types.
 #' @param x An object to convert to an carrow_array
 #' @param ... Passed to S3 Methods
@@ -23,12 +23,12 @@ carrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offse
   buffers <- if (is.null(buffers)) {
     NULL
   } else if (is.list(buffers)) {
-    lapply(buffers, as_arrow_buffer)
+    lapply(buffers, as_carrow_buffer)
   } else {
-    list(as_arrow_buffer(buffers))
+    list(as_carrow_buffer(buffers))
   }
-  children <- if (is.null(children)) NULL else lapply(children, as_arrow_array_data)
-  dictionary <- if (is.null(dictionary)) NULL else as_arrow_array_data(dictionary)
+  children <- if (is.null(children)) NULL else lapply(children, as_carrow_array_data)
+  dictionary <- if (is.null(dictionary)) NULL else as_carrow_array_data(dictionary)
 
   .Call(
     carrow_c_array_from_sexp,
@@ -49,25 +49,25 @@ carrow_array_data_info <- function(x, ...) {
 
 #' @rdname carrow_array_data
 #' @export
-as_arrow_array_data <- function(x, ...) {
-  UseMethod("as_arrow_array_data")
+as_carrow_array_data <- function(x, ...) {
+  UseMethod("as_carrow_array_data")
 }
 
 #' @rdname carrow_array_data
 #' @export
-as_arrow_array_data.arrowvctrs_array_data <- function(x, ...) {
+as_carrow_array_data.arrowvctrs_array_data <- function(x, ...) {
   x
 }
 
 #' @rdname carrow_array_data
 #' @export
-as_arrow_buffer <- function(x, ...) {
-  UseMethod("as_arrow_buffer")
+as_carrow_buffer <- function(x, ...) {
+  UseMethod("as_carrow_buffer")
 }
 
 #' @rdname carrow_array_data
 #' @export
-as_arrow_buffer.default <- function(x, ...) {
+as_carrow_buffer.default <- function(x, ...) {
   # sanitized in carrow_c_array_from_sexp()
   x
 }

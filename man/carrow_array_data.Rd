@@ -3,10 +3,10 @@
 \name{carrow_array_data}
 \alias{carrow_array_data}
 \alias{carrow_array_data_info}
-\alias{as_arrow_array_data}
-\alias{as_arrow_array_data.arrowvctrs_array_data}
-\alias{as_arrow_buffer}
-\alias{as_arrow_buffer.default}
+\alias{as_carrow_array_data}
+\alias{as_carrow_array_data.arrowvctrs_array_data}
+\alias{as_carrow_buffer}
+\alias{as_carrow_buffer.default}
 \title{Create Arrow arrays}
 \usage{
 carrow_array_data(
@@ -20,13 +20,13 @@ carrow_array_data(
 
 carrow_array_data_info(x, ...)
 
-as_arrow_array_data(x, ...)
+as_carrow_array_data(x, ...)
 
-\method{as_arrow_array_data}{arrowvctrs_array_data}(x, ...)
+\method{as_carrow_array_data}{arrowvctrs_array_data}(x, ...)
 
-as_arrow_buffer(x, ...)
+as_carrow_buffer(x, ...)
 
-\method{as_arrow_buffer}{default}(x, ...)
+\method{as_carrow_buffer}{default}(x, ...)
 }
 \arguments{
 \item{buffers}{A \code{\link[=list]{list()}} of R vectors whose memory serves as an underlying
@@ -39,7 +39,7 @@ computed yet.}
 
 \item{offset}{The number of elements to skip at the front of the array.}
 
-\item{children}{Child vectors as a \code{\link[=list]{list()}} coerced by \code{\link[=as_arrow_array_data]{as_arrow_array_data()}}}
+\item{children}{Child vectors as a \code{\link[=list]{list()}} coerced by \code{\link[=as_carrow_array_data]{as_carrow_array_data()}}}
 
 \item{dictionary}{Dictionary array for dictionary types.}
 

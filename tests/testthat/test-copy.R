@@ -37,7 +37,7 @@ test_that("carrow_deep_copy() works for primitive types", {
     carrow_schema("i", flags = carrow_schema_flags(nullable = TRUE)),
     carrow_array_data(
       list(
-        as_arrow_bitmask(c(TRUE, FALSE, TRUE, FALSE, TRUE)),
+        as_carrow_bitmask(c(TRUE, FALSE, TRUE, FALSE, TRUE)),
         1:5
       ),
       length = 4,

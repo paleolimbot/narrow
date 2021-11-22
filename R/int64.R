@@ -8,29 +8,29 @@
 #' @export
 #'
 #' @examples
-#' as_arrow_int64(1:5)
+#' as_carrow_int64(1:5)
 #'
-as_arrow_int64 <- function(x, ...) {
-  UseMethod("as_arrow_int64")
+as_carrow_int64 <- function(x, ...) {
+  UseMethod("as_carrow_int64")
 }
 
 #' @export
-as_arrow_int64.arrowvctrs_int64 <- function(x, ...) {
+as_carrow_int64.arrowvctrs_int64 <- function(x, ...) {
   x
 }
 
 #' @export
-as_arrow_int64.default <- function(x, ...) {
-  as_arrow_int64.double(as.numeric(x), ...)
+as_carrow_int64.default <- function(x, ...) {
+  as_carrow_int64.double(as.numeric(x), ...)
 }
 
 #' @export
-as_arrow_int64.double <- function(x, ...) {
+as_carrow_int64.double <- function(x, ...) {
   .Call(carrow_c_int64_from_double, x)
 }
 
 #' @export
-as_arrow_int64.integer <- function(x, ...) {
+as_carrow_int64.integer <- function(x, ...) {
   .Call(carrow_c_int64_from_integer, x)
 }
 
@@ -53,7 +53,7 @@ as.integer.arrowvctrs_int64 <- function(x, ..., start = 1, end = NULL) {
 #' @export
 `[<-.arrowvctrs_int64` <- function(x, i, value) {
   x_bare <- unclass(x)
-  x_bare[i] <- as_arrow_int64(value)
+  x_bare[i] <- as_carrow_int64(value)
   structure(x_bare, class = "arrowvctrs_int64")
 }
 

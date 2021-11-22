@@ -11,38 +11,38 @@
 #' @export
 #'
 #' @examples
-#' as_arrow_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+#' as_carrow_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
 #' as.logical(new_arrow_bitmask(0x01))
 #'
-as_arrow_bitmask <- function(x, ...) {
-  UseMethod("as_arrow_bitmask")
+as_carrow_bitmask <- function(x, ...) {
+  UseMethod("as_carrow_bitmask")
 }
 
-#' @rdname as_arrow_bitmask
+#' @rdname as_carrow_bitmask
 #' @export
-as_arrow_bitmask.default <- function(x, ...) {
-  as_arrow_bitmask.logical(as.logical(x))
+as_carrow_bitmask.default <- function(x, ...) {
+  as_carrow_bitmask.logical(as.logical(x))
 }
 
-#' @rdname as_arrow_bitmask
+#' @rdname as_carrow_bitmask
 #' @export
-as_arrow_bitmask.arrowvctrs_bitmask <- function(x, ...) {
+as_carrow_bitmask.arrowvctrs_bitmask <- function(x, ...) {
   x
 }
 
-#' @rdname as_arrow_bitmask
+#' @rdname as_carrow_bitmask
 #' @export
-as_arrow_bitmask.logical <- function(x, ...) {
+as_carrow_bitmask.logical <- function(x, ...) {
   .Call(carrow_c_bitmask_from_logical, x)
 }
 
-#' @rdname as_arrow_bitmask
+#' @rdname as_carrow_bitmask
 #' @export
 new_arrow_bitmask <- function(buffer = raw()) {
   structure(as.raw(buffer), class = "arrowvctrs_bitmask")
 }
 
-#' @rdname as_arrow_bitmask
+#' @rdname as_carrow_bitmask
 #' @export
 as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) * 8 else end
@@ -54,11 +54,11 @@ as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
   if (length(i) == 0) {
     new_arrow_bitmask()
   } else if (is.numeric(i) && length(i) == 1) {
-    as_arrow_bitmask(as.logical(x, start = i, end = i))
+    as_carrow_bitmask(as.logical(x, start = i, end = i))
   } else if (is.numeric(i) && all(diff(i) == 1)) {
-    as_arrow_bitmask(as.logical(x, start = min(i), end = max(i)))
+    as_carrow_bitmask(as.logical(x, start = min(i), end = max(i)))
   } else {
-    as_arrow_bitmask(as.logical(x)[i])
+    as_carrow_bitmask(as.logical(x)[i])
   }
 }
 
@@ -66,7 +66,7 @@ as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
 `[<-.arrowvctrs_bitmask` <- function(x, i, value) {
   x_lgl <- as.logical(x)
   x_lgl[i] <- as.logical(value)
-  as_arrow_bitmask(x_lgl)
+  as_carrow_bitmask(x_lgl)
 }
 
 #' @export

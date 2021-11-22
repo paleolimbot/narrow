@@ -32,7 +32,7 @@ as_carrow_array.logical <- function(x, ..., name = NULL) {
   carrow_array(
     carrow_schema("i", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     carrow_array_data(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
+      buffers = if (any(x_is_na)) list(as_carrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -47,7 +47,7 @@ as_carrow_array.integer <- function(x, ..., name = NULL) {
   carrow_array(
     carrow_schema("i", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     carrow_array_data(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
+      buffers = if (any(x_is_na)) list(as_carrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -62,7 +62,7 @@ as_carrow_array.double <- function(x, ..., name = NULL) {
   carrow_array(
     carrow_schema("g", name, flags = carrow_schema_flags(nullable = any(x_is_na))),
     carrow_array_data(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
+      buffers = if (any(x_is_na)) list(as_carrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0
@@ -85,7 +85,7 @@ as_carrow_array.character <- function(x, ..., name = NULL) {
   }
 
   if (any(x_is_na)) {
-    buffers <- c(list(as_arrow_bitmask(!x_is_na)), buffers)
+    buffers <- c(list(as_carrow_bitmask(!x_is_na)), buffers)
   } else {
     buffers <- c(list(NULL), buffers)
   }
@@ -120,7 +120,7 @@ as_carrow_array.factor <- function(x, ..., name = NULL) {
       dictionary = dictionary_vctr$schema
     ),
     carrow_array_data(
-      buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), indices) else list(NULL, indices),
+      buffers = if (any(x_is_na)) list(as_carrow_bitmask(!x_is_na), indices) else list(NULL, indices),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0,
