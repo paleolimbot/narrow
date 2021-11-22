@@ -12,7 +12,7 @@
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
 static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, const char* arg) {
-  if (!Rf_inherits(vctr_sexp, "arrowvctrs_vctr")) {
+  if (!Rf_inherits(vctr_sexp, "carrow_array")) {
     Rf_error("`x` must be an `carrow_array()`");
   }
 
@@ -35,7 +35,7 @@ static inline SEXP vctr_sexp_new(SEXP schema_xptr, SEXP array_data_xptr) {
   SEXP vctr_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
   SET_VECTOR_ELT(vctr_sexp, 0, schema_xptr);
   SET_VECTOR_ELT(vctr_sexp, 1, array_data_xptr);
-  Rf_setAttrib(vctr_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_vctr"));
+  Rf_setAttrib(vctr_sexp, R_ClassSymbol, Rf_mkString("carrow_array"));
   UNPROTECT(1);
   return vctr_sexp;
 }

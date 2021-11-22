@@ -27,7 +27,7 @@ from_carrow_array.default <- function(x, ptype, ...) {
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.NULL <- function(x, ptype, ...) {
-  if (!inherits(x, "arrowvctrs_vctr")) {
+  if (!inherits(x, "carrow_array")) {
     NextMethod()
   }
 
@@ -139,7 +139,7 @@ from_carrow_array.data.frame <- function(x, ptype, ...) {
 
 
 assert_x_carrow_array <- function(x) {
-  if (!inherits(x, "arrowvctrs_vctr")) {
+  if (!inherits(x, "carrow_array")) {
     stop("`x` is not an `carrow_array()`", call. = FALSE)
   }
 }

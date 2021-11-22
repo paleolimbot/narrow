@@ -4,7 +4,7 @@
 \alias{carrow_array}
 \alias{carrow_array_validate}
 \alias{as_carrow_array}
-\alias{as_carrow_array.arrowvctrs_vctr}
+\alias{as_carrow_array.carrow_array}
 \title{Create arrow vectors}
 \usage{
 carrow_array(schema = arrow_schema("n"), array = arrow_array_data())
@@ -13,7 +13,7 @@ carrow_array_validate(x)
 
 as_carrow_array(x, ...)
 
-\method{as_carrow_array}{arrowvctrs_vctr}(x, ...)
+\method{as_carrow_array}{carrow_array}(x, ...)
 }
 \arguments{
 \item{schema}{An \code{\link[=arrow_schema]{arrow_schema()}}}
@@ -25,7 +25,7 @@ as_carrow_array(x, ...)
 \item{...}{Passed to S3 methods}
 }
 \value{
-An object of class "arrowvctrs_vctr"
+An object of class "carrow_array"
 }
 \description{
 Create arrow vectors

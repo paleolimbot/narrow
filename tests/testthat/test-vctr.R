@@ -1,7 +1,7 @@
 
 test_that("carrow_array class works", {
   v <- carrow_array()
-  expect_s3_class(v, "arrowvctrs_vctr")
+  expect_s3_class(v, "carrow_array")
   expect_identical(as_carrow_array(v), v)
   expect_match(format(v), "carrow_array n\\[0\\]")
   expect_output(print(v), "carrow_array n\\[0\\]")
