@@ -138,15 +138,15 @@ enum ArrowType {
   CARROW_TYPE_MAX_ID
 };
 
-// The ArrowVector struct is a wrapper around the Schema and Array
+// The CarrowArray struct is a wrapper around the Schema and Array
 // that contains the casted pointers from Array as defined by Schema
 // It does not own any of its pointers, which are all borrowed from
 // its schema and array members.
-struct ArrowVector {
+struct CarrowArray {
   struct ArrowSchema* schema;
   struct ArrowArray* array_data;
 
-  // carrow_vector_set_schema() parses schema->format to obtain a few
+  // carrow_array_set_schema() parses schema->format to obtain a few
   // useful outputs that reduce the amount of parsing needed to
   // implement some common operations
   enum ArrowType type;
@@ -162,40 +162,40 @@ struct ArrowVector {
   int data_buffer_id;
 };
 
-static inline unsigned char* carrow_vector_validity_buffer(struct ArrowVector* vector) {
-  return (unsigned char*) vector->array_data->buffers[0];
+static inline unsigned char* carrow_array_validity_buffer(struct CarrowArray* array) {
+  return (unsigned char*) array->array_data->buffers[0];
 }
 
-static inline int32_t* carrow_vector_offset_buffer(struct ArrowVector* vector) {
-  if (vector->offset_buffer_id == -1) {
+static inline int32_t* carrow_array_offset_buffer(struct CarrowArray* array) {
+  if (array->offset_buffer_id == -1) {
     return 0;
   }
 
-  return (int32_t*) vector->array_data->buffers[vector->offset_buffer_id];
+  return (int32_t*) array->array_data->buffers[array->offset_buffer_id];
 }
 
-static inline int64_t* carrow_vector_large_offset_buffer(struct ArrowVector* vector) {
-  if (vector->large_offset_buffer_id == -1) {
+static inline int64_t* carrow_array_large_offset_buffer(struct CarrowArray* array) {
+  if (array->large_offset_buffer_id == -1) {
     return 0;
   }
 
-  return (int64_t*) vector->array_data->buffers[vector->large_offset_buffer_id];
+  return (int64_t*) array->array_data->buffers[array->large_offset_buffer_id];
 }
 
-static inline char* carrow_vector_union_type_buffer(struct ArrowVector* vector) {
-  if (vector->union_type_buffer_id == -1) {
+static inline char* carrow_array_union_type_buffer(struct CarrowArray* array) {
+  if (array->union_type_buffer_id == -1) {
     return 0;
   }
 
-  return (char*) vector->array_data->buffers[vector->union_type_buffer_id];
+  return (char*) array->array_data->buffers[array->union_type_buffer_id];
 }
 
-static inline void* carrow_vector_data_buffer(struct ArrowVector* vector) {
-  if (vector->data_buffer_id == -1) {
+static inline void* carrow_array_data_buffer(struct CarrowArray* array) {
+  if (array->data_buffer_id == -1) {
     return 0;
   }
 
-  return (void*) vector->array_data->buffers[vector->data_buffer_id];
+  return (void*) array->array_data->buffers[array->data_buffer_id];
 }
 
 #ifdef __cplusplus

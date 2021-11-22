@@ -6,11 +6,11 @@
 #include "vctr.h"
 
 SEXP carrow_c_vctr_validate(SEXP vctr_sexp) {
-  struct ArrowVector vector;
-  vctr_from_vctr(vctr_sexp, &vector, "vctr");
+  struct CarrowArray array;
+  vctr_from_vctr(vctr_sexp, &array, "vctr");
 
   struct ArrowStatus status;
-  carrow_vector_validate(&vector, &status);
+  carrow_array_validate(&array, &status);
   STOP_IF_NOT_OK(status);
 
   return R_NilValue;

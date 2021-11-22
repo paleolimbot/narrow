@@ -56,7 +56,7 @@ int64_t carrow_schema_metadata_size(const char* metadata) {
     memcpy(&value_len, metadata + pos, sizeof(int32_t));
     pos += sizeof(int32_t);
 
-    // SEXP value = PROTECT(Rf_allocVector(RAWSXP, value_len));
+    // SEXP value = PROTECT(Rf_allocarray(RAWSXP, value_len));
     if (value_len > 0) {
       // memcpy(RAW(value), metadata + pos, value_len);
       pos += value_len;

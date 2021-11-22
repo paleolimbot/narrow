@@ -11,7 +11,7 @@
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
-static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, const char* arg) {
+static inline void vctr_from_vctr(SEXP vctr_sexp, struct CarrowArray* array, const char* arg) {
   if (!Rf_inherits(vctr_sexp, "carrow_array")) {
     Rf_error("`x` must be an `carrow_array()`");
   }
@@ -21,11 +21,11 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
 
   struct ArrowStatus status;
 
-  if (carrow_vector_set_schema(vector, schema, &status) != 0) {
+  if (carrow_array_set_schema(array, schema, &status) != 0) {
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 
-  if (carrow_vector_set_array(vector, array_data, &status) != 0) {
+  if (carrow_array_set_array(array, array_data, &status) != 0) {
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 }

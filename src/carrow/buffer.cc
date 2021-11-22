@@ -3,7 +3,7 @@
 #include <memory>
 #include <errno.h>
 #include "buffer.h"
-#include "vector.h"
+#include "array.h"
 
 template <class dest_type_t, class src_type_t>
 int static_copy_template_class(void* dest_void, const void* src_void,

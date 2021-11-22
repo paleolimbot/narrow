@@ -9,7 +9,7 @@ SEXP carrow_c_buffers_from_character(SEXP chr) {
 
   // one pass for total length, one pass for copying memory
   // and assigning offsets
-  // probably faster as a growable vector but harder to implement
+  // probably faster as a growable array but harder to implement
 
   int64_t n_bytes = 0;
 
