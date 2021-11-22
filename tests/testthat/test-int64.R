@@ -18,6 +18,6 @@ test_that("subset and subset-assign work", {
 
 test_that("as_arrow_int64() has a reasonable print method", {
   off <- as_arrow_int64(1:5)
-  expect_output(expect_identical(print(off), off), "arrow_int64")
+  expect_output(expect_identical(print(off), off), "carrow_int64")
   expect_identical(format(off), format(1:5))
 })

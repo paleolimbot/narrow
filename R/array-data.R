@@ -9,16 +9,16 @@
 #' @param offset The number of elements to skip at the front of the array.
 #' @param children Child vectors as a [list()] coerced by [as_arrow_array_data()]
 #' @param dictionary Dictionary array for dictionary types.
-#' @param x An object to convert to an arrow_array
+#' @param x An object to convert to an carrow_array
 #' @param ... Passed to S3 Methods
 #'
 #' @return An object of class "arrowvctrs_array_data"
 #' @export
 #'
 #' @examples
-#' arrow_array_data(1:100, 100)
+#' carrow_array_data(1:100, 100)
 #'
-arrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
+carrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
                              children = NULL, dictionary = NULL) {
   buffers <- if (is.null(buffers)) {
     NULL
@@ -41,31 +41,31 @@ arrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset
   )
 }
 
-#' @rdname arrow_array_data
+#' @rdname carrow_array_data
 #' @export
-arrow_array_data_info <- function(x, ...) {
+carrow_array_data_info <- function(x, ...) {
   .Call(carrow_c_array_info, x)
 }
 
-#' @rdname arrow_array_data
+#' @rdname carrow_array_data
 #' @export
 as_arrow_array_data <- function(x, ...) {
   UseMethod("as_arrow_array_data")
 }
 
-#' @rdname arrow_array_data
+#' @rdname carrow_array_data
 #' @export
 as_arrow_array_data.arrowvctrs_array_data <- function(x, ...) {
   x
 }
 
-#' @rdname arrow_array_data
+#' @rdname carrow_array_data
 #' @export
 as_arrow_buffer <- function(x, ...) {
   UseMethod("as_arrow_buffer")
 }
 
-#' @rdname arrow_array_data
+#' @rdname carrow_array_data
 #' @export
 as_arrow_buffer.default <- function(x, ...) {
   # sanitized in carrow_c_array_from_sexp()
@@ -75,33 +75,33 @@ as_arrow_buffer.default <- function(x, ...) {
 
 #' @export
 length.arrowvctrs_array_data <- function(x, ...) {
-  length(arrow_array_data_info(x))
+  length(carrow_array_data_info(x))
 }
 
 #' @export
 names.arrowvctrs_array_data <- function(x, ...) {
-  names(arrow_array_data_info(x))
+  names(carrow_array_data_info(x))
 }
 
 #' @export
 `[[.arrowvctrs_array_data` <- function(x, i, ...) {
-  arrow_array_data_info(x)[[i]]
+  carrow_array_data_info(x)[[i]]
 }
 
 #' @export
 `$.arrowvctrs_array_data` <- function(x, i, ...) {
-  arrow_array_data_info(x)[[i]]
+  carrow_array_data_info(x)[[i]]
 }
 
 #' @export
 format.arrowvctrs_array_data <- function(x, ...) {
-  sprintf("<arrow_array at %s>", xptr_addr(x))
+  sprintf("<carrow_array at %s>", xptr_addr(x))
 }
 
 #' @export
 print.arrowvctrs_array_data <- function(x, ..., indent.str = "") {
   cat(sprintf("%s%s\n", indent.str, format(x)))
-  info <- arrow_array_data_info(x)
+  info <- carrow_array_data_info(x)
   for (nm in c("length", "null_count", "offset")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }

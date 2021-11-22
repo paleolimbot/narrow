@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-int arrow_vector_validate(struct ArrowVector* vector, struct ArrowStatus* status);
+int carrow_vector_validate(struct ArrowVector* vector, struct ArrowStatus* status);
 
 #ifdef __cplusplus
 }

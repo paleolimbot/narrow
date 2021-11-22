@@ -9,7 +9,7 @@ void finalize_array_data_xptr(SEXP array_data_xptr);
 
 static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
   if (!Rf_inherits(array_data_xptr, "arrowvctrs_array_data")) {
-    Rf_error("`%s` must be an object created with arrow_array_data()", arg);
+    Rf_error("`%s` must be an object created with carrow_array_data()", arg);
   }
 
   struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);

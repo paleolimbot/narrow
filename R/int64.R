@@ -69,7 +69,7 @@ print.arrowvctrs_int64 <- function(x, ..., max = NULL) {
   }
   x_to_print <- .Call(carrow_c_double_from_int64, x, 0, max + 10)
 
-  cat(sprintf("<arrow_int64[%d]>\n", length(x)))
+  cat(sprintf("<carrow_int64[%d]>\n", length(x)))
   print(x_to_print, ..., max = max)
   invisible(x)
 }

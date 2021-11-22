@@ -10,25 +10,25 @@
 #include "vector-init.h"
 #include "vector-copy.h"
 
-int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
+int carrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
                       struct ArrowVector* vector_src, int64_t src_offset,
                       int64_t n_elements, int32_t which_buffers,
                       struct ArrowStatus* status) {
-                        arrow_status_reset(status);
+                        carrow_status_reset(status);
 
   if (vector_dst == NULL) {
-    arrow_status_set_error(status, EINVAL, "`vector_dst` is NULL");
+    carrow_status_set_error(status, EINVAL, "`vector_dst` is NULL");
     RETURN_IF_NOT_OK(status);
   }
 
   if (vector_src == NULL) {
-    arrow_status_set_error(status, EINVAL, "`vector_src` is NULL");
+    carrow_status_set_error(status, EINVAL, "`vector_src` is NULL");
     RETURN_IF_NOT_OK(status);
   }
 
   // dense unions aren't supported yet
-  if (vector_src->type == ARROW_TYPE_DENSE_UNION) {
-    arrow_status_set_error(status, EINVAL, "Dense unions are not supported by arrow_vector_copy()");
+  if (vector_src->type == CARROW_TYPE_DENSE_UNION) {
+    carrow_status_set_error(status, EINVAL, "Dense unions are not supported by carrow_vector_copy()");
     RETURN_IF_NOT_OK(status);
   }
 
@@ -40,26 +40,26 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   uint64_t child_src_offset = src_offset;
   uint64_t child_n_elements = n_elements;
 
-  unsigned char* validity_buffer_src = arrow_vector_validity_buffer(vector_src);
-  unsigned char* validity_buffer_dst = arrow_vector_validity_buffer(vector_dst);
+  unsigned char* validity_buffer_src = carrow_vector_validity_buffer(vector_src);
+  unsigned char* validity_buffer_dst = carrow_vector_validity_buffer(vector_dst);
 
-  int32_t* offset_buffer_src = arrow_vector_offset_buffer(vector_src);
-  int32_t* offset_buffer_dst = arrow_vector_offset_buffer(vector_dst);
+  int32_t* offset_buffer_src = carrow_vector_offset_buffer(vector_src);
+  int32_t* offset_buffer_dst = carrow_vector_offset_buffer(vector_dst);
 
-  int64_t* large_offset_buffer_src = arrow_vector_large_offset_buffer(vector_src);
-  int64_t* large_offset_buffer_dst = arrow_vector_large_offset_buffer(vector_dst);
+  int64_t* large_offset_buffer_src = carrow_vector_large_offset_buffer(vector_src);
+  int64_t* large_offset_buffer_dst = carrow_vector_large_offset_buffer(vector_dst);
 
-  char* union_type_buffer_src = arrow_vector_union_type_buffer(vector_src);
-  char* union_type_buffer_dst = arrow_vector_union_type_buffer(vector_dst);
+  char* union_type_buffer_src = carrow_vector_union_type_buffer(vector_src);
+  char* union_type_buffer_dst = carrow_vector_union_type_buffer(vector_dst);
 
-  void* data_buffer_src = arrow_vector_data_buffer(vector_src);
-  void* data_buffer_dst = arrow_vector_data_buffer(vector_dst);
+  void* data_buffer_src = carrow_vector_data_buffer(vector_src);
+  void* data_buffer_dst = carrow_vector_data_buffer(vector_dst);
 
-  if (which_buffers & ARROW_BUFFER_VALIDITY) {
+  if (which_buffers & CARROW_BUFFER_VALIDITY) {
     // note that the validity buffer can be NULL if the null count is 0
     if (validity_buffer_src != NULL) {
       if (validity_buffer_dst == NULL) {
-        arrow_status_set_error(status, EINVAL, "Can't copy validity buffer to NULL");
+        carrow_status_set_error(status, EINVAL, "Can't copy validity buffer to NULL");
         RETURN_IF_NOT_OK(status);
       }
 
@@ -87,10 +87,10 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_BUFFER_OFFSET) {
+  if (which_buffers & CARROW_BUFFER_OFFSET) {
     if (offset_buffer_src != NULL) {
       if (offset_buffer_dst == NULL) {
-        arrow_status_set_error(status, EINVAL, "Can't copy offset buffer to NULL");
+        carrow_status_set_error(status, EINVAL, "Can't copy offset buffer to NULL");
         RETURN_IF_NOT_OK(status);
       }
 
@@ -103,7 +103,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
 
     if (large_offset_buffer_src != NULL) {
       if (large_offset_buffer_dst == NULL) {
-        arrow_status_set_error(status, EINVAL, "Can't copy large offset buffer to NULL");
+        carrow_status_set_error(status, EINVAL, "Can't copy large offset buffer to NULL");
         RETURN_IF_NOT_OK(status);
       }
 
@@ -115,10 +115,10 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_BUFFER_UNION_TYPE) {
+  if (which_buffers & CARROW_BUFFER_UNION_TYPE) {
     if (union_type_buffer_dst != NULL) {
       if (large_offset_buffer_dst == NULL) {
-        arrow_status_set_error(status, EINVAL, "Can't copy union type buffer to NULL");
+        carrow_status_set_error(status, EINVAL, "Can't copy union type buffer to NULL");
         RETURN_IF_NOT_OK(status);
       }
 
@@ -133,7 +133,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   // these can refer to child vectors or the data buffer (not true for dense unions)
   if (offset_buffer_src != NULL) {
     if (offset_buffer_dst == NULL) {
-      arrow_status_set_error(
+      carrow_status_set_error(
         status, EINVAL,
         "Can't calculate child buffer offset when destination array has offset buffer of NULL"
       );
@@ -145,7 +145,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     child_dst_offset = offset_buffer_dst[dst_offset];
   } else if (large_offset_buffer_src != NULL) {
     if (large_offset_buffer_src == NULL) {
-      arrow_status_set_error(
+      carrow_status_set_error(
         status, EINVAL,
         "Can't calculate child buffer offset when destination array has large offset buffer of NULL"
       );
@@ -155,9 +155,9 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     child_n_elements = large_offset_buffer_src[src_offset + n_elements] - large_offset_buffer_src[src_offset];
     child_src_offset = large_offset_buffer_src[src_offset];
     child_dst_offset = large_offset_buffer_dst[dst_offset];
-  } else if (vector_src->type == ARROW_TYPE_FIXED_SIZE_LIST) {
+  } else if (vector_src->type == CARROW_TYPE_FIXED_SIZE_LIST) {
     if (vector_src->element_size_bytes == -1) {
-      arrow_status_set_error(
+      carrow_status_set_error(
         status, EINVAL,
         "type is fixed-size list but element_size is -1"
       );
@@ -169,11 +169,11 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     child_dst_offset = dst_offset * vector_src->element_size_bytes;
   }
 
-  if (which_buffers & ARROW_BUFFER_DATA) {
+  if (which_buffers & CARROW_BUFFER_DATA) {
     if (data_buffer_src != NULL) {
       if (vector_src->element_size_bytes > 0) {
         if (data_buffer_dst == NULL) {
-          arrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
+          carrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
           RETURN_IF_NOT_OK(status);
         }
 
@@ -184,7 +184,7 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
         );
       } else if ((offset_buffer_src != NULL) || (large_offset_buffer_src != NULL)) {
         if (data_buffer_dst == NULL) {
-          arrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
+          carrow_status_set_error(status, EINVAL, "Can't copy data buffer to NULL");
           RETURN_IF_NOT_OK(status);
           return EINVAL;
         }
@@ -201,16 +201,16 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
   struct ArrowVector child_vector_src;
   struct ArrowVector child_vector_dst;
 
-  if (which_buffers & ARROW_BUFFER_CHILD) {
+  if (which_buffers & CARROW_BUFFER_CHILD) {
     // copy child vectors
     for (int64_t i = 0; i < vector_src->schema->n_children; i++) {
-      arrow_vector_init(&child_vector_src, vector_src->schema->children[i], vector_src->array_data->children[i], status);
+      carrow_vector_init(&child_vector_src, vector_src->schema->children[i], vector_src->array_data->children[i], status);
       RETURN_IF_NOT_OK(status);
 
-      arrow_vector_init(&child_vector_dst, vector_dst->schema->children[i], vector_dst->array_data->children[i], status);
+      carrow_vector_init(&child_vector_dst, vector_dst->schema->children[i], vector_dst->array_data->children[i], status);
       RETURN_IF_NOT_OK(status);
 
-      arrow_vector_copy(
+      carrow_vector_copy(
         &child_vector_dst, child_dst_offset,
         &child_vector_src, child_src_offset,
         child_n_elements,
@@ -221,16 +221,16 @@ int arrow_vector_copy(struct ArrowVector* vector_dst, int64_t dst_offset,
     }
   }
 
-  if (which_buffers & ARROW_BUFFER_DICTIONARY) {
+  if (which_buffers & CARROW_BUFFER_DICTIONARY) {
     // copy dictionary vector (the whole dictionary vector)
     if (vector_src->schema->dictionary != NULL) {
-      arrow_vector_init(&child_vector_src, vector_src->schema->dictionary, vector_src->array_data->dictionary, status);
+      carrow_vector_init(&child_vector_src, vector_src->schema->dictionary, vector_src->array_data->dictionary, status);
       RETURN_IF_NOT_OK(status);
 
-      arrow_vector_init(&child_vector_dst, vector_src->schema->dictionary, vector_dst->array_data->dictionary, status);
+      carrow_vector_init(&child_vector_dst, vector_src->schema->dictionary, vector_dst->array_data->dictionary, status);
       RETURN_IF_NOT_OK(status);
 
-      arrow_vector_copy(&child_vector_dst, 0, &child_vector_src, 0, child_vector_src.array_data->length, which_buffers, status);
+      carrow_vector_copy(&child_vector_dst, 0, &child_vector_src, 0, child_vector_src.array_data->length, which_buffers, status);
       RETURN_IF_NOT_OK(status);
     }
   }

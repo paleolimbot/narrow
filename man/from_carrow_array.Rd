@@ -13,7 +13,7 @@
 \alias{from_carrow_array.data.frame}
 \title{Convert Arrow vectors to R objects}
 \usage{
-from_carrow_array(x, ptype = arrow_default_ptype(x$schema), ...)
+from_carrow_array(x, ptype = carrow_default_ptype(x$schema), ...)
 
 \method{from_carrow_array}{default}(x, ptype, ...)
 

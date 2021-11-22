@@ -10,7 +10,7 @@ SEXP carrow_c_vctr_validate(SEXP vctr_sexp) {
   vctr_from_vctr(vctr_sexp, &vector, "vctr");
 
   struct ArrowStatus status;
-  arrow_vector_validate(&vector, &status);
+  carrow_vector_validate(&vector, &status);
   STOP_IF_NOT_OK(status);
 
   return R_NilValue;

@@ -7,14 +7,14 @@
 #' @export
 #'
 #' @examples
-#' arrow_default_ptype(carrow_schema("n"))
-#' arrow_default_ptype(
+#' carrow_default_ptype(carrow_schema("n"))
+#' carrow_default_ptype(
 #'   carrow_schema("+s", children = list(carrow_schema("i", "colname")))
 #' )
 #'
-arrow_default_ptype <- function(schema) {
+carrow_default_ptype <- function(schema) {
   if (!is.null(schema$dictionary)) {
-    return(arrow_default_ptype(schema$dictionary))
+    return(carrow_default_ptype(schema$dictionary))
   }
 
   info <- parse_format(schema$format)
@@ -26,7 +26,7 @@ arrow_default_ptype <- function(schema) {
     L =, e =, f =, g = double(),
     u =, U = character(),
     `+s` = {
-      children_ptype <- lapply(schema$children, arrow_default_ptype)
+      children_ptype <- lapply(schema$children, carrow_default_ptype)
       children_names <- lapply(schema$children, "[[", "name")
       children_names[vapply(children_names, is.null, logical(1))] <- ""
       names(children_ptype) <- children_names

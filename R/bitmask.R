@@ -81,7 +81,7 @@ print.arrowvctrs_bitmask <- function(x, ..., max = NULL) {
   }
   x_to_print <- as.logical(x, start = 1, end = max + 10)
 
-  cat(sprintf("<arrow_arrow_bitmask[%d]>\n", length(x) * 8))
+  cat(sprintf("<carrow_arrow_bitmask[%d]>\n", length(x) * 8))
   print(x_to_print, ..., max = max)
   invisible(x)
 }

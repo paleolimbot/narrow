@@ -5,12 +5,12 @@
 #include "status.h"
 
 
-void arrow_status_reset(struct ArrowStatus* status) {
+void carrow_status_reset(struct ArrowStatus* status) {
   status->code = 0;
   status->message[0] = '\0';
 }
 
-void arrow_status_set_error(struct ArrowStatus* status, int code, const char* fmt, ...) {
+void carrow_status_set_error(struct ArrowStatus* status, int code, const char* fmt, ...) {
   status->code = code;
 
   va_list args;

@@ -45,7 +45,7 @@ test_that("start/end limiting works for conversion to logical", {
 
 test_that("bitmask print method works", {
   expect_identical(format(new_arrow_bitmask(0x00)), format(rep(FALSE, 8)))
-  expect_output(print(new_arrow_bitmask()), "arrow_arrow_bitmask")
+  expect_output(print(new_arrow_bitmask()), "carrow_arrow_bitmask")
 })
 
 test_that("bitmask subset works", {

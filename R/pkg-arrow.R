@@ -9,12 +9,12 @@
 #' @rdname pkg-arrow
 #'
 from_carrow_array.Array <- function(x, ptype, ...) {
- arrow_arr <- from_carrow_array(x, arrow::Array)
+ carrow_arr <- from_carrow_array(x, arrow::Array)
 
- if (arrow_arr$type == ptype$type) {
-   arrow_arr
+ if (carrow_arr$type == ptype$type) {
+   carrow_arr
  } else {
-   arrow_arr$cast(ptype$type)
+   carrow_arr$cast(ptype$type)
  }
 }
 

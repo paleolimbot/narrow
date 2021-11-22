@@ -10,11 +10,11 @@ extern "C" {
 #endif
 
 
-int arrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
+int carrow_vector_init(struct ArrowVector* vector, struct ArrowSchema* schema,
                       struct ArrowArray* array_data, struct ArrowStatus* status);
-int arrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema,
+int carrow_vector_set_schema(struct ArrowVector* vector, struct ArrowSchema* schema,
                             struct ArrowStatus* status);
-int arrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array_data,
+int carrow_vector_set_array(struct ArrowVector* vector, struct ArrowArray* array_data,
                            struct ArrowStatus* status);
 
 #ifdef __cplusplus

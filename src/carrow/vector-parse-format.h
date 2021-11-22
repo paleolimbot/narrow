@@ -9,7 +9,7 @@ extern "C" {
 
 #include "vector.h"
 
-int arrow_vector_parse_format(struct ArrowVector* vector, const char* format, struct ArrowStatus* status);
+int carrow_vector_parse_format(struct ArrowVector* vector, const char* format, struct ArrowStatus* status);
 
 #ifdef __cplusplus
 }

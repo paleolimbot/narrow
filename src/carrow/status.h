@@ -12,8 +12,8 @@ struct ArrowStatus {
   char message[8096];
 };
 
-void arrow_status_reset(struct ArrowStatus* status);
-void arrow_status_set_error(struct ArrowStatus* status, int code, const char* fmt, ...);
+void carrow_status_reset(struct ArrowStatus* status);
+void carrow_status_set_error(struct ArrowStatus* status, int code, const char* fmt, ...);
 
 #define RETURN_IF_NOT_OK(_value) if ((_value)->code != 0) return (_value)->code
 

@@ -13,7 +13,7 @@
 #' @examples
 #' from_carrow_array(as_carrow_array(c(TRUE, FALSE, NA)), logical())
 #'
-from_carrow_array <- function(x, ptype = arrow_default_ptype(x$schema), ...) {
+from_carrow_array <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   UseMethod("from_carrow_array", ptype)
 }
 
@@ -93,7 +93,7 @@ from_carrow_array.factor <- function(x, ptype, ...) {
 
   # because of weirdness with UseMethod()
   if (missing(ptype)) {
-    ptype <- arrow_default_ptype(x$schema)
+    ptype <- carrow_default_ptype(x$schema)
   }
 
   # get indices
@@ -119,13 +119,13 @@ from_carrow_array.data.frame <- function(x, ptype, ...) {
 
   # because of weirdness with UseMethod()
   if (missing(ptype)) {
-    ptype <- arrow_default_ptype(x$schema)
+    ptype <- carrow_default_ptype(x$schema)
   }
 
   child_schemas <- x$schema$children
 
   if (ncol(ptype) == 0) {
-    ptype <- arrow_default_ptype(x$schema)
+    ptype <- carrow_default_ptype(x$schema)
   } else {
     stopifnot(identical(ncol(ptype), length(child_schemas)))
   }

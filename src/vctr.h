@@ -21,11 +21,11 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
 
   struct ArrowStatus status;
 
-  if (arrow_vector_set_schema(vector, schema, &status) != 0) {
+  if (carrow_vector_set_schema(vector, schema, &status) != 0) {
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 
-  if (arrow_vector_set_array(vector, array_data, &status) != 0) {
+  if (carrow_vector_set_array(vector, array_data, &status) != 0) {
     Rf_error("%s [%s]", status.message, strerror(status.code));
   }
 }

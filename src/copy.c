@@ -28,9 +28,9 @@ SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
     Rf_error("carrow_schema_copy failed with error [%d] %s", result, strerror(result));
   }
 
-  result = arrow_array_copy_structure(result_array_data, vector.array_data, ARROW_BUFFER_ALL);
+  result = carrow_array_copy_structure(result_array_data, vector.array_data, CARROW_BUFFER_ALL);
   if (result != 0) {
-    Rf_error("arrow_array_copy_structure failed with error [%d] %s", result, strerror(result));
+    Rf_error("carrow_array_copy_structure failed with error [%d] %s", result, strerror(result));
   }
 
   // don't keep the offset of the input!
@@ -39,39 +39,39 @@ SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowStatus status;
   struct ArrowVector vector_dst;
 
-  arrow_vector_init(&vector_dst, result_schema, result_array_data, &status);
+  carrow_vector_init(&vector_dst, result_schema, result_array_data, &status);
   STOP_IF_NOT_OK(status);
 
   // allocate the union type and offset buffers
-  arrow_vector_alloc_buffers(
+  carrow_vector_alloc_buffers(
     &vector_dst,
-    ARROW_BUFFER_OFFSET | ARROW_BUFFER_UNION_TYPE |
-      ARROW_BUFFER_CHILD | ARROW_BUFFER_DICTIONARY,
+    CARROW_BUFFER_OFFSET | CARROW_BUFFER_UNION_TYPE |
+      CARROW_BUFFER_CHILD | CARROW_BUFFER_DICTIONARY,
     &status
   );
   STOP_IF_NOT_OK(status);
 
   // ...and copy them
-  arrow_vector_copy(
+  carrow_vector_copy(
     &vector_dst, 0,
     &vector, vector.array_data->offset,
     vector_dst.array_data->length,
-    ARROW_BUFFER_OFFSET | ARROW_BUFFER_UNION_TYPE |
-      ARROW_BUFFER_CHILD | ARROW_BUFFER_DICTIONARY,
+    CARROW_BUFFER_OFFSET | CARROW_BUFFER_UNION_TYPE |
+      CARROW_BUFFER_CHILD | CARROW_BUFFER_DICTIONARY,
     &status
   );
   STOP_IF_NOT_OK(status);
 
   // ...then allocate the rest of the buffers
-  arrow_vector_alloc_buffers(&vector_dst, ARROW_BUFFER_ALL, &status);
+  carrow_vector_alloc_buffers(&vector_dst, CARROW_BUFFER_ALL, &status);
   STOP_IF_NOT_OK(status);
 
   // ...and copy them
-  arrow_vector_copy(
+  carrow_vector_copy(
     &vector_dst, 0,
     &vector, vector.array_data->offset,
     vector_dst.array_data->length,
-    ARROW_BUFFER_ALL,
+    CARROW_BUFFER_ALL,
     &status
   );
   STOP_IF_NOT_OK(status);

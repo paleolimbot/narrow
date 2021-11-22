@@ -19,7 +19,7 @@ static inline int64_t scalar_int64_from_sexp(SEXP int64_sexp, const char* arg) {
   } else if (IS_SIMPLE_SCALAR(int64_sexp, REALSXP)) {
     return REAL(int64_sexp)[0];
   } else {
-    Rf_error("`%s` must be numeric(1), integer(1), or arrow_int64(1)", arg);
+    Rf_error("`%s` must be numeric(1), integer(1), or carrow_int64(1)", arg);
   }
 }
 
