@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 
 #include "carrow/carrow.h"
-#include "vctr.h"
+#include "array.h"
 
 SEXP carrow_c_vctr_validate(SEXP vctr_sexp) {
   struct CarrowArray array;

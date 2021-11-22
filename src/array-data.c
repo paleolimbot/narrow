@@ -9,6 +9,7 @@
 
 void finalize_array_data_xptr(SEXP array_data_xptr);
 void finalize_array(struct ArrowArray* array_data);
+void finalize_exported_array(struct ArrowArray* array_data);
 
 SEXP carrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
                              SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
@@ -151,6 +152,18 @@ void finalize_array_data_xptr(SEXP array_data_xptr) {
   if (array_data != NULL) {
     free(array_data);
   }
+}
+
+// for ArrowArray* that are exported references to an R schema_xptr
+void finalize_exported_array_data(struct ArrowArray* array_data) {
+  SEXP array_data_xptr = (SEXP) array_data->private_data;
+  R_ReleaseObject(array_data_xptr);
+
+  // there's a thing here where callers can get some of the child
+  // arrays too and I'm not sure how to support that here
+  // https://arrow.apache.org/docs/format/CDataInterface.html#moving-child-arrays
+
+  array_data->release = NULL;
 }
 
 // for ArrowArray* that were created by carrow_c_array_from_sexp()

@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "carrow/carrow.h"
-#include "vctr.h"
+#include "array.h"
 #include "schema.h"
 #include "util.h"
 

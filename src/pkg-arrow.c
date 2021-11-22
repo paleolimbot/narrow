@@ -44,50 +44,19 @@ SEXP carrow_c_array_blank() {
 // itself (e.g., Arrow C++ via the arrow R package or pyarrow Python package),
 // the structure and the release callback need to keep the information.
 
-void release_exportable_schema(struct ArrowSchema* schema) {
-  SEXP schema_xptr = (SEXP) schema->private_data;
-  R_ReleaseObject(schema_xptr);
-  schema->release = NULL;
-}
-
-void release_exportable_array(struct ArrowArray* array_data) {
-  SEXP array_data_xptr = (SEXP) array_data->private_data;
-  R_ReleaseObject(array_data_xptr);
-
-  // there's a thing here where callers can get some of the child
-  // arrays too and I'm not sure how to support that here
-  // https://arrow.apache.org/docs/format/CDataInterface.html#moving-child-arrays
-
-  array_data->release = NULL;
-}
-
 SEXP carrow_c_exportable_schema(SEXP schema_xptr) {
-  struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
   struct ArrowSchema* schema_copy = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(schema_copy, "struct ArrowSchema");
-
-  // keep all the pointers but use the R_PreserveObject mechanism to keep
-  // the original data valid (R_ReleaseObject is called from the release callback)
-  memcpy(schema_copy, schema, sizeof(struct ArrowSchema));
-  schema_copy->private_data = schema_xptr;
-  schema_copy->release = &release_exportable_schema;
-  R_PreserveObject(schema_xptr);
+  schema_export(schema_xptr, schema_copy);
 
   // this object has no finalizer so it has to be passed somewhere that does!
   return R_MakeExternalPtr(schema_copy, R_NilValue, R_NilValue);
 }
 
 SEXP carrow_c_exportable_array(SEXP array_data_xptr) {
-  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
   struct ArrowArray* array_data_copy = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data_copy, "struct ArrowArray");
-
-  // keep all the pointers but use the R_PreserveObject mechanism to keep
-  // the original data valid (R_ReleaseObject is called from the release callback)
-  memcpy(array_data_copy, array_data, sizeof(struct ArrowArray));
-  array_data_copy->private_data = array_data_xptr;
-  array_data_copy->release = &release_exportable_array;
-  R_PreserveObject(array_data_xptr);
+  array_data_export(array_data_xptr, array_data_copy);
 
   // this object has no finalizer so it has to be passed somewhere that does!
   return R_MakeExternalPtr(array_data_copy, R_NilValue, R_NilValue);

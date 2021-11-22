@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 
 #include "carrow/carrow.h"
-#include "vctr.h"
+#include "array.h"
 #include "schema.h"
 #include "array-data.h"
 #include "bitmask.h"
