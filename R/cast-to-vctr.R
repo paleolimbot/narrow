@@ -22,7 +22,7 @@
 #' as_arrow_vctr(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
 as_arrow_vctr.NULL <- function(x, ..., name = NULL) {
-  arrow_vctr(arrow_schema("n", name), arrow_array(null_count = 0))
+  arrow_vctr(arrow_schema("n", name), arrow_array_data(null_count = 0))
 }
 
 #' @export
@@ -31,7 +31,7 @@ as_arrow_vctr.logical <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   arrow_vctr(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
-    arrow_array(
+    arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
@@ -46,7 +46,7 @@ as_arrow_vctr.integer <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   arrow_vctr(
     arrow_schema("i", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
-    arrow_array(
+    arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
@@ -61,7 +61,7 @@ as_arrow_vctr.double <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
   arrow_vctr(
     arrow_schema("g", name, flags = arrow_schema_flags(nullable = any(x_is_na))),
-    arrow_array(
+    arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
       null_count = sum(x_is_na),
@@ -92,7 +92,7 @@ as_arrow_vctr.character <- function(x, ..., name = NULL) {
 
   arrow_vctr(
     arrow_schema(format, name, flags = arrow_schema_flags(nullable = any(x_is_na))),
-    arrow_array(
+    arrow_array_data(
       buffers = buffers,
       length = length(x),
       null_count = sum(x_is_na),
@@ -119,7 +119,7 @@ as_arrow_vctr.factor <- function(x, ..., name = NULL) {
       flags = arrow_schema_flags(nullable = any(x_is_na)),
       dictionary = dictionary_vctr$schema
     ),
-    arrow_array(
+    arrow_array_data(
       buffers = if (any(x_is_na)) list(as_arrow_bitmask(!x_is_na), indices) else list(NULL, indices),
       length = length(x),
       null_count = sum(x_is_na),
@@ -134,7 +134,7 @@ as_arrow_vctr.factor <- function(x, ..., name = NULL) {
 as_arrow_vctr.raw <- function(x, ..., name = NULL) {
   arrow_vctr(
     arrow_schema("C", name),
-    arrow_array(
+    arrow_array_data(
       buffers = list(NULL, x),
       length = length(x),
       null_count = 0,
@@ -152,7 +152,7 @@ as_arrow_vctr.data.frame <- function(x, ..., name = NULL) {
 
   arrow_vctr(
     arrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
-    arrow_array(
+    arrow_array_data(
       buffers = list(NULL),
       length = nrow(x),
       null_count = 0,

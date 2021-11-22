@@ -7,7 +7,7 @@
 \alias{as_arrow_vctr.arrowvctrs_vctr}
 \title{Create arrow vectors}
 \usage{
-arrow_vctr(schema = arrow_schema("n"), array = arrow_array())
+arrow_vctr(schema = arrow_schema("n"), array = arrow_array_data())
 
 arrow_vctr_validate(x)
 
@@ -18,7 +18,7 @@ as_arrow_vctr(x, ...)
 \arguments{
 \item{schema}{An \code{\link[=arrow_schema]{arrow_schema()}}}
 
-\item{array}{An \code{\link[=arrow_array]{arrow_array()}}}
+\item{array}{An \code{\link[=arrow_array_data]{arrow_array_data()}}}
 
 \item{x}{An object to convert to an \code{\link[=arrow_vctr]{arrow_vctr()}}}
 

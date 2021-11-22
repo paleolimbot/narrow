@@ -1,6 +1,6 @@
 
 test_that("arrays can be constructed from R objects", {
-  a_null <- arrow_array()
+  a_null <- arrow_array_data()
   expect_identical(a_null$buffers, NULL)
   expect_identical(a_null$length, as_arrow_int64(0))
   expect_identical(a_null$null_count, as_arrow_int64(-1))
@@ -13,31 +13,31 @@ test_that("arrays can be constructed from R objects", {
   expect_match(format(a_null), "arrow_array")
   expect_output(expect_identical(print(a_null, "arrow_array"), a_null))
 
-  a_buf <- arrow_array(1:10, 10)
+  a_buf <- arrow_array_data(1:10, 10)
   expect_identical(a_buf$buffers[[1]], 1:10)
   expect_match(format(a_buf), "arrow_array")
   expect_output(expect_identical(print(a_buf, "arrow_array"), a_buf))
 
-  a_buf2 <- arrow_array(list(1:10, 1:5), 10)
+  a_buf2 <- arrow_array_data(list(1:10, 1:5), 10)
   expect_identical(a_buf2$buffers, list(1:10, 1:5))
   expect_match(format(a_buf2), "arrow_array")
   expect_output(expect_identical(print(a_buf2, "arrow_array"), a_buf2))
 
-  a_dict <- arrow_array(dictionary = arrow_array(1:10, 10))
+  a_dict <- arrow_array_data(dictionary = arrow_array_data(1:10, 10))
   expect_identical(a_dict$dictionary$length, as_arrow_int64(10))
   expect_match(format(a_dict), "arrow_array")
   expect_output(expect_identical(print(a_dict, "arrow_array"), a_dict))
 
-  a_children <- arrow_array(children = list(arrow_array(1:10, 10)))
+  a_children <- arrow_array_data(children = list(arrow_array_data(1:10, 10)))
   expect_identical(a_children$children[[1]]$length, as_arrow_int64(10))
   expect_match(format(a_children), "arrow_array")
   expect_output(expect_identical(print(a_children, "arrow_array"), a_children))
 })
 
-test_that("arrow_array() list interface works", {
-  a <- arrow_array()
+test_that("arrow_array_data() list interface works", {
+  a <- arrow_array_data()
   expect_identical(a$length, as_arrow_int64(0))
   expect_identical(a[["length"]], as_arrow_int64(0))
-  expect_identical(names(a), names(arrow_array_info(a)))
-  expect_identical(length(a), length(arrow_array_info(a)))
+  expect_identical(names(a), names(arrow_array_data_info(a)))
+  expect_identical(length(a), length(arrow_array_data_info(a)))
 })

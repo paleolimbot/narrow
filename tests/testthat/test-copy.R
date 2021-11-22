@@ -35,7 +35,7 @@ test_that("arrow_deep_copy() works for primitive types", {
   # with a validity buffer that has a non byte-aligned offset
   int_vctr <- arrow_vctr(
     arrow_schema("i", flags = arrow_schema_flags(nullable = TRUE)),
-    arrow_array(
+    arrow_array_data(
       list(
         as_arrow_bitmask(c(TRUE, FALSE, TRUE, FALSE, TRUE)),
         1:5

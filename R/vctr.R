@@ -2,7 +2,7 @@
 #' Create arrow vectors
 #'
 #' @param schema An [arrow_schema()]
-#' @param array An [arrow_array()]
+#' @param array An [arrow_array_data()]
 #' @param x An object to convert to an [arrow_vctr()]
 #' @param ... Passed to S3 methods
 #'
@@ -12,9 +12,9 @@
 #' @examples
 #' arrow_vctr()
 #'
-arrow_vctr <- function(schema = arrow_schema("n"), array = arrow_array()) {
+arrow_vctr <- function(schema = arrow_schema("n"), array = arrow_array_data()) {
   schema <- as_arrow_schema(schema)
-  arrays <- as_arrow_array(array)
+  arrays <- as_arrow_array_data(array)
   vctr <- structure(list(schema = schema, array = array), class = "arrowvctrs_vctr")
   arrow_vctr_validate(vctr)
   vctr
