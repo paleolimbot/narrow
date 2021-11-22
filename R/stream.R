@@ -2,6 +2,7 @@
 #' Stream objects as Arrow arrays
 #'
 #' @param x An R object to convert to an Arrow Stream
+#' @param array_stream An object of class "carrow_stream"
 #' @param chunk_size The number of elements to return in each chunk
 #'   or `NULL`.
 #' @param ... Passed to S3 methods

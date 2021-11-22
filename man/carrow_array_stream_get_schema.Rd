@@ -19,6 +19,8 @@ as_carrow_array_stream(x, ..., chunk_size = NULL)
 \method{as_carrow_array_stream}{carrow_array}(x, ..., chunk_size = NULL)
 }
 \arguments{
+\item{array_stream}{An object of class "carrow_stream"}
+
 \item{x}{An R object to convert to an Arrow Stream}
 
 \item{...}{Passed to S3 methods}
