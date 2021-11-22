@@ -1,6 +1,6 @@
 
-#ifndef arrowvctrs_SCHEMA_H_INCLUDED
-#define arrowvctrs_SCHEMA_H_INCLUDED
+#ifndef carrow_SCHEMA_H_INCLUDED
+#define carrow_SCHEMA_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>
@@ -15,7 +15,7 @@ unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg);
 SEXP sexp_from_metadata(unsigned char* metadata);
 
 static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char* arg) {
-  if (!Rf_inherits(schema_xptr, "arrowvctrs_schema")) {
+  if (!Rf_inherits(schema_xptr, "carrow_schema")) {
     Rf_error("`%s` must be an object created with carrow_schema()", arg);
   }
 
@@ -41,7 +41,7 @@ static inline struct ArrowSchema* nullable_schema_from_xptr(SEXP schema_xptr, co
 
 static inline SEXP schema_xptr_new(struct ArrowSchema* schema) {
   SEXP schema_xptr = PROTECT(R_MakeExternalPtr(schema, R_NilValue, R_NilValue));
-  Rf_setAttrib(schema_xptr, R_ClassSymbol, Rf_mkString("arrowvctrs_schema"));
+  Rf_setAttrib(schema_xptr, R_ClassSymbol, Rf_mkString("carrow_schema"));
   UNPROTECT(1);
   return schema_xptr;
 }

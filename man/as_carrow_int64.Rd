@@ -12,7 +12,7 @@ as_carrow_int64(x, ...)
 \item{...}{Passed to S3 Methods}
 }
 \value{
-An object of class "arrowvctrs_int64"
+An object of class "carrow_int64"
 }
 \description{
 64-bit integer vectors

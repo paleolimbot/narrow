@@ -43,7 +43,7 @@ SEXP carrow_c_buffers_from_character(SEXP chr) {
   }
 
   offsets[n] = n_bytes;
-  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_int64"));
+  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
 
   SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(result, 0, offsets_sexp);

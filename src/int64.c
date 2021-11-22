@@ -42,7 +42,7 @@ SEXP carrow_c_int64_from_double(SEXP dbl_sexp) {
     value[i] = (int64_t) dbl[i];
   }
 
-  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_int64"));
+  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
   UNPROTECT(1);
   return int64_sexp;
 }
@@ -58,7 +58,7 @@ SEXP carrow_c_int64_from_integer(SEXP int_sexp) {
     value[i] = (int64_t) integer[i];
   }
 
-  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_int64"));
+  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
   UNPROTECT(1);
   return int64_sexp;
 }

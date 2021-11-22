@@ -3,23 +3,23 @@
 \name{as_carrow_bitmask}
 \alias{as_carrow_bitmask}
 \alias{as_carrow_bitmask.default}
-\alias{as_carrow_bitmask.arrowvctrs_bitmask}
+\alias{as_carrow_bitmask.carrow_bitmask}
 \alias{as_carrow_bitmask.logical}
 \alias{new_arrow_bitmask}
-\alias{as.logical.arrowvctrs_bitmask}
+\alias{as.logical.carrow_bitmask}
 \title{Create bitmask buffers}
 \usage{
 as_carrow_bitmask(x, ...)
 
 \method{as_carrow_bitmask}{default}(x, ...)
 
-\method{as_carrow_bitmask}{arrowvctrs_bitmask}(x, ...)
+\method{as_carrow_bitmask}{carrow_bitmask}(x, ...)
 
 \method{as_carrow_bitmask}{logical}(x, ...)
 
 new_arrow_bitmask(buffer = raw())
 
-\method{as.logical}{arrowvctrs_bitmask}(x, ..., start = 1, end = NULL)
+\method{as.logical}{carrow_bitmask}(x, ..., start = 1, end = NULL)
 }
 \arguments{
 \item{x}{An object to convert to a bitmask}
@@ -32,7 +32,7 @@ new_arrow_bitmask(buffer = raw())
 when converting to \code{\link[=logical]{logical()}}.}
 }
 \value{
-An object with class 'arrowvctrs_bitmask'
+An object with class 'carrow_bitmask'
 }
 \description{
 Create bitmask buffers

@@ -4,7 +4,7 @@
 #' @param x An object to convert to a large integer vector
 #' @param ... Passed to S3 Methods
 #'
-#' @return An object of class "arrowvctrs_int64"
+#' @return An object of class "carrow_int64"
 #' @export
 #'
 #' @examples
@@ -15,7 +15,7 @@ as_carrow_int64 <- function(x, ...) {
 }
 
 #' @export
-as_carrow_int64.arrowvctrs_int64 <- function(x, ...) {
+as_carrow_int64.carrow_int64 <- function(x, ...) {
   x
 }
 
@@ -35,35 +35,35 @@ as_carrow_int64.integer <- function(x, ...) {
 }
 
 #' @export
-as.double.arrowvctrs_int64 <- function(x, ..., start = 1, end = NULL) {
+as.double.carrow_int64 <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) else end
   .Call(carrow_c_double_from_int64, x, start - 1, end)
 }
 
 #' @export
-as.integer.arrowvctrs_int64 <- function(x, ..., start = 1, end = NULL) {
-  as.integer(as.double.arrowvctrs_int64(x, start = start, end = end))
+as.integer.carrow_int64 <- function(x, ..., start = 1, end = NULL) {
+  as.integer(as.double.carrow_int64(x, start = start, end = end))
 }
 
 #' @export
-`[.arrowvctrs_int64` <- function(x, i) {
-  structure(NextMethod(), class = "arrowvctrs_int64")
+`[.carrow_int64` <- function(x, i) {
+  structure(NextMethod(), class = "carrow_int64")
 }
 
 #' @export
-`[<-.arrowvctrs_int64` <- function(x, i, value) {
+`[<-.carrow_int64` <- function(x, i, value) {
   x_bare <- unclass(x)
   x_bare[i] <- as_carrow_int64(value)
-  structure(x_bare, class = "arrowvctrs_int64")
+  structure(x_bare, class = "carrow_int64")
 }
 
 #' @export
-format.arrowvctrs_int64 <- function(x, ...) {
+format.carrow_int64 <- function(x, ...) {
   format(as.numeric(x), ...)
 }
 
 #' @export
-print.arrowvctrs_int64 <- function(x, ..., max = NULL) {
+print.carrow_int64 <- function(x, ..., max = NULL) {
   if (is.null(max)) {
     max <- getOption("max.print", 1000)
   }

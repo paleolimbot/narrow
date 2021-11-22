@@ -1,6 +1,6 @@
 
-#ifndef arrowvctrs_int64_H_INCLUDED
-#define arrowvctrs_int64_H_INCLUDED
+#ifndef carrow_int64_H_INCLUDED
+#define carrow_int64_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>
@@ -10,7 +10,7 @@
 #define BIG_INTEGER(data_) ((int64_t*) REAL(data_))
 
 static inline int64_t scalar_int64_from_sexp(SEXP int64_sexp, const char* arg) {
-  if (Rf_inherits(int64_sexp, "arrowvctrs_int64")) {
+  if (Rf_inherits(int64_sexp, "carrow_int64")) {
     int64_t out;
     memcpy(&out, REAL(int64_sexp), sizeof(int64_t));
     return out;
@@ -28,7 +28,7 @@ static inline SEXP sexp_from_int64(int64_t n, int64_t* value) {
   if (n > 0) {
     memcpy(REAL(int64_sexp), value, n * sizeof(int64_t));
   }
-  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_int64"));
+  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
   UNPROTECT(1);
   return int64_sexp;
 }

@@ -20,7 +20,7 @@ static inline SEXP bitmask_new(int64_t size) {
     RAW(bitmask)[n_bytes - 1] = 0x00;
   }
 
-  Rf_setAttrib(bitmask, R_ClassSymbol, Rf_mkString("arrowvctrs_bitmask"));
+  Rf_setAttrib(bitmask, R_ClassSymbol, Rf_mkString("carrow_bitmask"));
   UNPROTECT(1);
   return bitmask;
 }

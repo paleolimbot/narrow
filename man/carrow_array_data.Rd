@@ -4,7 +4,7 @@
 \alias{carrow_array_data}
 \alias{carrow_array_data_info}
 \alias{as_carrow_array_data}
-\alias{as_carrow_array_data.arrowvctrs_array_data}
+\alias{as_carrow_array_data.carrow_array_data}
 \alias{as_carrow_buffer}
 \alias{as_carrow_buffer.default}
 \title{Create Arrow arrays}
@@ -22,7 +22,7 @@ carrow_array_data_info(x, ...)
 
 as_carrow_array_data(x, ...)
 
-\method{as_carrow_array_data}{arrowvctrs_array_data}(x, ...)
+\method{as_carrow_array_data}{carrow_array_data}(x, ...)
 
 as_carrow_buffer(x, ...)
 
@@ -48,7 +48,7 @@ computed yet.}
 \item{...}{Passed to S3 Methods}
 }
 \value{
-An object of class "arrowvctrs_array_data"
+An object of class "carrow_array_data"
 }
 \description{
 Create Arrow arrays

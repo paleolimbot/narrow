@@ -30,7 +30,7 @@ SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_se
   SEXP schema_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
   SET_VECTOR_ELT(schema_prot, 0, children_sexp);
   SET_VECTOR_ELT(schema_prot, 1, dictionary_xptr);
-  Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("arrowvctrs_schema_prot"));
+  Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("carrow_schema_prot"));
 
   // wrap in external ptr early to ensure deletion
   SEXP result_xptr = PROTECT(schema_xptr_new(result));
@@ -119,7 +119,7 @@ SEXP carrow_c_schema_data(SEXP schema_xptr) {
   // Try to return external pointers that were passed to schema_xptr_new to
   // reduce the chance of circular references
   SEXP schema_prot = R_ExternalPtrProtected(schema_xptr);
-  if (Rf_inherits(schema_prot, "arrowvctrs_schema_prot")) {
+  if (Rf_inherits(schema_prot, "carrow_schema_prot")) {
     SET_VECTOR_ELT(result, 4, VECTOR_ELT(schema_prot, 0));
     SET_VECTOR_ELT(result, 5, VECTOR_ELT(schema_prot, 1));
   } else {

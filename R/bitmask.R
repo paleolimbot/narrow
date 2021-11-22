@@ -7,7 +7,7 @@
 #'   when converting to [logical()].
 #' @param ... Passed to S3 methods
 #'
-#' @return An object with class 'arrowvctrs_bitmask'
+#' @return An object with class 'carrow_bitmask'
 #' @export
 #'
 #' @examples
@@ -26,7 +26,7 @@ as_carrow_bitmask.default <- function(x, ...) {
 
 #' @rdname as_carrow_bitmask
 #' @export
-as_carrow_bitmask.arrowvctrs_bitmask <- function(x, ...) {
+as_carrow_bitmask.carrow_bitmask <- function(x, ...) {
   x
 }
 
@@ -39,18 +39,18 @@ as_carrow_bitmask.logical <- function(x, ...) {
 #' @rdname as_carrow_bitmask
 #' @export
 new_arrow_bitmask <- function(buffer = raw()) {
-  structure(as.raw(buffer), class = "arrowvctrs_bitmask")
+  structure(as.raw(buffer), class = "carrow_bitmask")
 }
 
 #' @rdname as_carrow_bitmask
 #' @export
-as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
+as.logical.carrow_bitmask <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) * 8 else end
   .Call(carrow_c_logical_from_bitmask, x, start - 1, end)
 }
 
 #' @export
-`[.arrowvctrs_bitmask` <- function(x, i) {
+`[.carrow_bitmask` <- function(x, i) {
   if (length(i) == 0) {
     new_arrow_bitmask()
   } else if (is.numeric(i) && length(i) == 1) {
@@ -63,19 +63,19 @@ as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
 }
 
 #' @export
-`[<-.arrowvctrs_bitmask` <- function(x, i, value) {
+`[<-.carrow_bitmask` <- function(x, i, value) {
   x_lgl <- as.logical(x)
   x_lgl[i] <- as.logical(value)
   as_carrow_bitmask(x_lgl)
 }
 
 #' @export
-format.arrowvctrs_bitmask <- function(x, ...) {
+format.carrow_bitmask <- function(x, ...) {
   format(as.logical(x), ...)
 }
 
 #' @export
-print.arrowvctrs_bitmask <- function(x, ..., max = NULL) {
+print.carrow_bitmask <- function(x, ..., max = NULL) {
   if (is.null(max)) {
     max <- getOption("max.print", 1000)
   }

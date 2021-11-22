@@ -5,7 +5,7 @@
 \alias{carrow_schema_flags}
 \alias{carrow_schema_deep_copy}
 \alias{as_carrow_schema}
-\alias{as_carrow_schema.arrowvctrs_schema}
+\alias{as_carrow_schema.carrow_schema}
 \alias{as_carrow_schema.character}
 \alias{carrow_schema_info}
 \title{Create Arrow Schema objects}
@@ -29,7 +29,7 @@ carrow_schema_deep_copy(schema)
 
 as_carrow_schema(x, ...)
 
-\method{as_carrow_schema}{arrowvctrs_schema}(x, ...)
+\method{as_carrow_schema}{carrow_schema}(x, ...)
 
 \method{as_carrow_schema}{character}(x, ...)
 
@@ -65,7 +65,7 @@ containing key/value metadata.}
 \item{recursive}{Use \code{TRUE} to serialize the schema recursively}
 }
 \value{
-An external pointer with class 'arrowvctrs_schema'
+An external pointer with class 'carrow_schema'
 }
 \description{
 Create Arrow Schema objects

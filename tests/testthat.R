@@ -1,4 +1,4 @@
 library(testthat)
-library(arrowvctrs)
+library(carrow)
 
-test_check("arrowvctrs")
+test_check("carrow")

@@ -16,7 +16,7 @@
 #' @param x An object to convert to an [carrow_schema()]
 #' @param ... Passed to S3 methods
 #'
-#' @return An external pointer with class 'arrowvctrs_schema'
+#' @return An external pointer with class 'carrow_schema'
 #' @export
 #'
 carrow_schema <- function(format, name = NULL, metadata = NULL,
@@ -58,7 +58,7 @@ as_carrow_schema <- function(x, ...) {
 
 #' @rdname carrow_schema
 #' @export
-as_carrow_schema.arrowvctrs_schema <- function(x, ...) {
+as_carrow_schema.carrow_schema <- function(x, ...) {
   x
 }
 
@@ -129,45 +129,45 @@ list_of_raw_to_metadata <- function(metadata) {
 
 
 #' @export
-length.arrowvctrs_schema <- function(x, ...) {
+length.carrow_schema <- function(x, ...) {
   length(carrow_schema_info(x))
 }
 
 #' @export
-names.arrowvctrs_schema <- function(x, ...) {
+names.carrow_schema <- function(x, ...) {
   names(carrow_schema_info(x))
 }
 
 #' @export
-`[[.arrowvctrs_schema` <- function(x, i, ...) {
+`[[.carrow_schema` <- function(x, i, ...) {
   carrow_schema_info(x)[[i]]
 }
 
 #' @export
-`$.arrowvctrs_schema` <- function(x, i, ...) {
+`$.carrow_schema` <- function(x, i, ...) {
   carrow_schema_info(x)[[i]]
 }
 
 #' @export
-`[[<-.arrowvctrs_schema` <- function(x, i, value) {
+`[[<-.carrow_schema` <- function(x, i, value) {
   info <- carrow_schema_info(x)
   info[[i]] <- value
   do.call(carrow_schema, info)
 }
 
 #' @export
-`$<-.arrowvctrs_schema` <- function(x, name, value) {
+`$<-.carrow_schema` <- function(x, name, value) {
   x[[name]] <- value
   x
 }
 
 #' @export
-format.arrowvctrs_schema <- function(x, ...) {
+format.carrow_schema <- function(x, ...) {
   sprintf("<carrow_schema '%s' at %s>", carrow_schema_info(x)$format, xptr_addr(x))
 }
 
 #' @export
-print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
+print.carrow_schema <- function(x, ..., indent.str = "") {
   cat(paste0(indent.str, format(x), "\n"))
   info <- carrow_schema_info(x)
   for (nm in c("format", "name")) {
@@ -212,7 +212,7 @@ print.arrowvctrs_schema <- function(x, ..., indent.str = "") {
 
 #' @export
 #' @importFrom utils str
-str.arrowvctrs_schema <- function(object, ...) {
+str.carrow_schema <- function(object, ...) {
   cat(paste0(format(object), " "))
   str(carrow_schema_info(object), ...)
   invisible(object)
