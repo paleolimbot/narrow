@@ -30,11 +30,11 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct ArrowVector* vector, co
   }
 }
 
-static inline SEXP vctr_sexp_new(SEXP schema_xptr, SEXP array_xptr) {
+static inline SEXP vctr_sexp_new(SEXP schema_xptr, SEXP array_data_xptr) {
   const char* names[] = {"schema", "array", ""};
   SEXP vctr_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
   SET_VECTOR_ELT(vctr_sexp, 0, schema_xptr);
-  SET_VECTOR_ELT(vctr_sexp, 1, array_xptr);
+  SET_VECTOR_ELT(vctr_sexp, 1, array_data_xptr);
   Rf_setAttrib(vctr_sexp, R_ClassSymbol, Rf_mkString("arrowvctrs_vctr"));
   UNPROTECT(1);
   return vctr_sexp;

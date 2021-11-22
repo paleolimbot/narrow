@@ -5,7 +5,7 @@
 
 SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
                              SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr);
-SEXP arrowvctrs_c_array_info(SEXP array_xptr);
+SEXP arrowvctrs_c_array_info(SEXP array_data_xptr);
 
 SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr);
@@ -36,7 +36,7 @@ SEXP arrowvctrs_c_xptr_addr_double(SEXP xptr);
 SEXP arrowvctrs_c_schema_blank();
 SEXP arrowvctrs_c_array_blank();
 SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr);
-SEXP arrowvctrs_c_exportable_array(SEXP array_xptr);
+SEXP arrowvctrs_c_exportable_array(SEXP array_data_xptr);
 
 static const R_CallMethodDef CallEntries[] = {
   {"arrowvctrs_c_array_from_sexp", (DL_FUNC) &arrowvctrs_c_array_from_sexp, 6},

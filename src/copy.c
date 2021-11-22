@@ -21,7 +21,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowArray* result_array = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(result_schema, "struct ArrowArray");
   result_array->release = NULL;
-  SEXP result_array_xptr = PROTECT(array_xptr_new(result_array));
+  SEXP result_array_data_xptr = PROTECT(array_data_xptr_new(result_array));
 
   int result = arrow_schema_deep_copy(result_schema, vector.schema);
   if (result != 0) {
@@ -76,7 +76,7 @@ SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
   );
   STOP_IF_NOT_OK(status);
 
-  SEXP vctr_result_sexp = PROTECT(vctr_sexp_new(result_schema_xptr, result_array_xptr));
+  SEXP vctr_result_sexp = PROTECT(vctr_sexp_new(result_schema_xptr, result_array_data_xptr));
   UNPROTECT(3);
   return vctr_result_sexp;
 }

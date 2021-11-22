@@ -7,7 +7,7 @@
 #include "array-data.h"
 #include "util.h"
 
-void finalize_array_xptr(SEXP array_xptr);
+void finalize_array_data_xptr(SEXP array_data_xptr);
 void finalize_array(struct ArrowArray* array);
 
 SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
@@ -32,9 +32,9 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   array->dictionary = NULL;
   array->release = &finalize_array;
 
-  SEXP array_xptr = PROTECT(array_xptr_new(array));
-  R_RegisterCFinalizer(array_xptr, finalize_array_xptr);
-  R_SetExternalPtrTag(array_xptr, array_prot);
+  SEXP array_data_xptr = PROTECT(array_data_xptr_new(array));
+  R_RegisterCFinalizer(array_data_xptr, finalize_array_data_xptr);
+  R_SetExternalPtrTag(array_data_xptr, array_prot);
 
   array->length = scalar_int64_from_sexp(length_sexp, "length");
   array->null_count = scalar_int64_from_sexp(null_count_sexp, "null_count");
@@ -74,11 +74,11 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   array->dictionary = nullable_array_from_xptr(dictionary_xptr, "dictionary");
 
   UNPROTECT(2);
-  return array_xptr;
+  return array_data_xptr;
 }
 
-SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
-  struct ArrowArray* array = array_from_xptr(array_xptr, "array");
+SEXP arrowvctrs_c_array_info(SEXP array_data_xptr) {
+  struct ArrowArray* array = array_from_xptr(array_data_xptr, "array");
   const char* names[] = {
     "length", "null_count", "offset", "n_buffers", "n_children",
     "buffers", "children", "dictionary", ""
@@ -91,7 +91,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
   SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array->n_buffers));
   SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array->n_children));
 
-  SEXP array_prot = R_ExternalPtrTag(array_xptr);
+  SEXP array_prot = R_ExternalPtrTag(array_data_xptr);
 
   // if we alloced this ourselves (from R's C API),
   // it will have the SEXPs attached
@@ -106,7 +106,7 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     if (array->n_buffers > 0) {
       SEXP buffers = PROTECT(Rf_allocVector(VECSXP, array->n_buffers));
       for (int64_t i = 0; i < array->n_buffers; i++) {
-        SEXP buffer = PROTECT(R_MakeExternalPtr((void*) array->buffers[i], R_NilValue, array_xptr));
+        SEXP buffer = PROTECT(R_MakeExternalPtr((void*) array->buffers[i], R_NilValue, array_data_xptr));
         SET_VECTOR_ELT(buffers, i, buffer);
         UNPROTECT(1);
       }
@@ -117,8 +117,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     if (array->n_children > 0) {
       SEXP children = PROTECT(Rf_allocVector(VECSXP, array->n_children));
       for (int64_t i = 0; i < array->n_children; i++) {
-        SEXP child = PROTECT(array_xptr_new(array->children[i]));
-        R_SetExternalPtrProtected(child, array_xptr);
+        SEXP child = PROTECT(array_data_xptr_new(array->children[i]));
+        R_SetExternalPtrProtected(child, array_data_xptr);
         SET_VECTOR_ELT(children, i, child);
         UNPROTECT(1);
       }
@@ -127,8 +127,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
     }
 
     if (array->dictionary != NULL) {
-      SEXP dictionary = PROTECT(array_xptr_new(array->dictionary));
-      R_SetExternalPtrProtected(dictionary, array_xptr);
+      SEXP dictionary = PROTECT(array_data_xptr_new(array->dictionary));
+      R_SetExternalPtrProtected(dictionary, array_data_xptr);
       SET_VECTOR_ELT(array_info, 7, dictionary);
       UNPROTECT(1);
     }
@@ -142,8 +142,8 @@ SEXP arrowvctrs_c_array_info(SEXP array_xptr) {
 // call the release() callback and set the release callback to NULL
 // the pointer to an ArrowArray is always created by us but its release
 // callback might have been defined by some other package
-void finalize_array_xptr(SEXP array_xptr) {
-  struct ArrowArray* array = (struct ArrowArray*) R_ExternalPtrAddr(array_xptr);
+void finalize_array_data_xptr(SEXP array_data_xptr) {
+  struct ArrowArray* array = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
   if (array != NULL && array->release != NULL) {
     array->release(array);
   }

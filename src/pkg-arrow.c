@@ -29,11 +29,11 @@ SEXP arrowvctrs_c_array_blank() {
   check_trivial_alloc(array, "struct ArrowArray");
   array->release = NULL;
 
-  SEXP array_xptr = PROTECT(array_xptr_new(array));
-  R_RegisterCFinalizer(array_xptr, finalize_array_xptr);
+  SEXP array_data_xptr = PROTECT(array_data_xptr_new(array));
+  R_RegisterCFinalizer(array_data_xptr, finalize_array_data_xptr);
   UNPROTECT(1);
 
-  return array_xptr;
+  return array_data_xptr;
 }
 
 // The rest of this package operates under the assumption that references
@@ -51,8 +51,8 @@ void release_exportable_schema(struct ArrowSchema* schema) {
 }
 
 void release_exportable_array(struct ArrowArray* array) {
-  SEXP array_xptr = (SEXP) array->private_data;
-  R_ReleaseObject(array_xptr);
+  SEXP array_data_xptr = (SEXP) array->private_data;
+  R_ReleaseObject(array_data_xptr);
 
   // there's a thing here where callers can get some of the child
   // arrays too and I'm not sure how to support that here
@@ -77,17 +77,17 @@ SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr) {
   return R_MakeExternalPtr(schema_copy, R_NilValue, R_NilValue);
 }
 
-SEXP arrowvctrs_c_exportable_array(SEXP array_xptr) {
-  struct ArrowArray* array = array_from_xptr(array_xptr, "array");
+SEXP arrowvctrs_c_exportable_array(SEXP array_data_xptr) {
+  struct ArrowArray* array = array_from_xptr(array_data_xptr, "array");
   struct ArrowArray* array_copy = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_copy, "struct ArrowArray");
 
   // keep all the pointers but use the R_PreserveObject mechanism to keep
   // the original data valid (R_ReleaseObject is called from the release callback)
   memcpy(array_copy, array, sizeof(struct ArrowArray));
-  array_copy->private_data = array_xptr;
+  array_copy->private_data = array_data_xptr;
   array_copy->release = &release_exportable_array;
-  R_PreserveObject(array_xptr);
+  R_PreserveObject(array_data_xptr);
 
   // this object has no finalizer so it has to be passed somewhere that does!
   return R_MakeExternalPtr(array_copy, R_NilValue, R_NilValue);
