@@ -10,7 +10,7 @@
 void finalize_array_data_xptr(SEXP array_data_xptr);
 void finalize_array(struct ArrowArray* array_data);
 
-SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
+SEXP carrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
                              SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   const char* names_prot[] = {"buffers", "children", "dictionary", ""};
   SEXP array_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
@@ -77,7 +77,7 @@ SEXP arrowvctrs_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null
   return array_data_xptr;
 }
 
-SEXP arrowvctrs_c_array_info(SEXP array_data_xptr) {
+SEXP carrow_c_array_info(SEXP array_data_xptr) {
   struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
   const char* names[] = {
     "length", "null_count", "offset", "n_buffers", "n_children",
@@ -153,7 +153,7 @@ void finalize_array_data_xptr(SEXP array_data_xptr) {
   }
 }
 
-// for ArrowArray* that were created by arrowvctrs_c_array_from_sexp()
+// for ArrowArray* that were created by carrow_c_array_from_sexp()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_array(struct ArrowArray* array_data) {

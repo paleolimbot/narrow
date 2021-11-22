@@ -9,7 +9,7 @@
 #include "schema.h"
 #include "util.h"
 
-SEXP arrowvctrs_c_deep_copy(SEXP vctr_sexp) {
+SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
 

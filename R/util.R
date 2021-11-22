@@ -1,6 +1,6 @@
 
 xptr_addr <- function(x) {
-  .Call(arrowvctrs_c_xptr_addr, x);
+  .Call(carrow_c_xptr_addr, x);
 }
 
 `%||%` <- function(rhs, lhs) {

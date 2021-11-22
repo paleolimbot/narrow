@@ -11,7 +11,7 @@
 #include "schema.h"
 #include "util.h"
 
-SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
+SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   struct ArrowSchema* result = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(result, "struct ArrowSchema");
@@ -74,7 +74,7 @@ SEXP arrowvctrs_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadat
   return result_xptr;
 }
 
-SEXP arrowvctrs_c_schema_deep_copy(SEXP schema_xptr) {
+SEXP carrow_c_schema_deep_copy(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   struct ArrowSchema* new_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
@@ -93,7 +93,7 @@ SEXP arrowvctrs_c_schema_deep_copy(SEXP schema_xptr) {
   return new_schema_xptr;
 }
 
-SEXP arrowvctrs_c_schema_data(SEXP schema_xptr) {
+SEXP carrow_c_schema_data(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   const char* names[] = {"format", "name", "metadata", "flags", "children", "dictionary", ""};
@@ -168,7 +168,7 @@ void finalize_schema_xptr(SEXP schema_xptr) {
   }
 }
 
-// for ArrowSchema* that were created by arrowvctrs_c_schema_xptr_new()
+// for ArrowSchema* that were created by carrow_c_schema_xptr_new()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_schema(struct ArrowSchema* schema) {

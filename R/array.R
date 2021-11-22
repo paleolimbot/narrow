@@ -23,7 +23,7 @@ carrow_array <- function(schema = arrow_schema("n"), array = arrow_array_data())
 #' @rdname carrow_array
 #' @export
 carrow_array_validate <- function(x) {
-  .Call(arrowvctrs_c_vctr_validate, x)
+  .Call(carrow_c_vctr_validate, x)
   invisible(x)
 }
 

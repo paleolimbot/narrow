@@ -19,7 +19,7 @@
     } \
   }
 
-SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_logical_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
   int64_t size = vector.array_data->length;
@@ -44,7 +44,7 @@ SEXP arrowvctrs_c_logical_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP arrowvctrs_c_integer_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_integer_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
   int64_t size = vector.array_data->length;
@@ -69,7 +69,7 @@ SEXP arrowvctrs_c_integer_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_double_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
   int64_t size = vector.array_data->length;
@@ -94,7 +94,7 @@ SEXP arrowvctrs_c_double_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP arrowvctrs_c_raw_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_raw_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
   int64_t size = vector.array_data->length;
@@ -119,7 +119,7 @@ SEXP arrowvctrs_c_raw_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP arrowvctrs_c_character_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_character_from_vctr(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "x");
   int64_t size = vector.array_data->length;

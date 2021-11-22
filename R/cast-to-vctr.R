@@ -76,7 +76,7 @@ as_carrow_array.character <- function(x, ..., name = NULL) {
   x_is_na <- is.na(x)
 
   # flatten and check for long data vector
-  buffers <- .Call(arrowvctrs_c_buffers_from_character, x)
+  buffers <- .Call(carrow_c_buffers_from_character, x)
   if (length(buffers[[2]]) <= (2 ^ 31 - 1)) {
     buffers[[1]] <- as.integer(as.numeric(buffers[[1]]))
     format <- "u"

@@ -26,18 +26,18 @@ as_arrow_int64.default <- function(x, ...) {
 
 #' @export
 as_arrow_int64.double <- function(x, ...) {
-  .Call(arrowvctrs_c_int64_from_double, x)
+  .Call(carrow_c_int64_from_double, x)
 }
 
 #' @export
 as_arrow_int64.integer <- function(x, ...) {
-  .Call(arrowvctrs_c_int64_from_integer, x)
+  .Call(carrow_c_int64_from_integer, x)
 }
 
 #' @export
 as.double.arrowvctrs_int64 <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) else end
-  .Call(arrowvctrs_c_double_from_int64, x, start - 1, end)
+  .Call(carrow_c_double_from_int64, x, start - 1, end)
 }
 
 #' @export
@@ -67,7 +67,7 @@ print.arrowvctrs_int64 <- function(x, ..., max = NULL) {
   if (is.null(max)) {
     max <- getOption("max.print", 1000)
   }
-  x_to_print <- .Call(arrowvctrs_c_double_from_int64, x, 0, max + 10)
+  x_to_print <- .Call(carrow_c_double_from_int64, x, 0, max + 10)
 
   cat(sprintf("<arrow_int64[%d]>\n", length(x)))
   print(x_to_print, ..., max = max)

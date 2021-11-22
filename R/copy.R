@@ -10,5 +10,5 @@
 #' arrow_deep_copy(as_carrow_array(1:5))
 #'
 arrow_deep_copy <- function(x) {
-  .Call(arrowvctrs_c_deep_copy, as_carrow_array(x))
+  .Call(carrow_c_deep_copy, as_carrow_array(x))
 }

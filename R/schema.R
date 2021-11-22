@@ -23,7 +23,7 @@ arrow_schema <- function(format, name = NULL, metadata = NULL,
                          flags = arrow_schema_flags(),
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)
-  .Call(arrowvctrs_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
+  .Call(carrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
 #' @rdname arrow_schema
@@ -47,7 +47,7 @@ arrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
 #' @rdname arrow_schema
 #' @export
 arrow_schema_deep_copy <- function(schema) {
-  .Call(arrowvctrs_c_schema_deep_copy, as_arrow_schema(schema))
+  .Call(carrow_c_schema_deep_copy, as_arrow_schema(schema))
 }
 
 #' @rdname arrow_schema
@@ -71,7 +71,7 @@ as_arrow_schema.character <- function(x, ...) {
 #' @rdname arrow_schema
 #' @export
 arrow_schema_info <- function(x, ..., recursive = FALSE) {
-  result <- .Call(arrowvctrs_c_schema_data, x)
+  result <- .Call(carrow_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
   if (recursive) {
     if (!is.null(result$children)) {

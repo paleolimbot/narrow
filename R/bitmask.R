@@ -33,7 +33,7 @@ as_arrow_bitmask.arrowvctrs_bitmask <- function(x, ...) {
 #' @rdname as_arrow_bitmask
 #' @export
 as_arrow_bitmask.logical <- function(x, ...) {
-  .Call(arrowvctrs_c_bitmask_from_logical, x)
+  .Call(carrow_c_bitmask_from_logical, x)
 }
 
 #' @rdname as_arrow_bitmask
@@ -46,7 +46,7 @@ new_arrow_bitmask <- function(buffer = raw()) {
 #' @export
 as.logical.arrowvctrs_bitmask <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) * 8 else end
-  .Call(arrowvctrs_c_logical_from_bitmask, x, start - 1, end)
+  .Call(carrow_c_logical_from_bitmask, x, start - 1, end)
 }
 
 #' @export

@@ -7,12 +7,12 @@
 #include "array-data.h"
 #include "util.h"
 
-SEXP arrowvctrs_c_xptr_addr_double(SEXP xptr) {
+SEXP carrow_c_xptr_addr_double(SEXP xptr) {
   uintptr_t pointer_int = (uintptr_t) R_ExternalPtrAddr(xptr);
   return Rf_ScalarReal((double) pointer_int);
 }
 
-SEXP arrowvctrs_c_schema_blank() {
+SEXP carrow_c_schema_blank() {
   struct ArrowSchema* schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(schema, "struct ArrowSchema");
   schema->release = NULL;
@@ -24,7 +24,7 @@ SEXP arrowvctrs_c_schema_blank() {
   return schema_xptr;
 }
 
-SEXP arrowvctrs_c_array_blank() {
+SEXP carrow_c_array_blank() {
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data, "struct ArrowArray");
   array_data->release = NULL;
@@ -61,7 +61,7 @@ void release_exportable_array(struct ArrowArray* array_data) {
   array_data->release = NULL;
 }
 
-SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr) {
+SEXP carrow_c_exportable_schema(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
   struct ArrowSchema* schema_copy = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(schema_copy, "struct ArrowSchema");
@@ -77,7 +77,7 @@ SEXP arrowvctrs_c_exportable_schema(SEXP schema_xptr) {
   return R_MakeExternalPtr(schema_copy, R_NilValue, R_NilValue);
 }
 
-SEXP arrowvctrs_c_exportable_array(SEXP array_data_xptr) {
+SEXP carrow_c_exportable_array(SEXP array_data_xptr) {
   struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
   struct ArrowArray* array_data_copy = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data_copy, "struct ArrowArray");

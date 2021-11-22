@@ -31,7 +31,7 @@ arrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset
   dictionary <- if (is.null(dictionary)) NULL else as_arrow_array_data(dictionary)
 
   .Call(
-    arrowvctrs_c_array_from_sexp,
+    carrow_c_array_from_sexp,
     buffers,
     length,
     null_count,
@@ -44,7 +44,7 @@ arrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset
 #' @rdname arrow_array_data
 #' @export
 arrow_array_data_info <- function(x, ...) {
-  .Call(arrowvctrs_c_array_info, x)
+  .Call(carrow_c_array_info, x)
 }
 
 #' @rdname arrow_array_data
@@ -68,7 +68,7 @@ as_arrow_buffer <- function(x, ...) {
 #' @rdname arrow_array_data
 #' @export
 as_arrow_buffer.default <- function(x, ...) {
-  # sanitized in arrowvctrs_c_array_from_sexp()
+  # sanitized in carrow_c_array_from_sexp()
   x
 }
 

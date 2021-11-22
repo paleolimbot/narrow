@@ -5,7 +5,7 @@
 #include "carrow/carrow.h"
 #include "vctr.h"
 
-SEXP arrowvctrs_c_vctr_validate(SEXP vctr_sexp) {
+SEXP carrow_c_vctr_validate(SEXP vctr_sexp) {
   struct ArrowVector vector;
   vctr_from_vctr(vctr_sexp, &vector, "vctr");
 

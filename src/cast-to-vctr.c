@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdint.h>
 
-SEXP arrowvctrs_c_buffers_from_character(SEXP chr) {
+SEXP carrow_c_buffers_from_character(SEXP chr) {
   R_xlen_t n = Rf_xlength(chr);
 
   // one pass for total length, one pass for copying memory

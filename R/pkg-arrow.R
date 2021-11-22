@@ -25,13 +25,13 @@ from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
     ptype$classname,
     RecordBatch =,
     Array = arrow::Array$import_from_c(
-      xptr_addr_double(.Call(arrowvctrs_c_exportable_array, x$array)),
-      xptr_addr_double(.Call(arrowvctrs_c_exportable_schema, x$schema))
+      xptr_addr_double(.Call(carrow_c_exportable_array, x$array)),
+      xptr_addr_double(.Call(carrow_c_exportable_schema, x$schema))
     ),
     DataType =,
     Field =,
     Schema = ptype$import_from_c(
-      xptr_addr_double(.Call(arrowvctrs_c_exportable_schema, x$schema))
+      xptr_addr_double(.Call(carrow_c_exportable_schema, x$schema))
     ),
     stop(sprintf("Can't convert from carrow_array to R6 type '%s'", ptype$classname))
   )
@@ -80,13 +80,13 @@ as_carrow_array.RecordBatch <- function(x, ...) {
 }
 
 xptr_addr_double <- function(x) {
-  .Call(arrowvctrs_c_xptr_addr_double, x);
+  .Call(carrow_c_xptr_addr_double, x);
 }
 
 blank_invalid_schema <- function() {
-  .Call(arrowvctrs_c_schema_blank)
+  .Call(carrow_c_schema_blank)
 }
 
 blank_invalid_array <- function() {
-  .Call(arrowvctrs_c_array_blank)
+  .Call(carrow_c_array_blank)
 }
