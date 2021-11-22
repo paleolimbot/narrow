@@ -1,4 +1,4 @@
-Package: arrowvctrs
+Package: carrow
 Title: An R Interface to the 'Apache Arrow' C API
 Version: 0.0.0.9000
 Authors@R: 
@@ -12,10 +12,11 @@ License: Apache License (>= 2)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Suggests: 
+    arrow,
     covr,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
-URL: https://github.com/paleolimbot/arrowvctrs
-BugReports: https://github.com/paleolimbot/arrowvctrs/issues
+URL: https://github.com/paleolimbot/carrow
+BugReports: https://github.com/paleolimbot/carrow/issues

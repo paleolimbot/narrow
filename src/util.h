@@ -1,6 +1,6 @@
 
-#ifndef arrowvctrs_UTIL_H_INCLUDED
-#define arrowvctrs_UTIL_H_INCLUDED
+#ifndef carrow_UTIL_H_INCLUDED
+#define carrow_UTIL_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>

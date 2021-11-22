@@ -1,43 +1,47 @@
 
-test_that("arrays can be constructed from R objects", {
-  a_null <- arrow_array()
-  expect_identical(a_null$buffers, NULL)
-  expect_identical(a_null$length, as_arrow_int64(0))
-  expect_identical(a_null$null_count, as_arrow_int64(-1))
-  expect_identical(a_null$offset, as_arrow_int64(0))
-  expect_identical(a_null$n_children, as_arrow_int64(0))
-  expect_identical(a_null$n_buffers, as_arrow_int64(0))
-  expect_identical(a_null$children, NULL)
-  expect_identical(a_null$dictionary, NULL)
-
-  expect_match(format(a_null), "arrow_array")
-  expect_output(expect_identical(print(a_null, "arrow_array"), a_null))
-
-  a_buf <- arrow_array(1:10, 10)
-  expect_identical(a_buf$buffers[[1]], 1:10)
-  expect_match(format(a_buf), "arrow_array")
-  expect_output(expect_identical(print(a_buf, "arrow_array"), a_buf))
-
-  a_buf2 <- arrow_array(list(1:10, 1:5), 10)
-  expect_identical(a_buf2$buffers, list(1:10, 1:5))
-  expect_match(format(a_buf2), "arrow_array")
-  expect_output(expect_identical(print(a_buf2, "arrow_array"), a_buf2))
-
-  a_dict <- arrow_array(dictionary = arrow_array(1:10, 10))
-  expect_identical(a_dict$dictionary$length, as_arrow_int64(10))
-  expect_match(format(a_dict), "arrow_array")
-  expect_output(expect_identical(print(a_dict, "arrow_array"), a_dict))
-
-  a_children <- arrow_array(children = list(arrow_array(1:10, 10)))
-  expect_identical(a_children$children[[1]]$length, as_arrow_int64(10))
-  expect_match(format(a_children), "arrow_array")
-  expect_output(expect_identical(print(a_children, "arrow_array"), a_children))
+test_that("carrow_array class works", {
+  v <- carrow_array()
+  expect_s3_class(v, "carrow_array")
+  expect_identical(as_carrow_array(v), v)
+  expect_match(format(v), "carrow_array n\\[0\\]")
+  expect_output(print(v), "carrow_array n\\[0\\]")
 })
 
-test_that("arrow_array() list interface works", {
-  a <- arrow_array()
-  expect_identical(a$length, as_arrow_int64(0))
-  expect_identical(a[["length"]], as_arrow_int64(0))
-  expect_identical(names(a), names(as.list(a)))
-  expect_identical(length(a), length(as.list(a)))
+test_that("carrow_array_validate works", {
+  v <- carrow_array()
+  expect_identical(carrow_array_validate(v), v)
+
+  expect_error(
+    carrow_array(carrow_schema("i"), carrow_array_data()),
+    "Expected 2 buffers"
+  )
+
+  expect_error(
+    carrow_array(carrow_schema("n"), carrow_array_data(children = list(carrow_array_data()))),
+    "does not match number of children of schema"
+  )
+
+  expect_error(
+    carrow_array(
+      carrow_schema("+s", children = list(carrow_schema("u"))),
+      carrow_array_data(buffers = list(NULL), children = list(carrow_array_data()))
+    ),
+    "Expected 3 buffers"
+  )
+
+  expect_error(
+    carrow_array(
+      carrow_schema("i", dictionary = carrow_schema("u")),
+      carrow_array_data(buffers = list(NULL, 1L), dictionary = carrow_array_data())
+    ),
+    "Expected 3 buffers"
+  )
+
+  expect_silent(carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, NULL))))
+})
+
+test_that("subset-assign on a vctr does validation", {
+  v <- carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, 1L), null_count = 0, length = 1))
+  expect_silent(v$schema <- carrow_schema("i"))
+  expect_error(v$schema <- carrow_schema("u"), "Expected 3 buffers")
 })

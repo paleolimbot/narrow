@@ -20,7 +20,7 @@ static inline SEXP bitmask_new(int64_t size) {
     RAW(bitmask)[n_bytes - 1] = 0x00;
   }
 
-  Rf_setAttrib(bitmask, R_ClassSymbol, Rf_mkString("arrowvctrs_bitmask"));
+  Rf_setAttrib(bitmask, R_ClassSymbol, Rf_mkString("carrow_bitmask"));
   UNPROTECT(1);
   return bitmask;
 }
@@ -47,13 +47,13 @@ SEXP bitmask_to_logical(SEXP bitmask, R_xlen_t start, R_xlen_t end) {
   return lgl_sexp;
 }
 
-SEXP arrowvctrs_c_logical_from_bitmask(SEXP bitmask, SEXP start_sexp, SEXP end_sexp) {
+SEXP carrow_c_logical_from_bitmask(SEXP bitmask, SEXP start_sexp, SEXP end_sexp) {
   R_xlen_t start = scalar_int64_from_sexp(start_sexp, "start");
   R_xlen_t end = scalar_int64_from_sexp(end_sexp, "end");
   return bitmask_to_logical(bitmask, start, end);
 }
 
-SEXP arrowvctrs_c_bitmask_from_logical(SEXP lgl_sexp) {
+SEXP carrow_c_bitmask_from_logical(SEXP lgl_sexp) {
   R_xlen_t length = Rf_xlength(lgl_sexp);
   int* lgl = LOGICAL(lgl_sexp);
   SEXP bitmask = PROTECT(bitmask_new(length));
