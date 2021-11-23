@@ -8,8 +8,10 @@ test_that("carrow array stream works", {
     carrow_schema_info(carrow_schema("i"))
   )
 
-  # expect_identical(
-  #   from_carrow_array(carrow_array_stream_get_next(stream)),
-  #   1:5
-  # )
+  expect_identical(
+    from_carrow_array(carrow_array_stream_get_next(stream)),
+    1:5
+  )
+
+  expect_null(carrow_array_stream_get_next(stream))
 })
