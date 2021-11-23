@@ -91,3 +91,15 @@ test_that("RecordBatch to array works", {
   v <- as_carrow_array(rb)
   expect_identical(from_carrow_array(v), data.frame(a = 1L, b = 2, c = "three"))
 })
+
+test_that("streams can be exported to RecordBatchReader", {
+  skip_if_not_installed("arrow")
+
+  df <- data.frame(a = 1L, b = 2, c = "three")
+  stream <- as_carrow_array_stream(as_carrow_array(df))
+  reader <- carrow_array_stream_to_arrow(stream)
+  expect_identical(
+    unclass(as.data.frame(reader$read_table())),
+    unclass(df)
+  )
+})

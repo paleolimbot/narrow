@@ -79,7 +79,7 @@ SEXP carrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_cou
 }
 
 SEXP carrow_c_array_info(SEXP array_data_xptr) {
-  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
+  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array_data");
   const char* names[] = {
     "length", "null_count", "offset", "n_buffers", "n_children",
     "buffers", "children", "dictionary", ""

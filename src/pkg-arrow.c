@@ -5,6 +5,7 @@
 #include "carrow/carrow.h"
 #include "schema.h"
 #include "array-data.h"
+#include "array-stream.h"
 #include "util.h"
 
 SEXP carrow_c_xptr_addr_double(SEXP xptr) {

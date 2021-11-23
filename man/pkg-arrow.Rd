@@ -8,6 +8,7 @@
 \alias{as_carrow_schema.Schema}
 \alias{as_carrow_array.Array}
 \alias{as_carrow_array.RecordBatch}
+\alias{carrow_array_stream_to_arrow}
 \title{Convert to and from arrow package types}
 \usage{
 \method{from_carrow_array}{Array}(x, ptype, ...)
@@ -23,6 +24,8 @@
 \method{as_carrow_array}{Array}(x, ...)
 
 \method{as_carrow_array}{RecordBatch}(x, ...)
+
+carrow_array_stream_to_arrow(x)
 }
 \arguments{
 \item{x}{An object to convert to or from 'arrow' package types}

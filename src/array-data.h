@@ -42,7 +42,7 @@ static inline SEXP array_data_xptr_new(struct ArrowArray* array_data) {
 }
 
 static inline void array_data_export(SEXP array_data_xptr, struct ArrowArray* array_data_copy) {
-  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array");
+  struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array_data");
 
   // keep all the pointers but use the R_PreserveObject mechanism to keep
   // the original data valid (R_ReleaseObject is called from the release callback)

@@ -79,6 +79,14 @@ as_carrow_array.RecordBatch <- function(x, ...) {
   carrow_array(schema, array)
 }
 
+#' @rdname pkg-arrow
+#' @export
+carrow_array_stream_to_arrow <- function(x) {
+  asNamespace("arrow")$ImportRecordBatchReader(
+    xptr_addr_double(.Call(carrow_c_exportable_array_stream, x))
+  )
+}
+
 xptr_addr_double <- function(x) {
   .Call(carrow_c_xptr_addr_double, x);
 }

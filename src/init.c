@@ -37,6 +37,7 @@ SEXP carrow_c_schema_blank();
 SEXP carrow_c_array_blank();
 SEXP carrow_c_exportable_schema(SEXP schema_xptr);
 SEXP carrow_c_exportable_array(SEXP array_data_xptr);
+SEXP carrow_c_exportable_array_stream(SEXP array_stream_xptr);
 
 SEXP carrow_c_carrow_array_stream(SEXP array_sexp);
 SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr);
@@ -70,6 +71,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_array_blank", (DL_FUNC) &carrow_c_array_blank, 0},
   {"carrow_c_exportable_schema", (DL_FUNC) &carrow_c_exportable_schema, 1},
   {"carrow_c_exportable_array", (DL_FUNC) &carrow_c_exportable_array, 1},
+  {"carrow_c_exportable_array_stream", (DL_FUNC) &carrow_c_exportable_array_stream, 1},
   {"carrow_c_carrow_array_stream", (DL_FUNC) &carrow_c_carrow_array_stream, 1},
   {"carrow_c_carrow_array_stream_get_schema", (DL_FUNC) &carrow_c_carrow_array_stream_get_schema, 1},
   {"carrow_c_carrow_array_stream_get_next", (DL_FUNC) &carrow_c_carrow_array_stream_get_next, 1},
