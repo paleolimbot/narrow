@@ -25,7 +25,7 @@ from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
     ptype$classname,
     RecordBatch =,
     Array = arrow::Array$import_from_c(
-      xptr_addr_double(.Call(carrow_c_exportable_array, x$array)),
+      xptr_addr_double(.Call(carrow_c_exportable_array, x$array_data)),
       xptr_addr_double(.Call(carrow_c_exportable_schema, x$schema))
     ),
     DataType =,

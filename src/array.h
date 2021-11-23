@@ -31,7 +31,7 @@ static inline void array_from_array_sexp(SEXP array_sexp, struct CarrowArray* ar
 }
 
 static inline SEXP array_sexp_new(SEXP schema_xptr, SEXP array_data_xptr) {
-  const char* names[] = {"schema", "array", ""};
+  const char* names[] = {"schema", "array_data", ""};
   SEXP array_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
   SET_VECTOR_ELT(array_sexp, 0, schema_xptr);
   SET_VECTOR_ELT(array_sexp, 1, array_data_xptr);

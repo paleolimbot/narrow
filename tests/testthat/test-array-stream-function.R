@@ -8,7 +8,7 @@ test_that("carrow_array_stream_function works", {
     } else if(i <= 2) {
       as_carrow_array(i)
     } else if (i <= 3) {
-      as_carrow_array(i)$array
+      as_carrow_array(i)$array_data
     } else if (i <= 4) {
       stop("Four is a terrible number")
     } else {

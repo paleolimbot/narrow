@@ -7,7 +7,7 @@
 \alias{as_carrow_array.carrow_array}
 \title{Create arrow vectors}
 \usage{
-carrow_array(schema = carrow_schema("n"), array = carrow_array_data())
+carrow_array(schema = carrow_schema("n"), array_data = carrow_array_data())
 
 carrow_array_validate(x)
 
@@ -18,7 +18,7 @@ as_carrow_array(x, ...)
 \arguments{
 \item{schema}{An \code{\link[=carrow_schema]{carrow_schema()}}}
 
-\item{array}{An \code{\link[=carrow_array_data]{carrow_array_data()}}}
+\item{array_data}{An \code{\link[=carrow_array_data]{carrow_array_data()}}}
 
 \item{x}{An object to convert to an \code{\link[=carrow_array]{carrow_array()}}}
 

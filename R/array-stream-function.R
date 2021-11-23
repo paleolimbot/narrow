@@ -34,7 +34,7 @@ carrow_array_stream_function <- function(schema, fun) {
             carrow_schema_info(result_array$schema, recursive = TRUE)
           )
         )
-        result_array$array
+        result_array$array_data
       }
     }, error = function(e) {
       structure(conditionMessage(e), class = "carrow_array_stream_error")

@@ -2,7 +2,7 @@
 #' Create arrow vectors
 #'
 #' @param schema An [carrow_schema()]
-#' @param array An [carrow_array_data()]
+#' @param array_data An [carrow_array_data()]
 #' @param x An object to convert to an [carrow_array()]
 #' @param ... Passed to S3 methods
 #'
@@ -12,10 +12,10 @@
 #' @examples
 #' carrow_array()
 #'
-carrow_array <- function(schema = carrow_schema("n"), array = carrow_array_data()) {
+carrow_array <- function(schema = carrow_schema("n"), array_data = carrow_array_data()) {
   schema <- as_carrow_schema(schema)
-  arrays <- as_carrow_array_data(array)
-  array <- structure(list(schema = schema, array = array), class = "carrow_array")
+  arrays <- as_carrow_array_data(array_data)
+  array <- structure(list(schema = schema, array_data = array_data), class = "carrow_array")
   carrow_array_validate(array)
   array
 }
@@ -54,7 +54,7 @@ as_carrow_array.carrow_array <- function(x, ...) {
 
 #' @export
 format.carrow_array <- function(x, ...) {
-  total_length <- x$array$length
+  total_length <- x$array_data$length
   sprintf("<carrow_array %s[%s]>", x$schema$format, format(total_length))
 }
 
@@ -66,7 +66,7 @@ print.carrow_array <- function(x, ...) {
   print(x$schema, indent.str = "  ")
 
   cat(sprintf("- array:\n"))
-  print(x$array, indent.str = "  ")
+  print(x$array_data, indent.str = "  ")
 
   invisible(x)
 }

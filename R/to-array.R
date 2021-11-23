@@ -124,7 +124,7 @@ as_carrow_array.factor <- function(x, ..., name = NULL) {
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0,
-      dictionary = dictionary_array$array
+      dictionary = dictionary_array$array_data
     )
   )
 }
@@ -147,7 +147,7 @@ as_carrow_array.raw <- function(x, ..., name = NULL) {
 #' @rdname as_carrow_array.NULL
 as_carrow_array.data.frame <- function(x, ..., name = NULL) {
   arrays <- Map(as_carrow_array, x, name = names(x))
-  array_data <- lapply(arrays, "[[", "array")
+  array_data <- lapply(arrays, "[[", "array_data")
 
   carrow_array(
     carrow_schema("+s", name, children = lapply(arrays, "[[", "schema")),

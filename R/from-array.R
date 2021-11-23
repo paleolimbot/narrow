@@ -80,7 +80,7 @@ from_carrow_array.character <- function(x, ptype, ...) {
     .Call(carrow_c_character_from_array, x)
   } else {
     indices <- from_carrow_array_integer(x) + 1L
-    dictionary <- carrow_array(x$schema$dictionary, x$array$dictionary)
+    dictionary <- carrow_array(x$schema$dictionary, x$array_data$dictionary)
     from_carrow_array(dictionary, character())[indices]
   }
 }
@@ -102,7 +102,7 @@ from_carrow_array.factor <- function(x, ptype, ...) {
   # try to detect levels if none were given
   levels <- levels(ptype)
   if (identical(levels, character())) {
-    dictionary <- carrow_array(x$schema$dictionary, x$array$dictionary)
+    dictionary <- carrow_array(x$schema$dictionary, x$array_data$dictionary)
     levels <- from_carrow_array(dictionary, character())
   }
 
@@ -130,11 +130,11 @@ from_carrow_array.data.frame <- function(x, ptype, ...) {
     stopifnot(identical(ncol(ptype), length(child_schemas)))
   }
 
-  child_arrays <- x$array$children
+  child_arrays <- x$array_data$children
   child_arrays <- Map(carrow_array, child_schemas, child_arrays)
   result <- Map(from_carrow_array, child_arrays, ptype)
   names(result) <- names(ptype)
-  new_data_frame(result, nrow = as.integer(as.numeric(x$array$length)))
+  new_data_frame(result, nrow = as.integer(as.numeric(x$array_data$length)))
 }
 
 
