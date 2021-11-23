@@ -17,8 +17,7 @@ API](https://arrow.apache.org/docs/format/CDataInterface.html) and
 [Arrow Stream C
 API](https://arrow.apache.org/docs/format/CStreamInterface.html) to
 provide lightweight Arrow support for R packages to consume and produce
-streams of data in Arrow format. Right now it’s just a fun way for me to
-learn about Arrow!
+streams of data in Arrow format.
 
 ## Installation
 
@@ -30,229 +29,178 @@ You can install the development version from
 remotes::install_github("paleolimbot/carrow")
 ```
 
-## Example
+## Creating arrays
 
-This is a basic example which shows you how to solve a common problem:
+You can create an Arrow array using `as_carrow_array()`. For many types
+(e.g., integers and doubles), this is done without any copying of
+memory: carrow just arranges the existing R vector memory and protects
+it for the lifetime of the underlying `struct ArrowArray`.
 
 ``` r
 library(carrow)
-(carray <- as_carrow_array(ggplot2::mpg))
-#> <carrow_array +s[234]>
+(array <- as_carrow_array(1:5))
+#> <carrow_array i[5]>
 #> - schema:
-#>   <carrow_schema '+s' at 0x137ed0e90>
-#>   - format: +s
+#>   <carrow_schema 'i' at 0x11bfb7590>
+#>   - format: i
 #>   - name: NULL
 #>   - flags: 
 #>   - metadata:  list()
 #>   - dictionary: NULL
-#>   - children[11]:
-#>     <carrow_schema 'u' at 0x147f20180>
-#>     - format: u
-#>     - name: manufacturer
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'u' at 0x147f531a0>
-#>     - format: u
-#>     - name: model
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'g' at 0x147fd7d40>
-#>     - format: g
-#>     - name: displ
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'i' at 0x147f630b0>
-#>     - format: i
-#>     - name: year
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'i' at 0x147fa7b80>
-#>     - format: i
-#>     - name: cyl
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'u' at 0x147feb2d0>
-#>     - format: u
-#>     - name: trans
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'u' at 0x147f96120>
-#>     - format: u
-#>     - name: drv
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'i' at 0x147f91ff0>
-#>     - format: i
-#>     - name: cty
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'i' at 0x147fab2f0>
-#>     - format: i
-#>     - name: hwy
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'u' at 0x147f25be0>
-#>     - format: u
-#>     - name: fl
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_schema 'u' at 0x137ef10d0>
-#>     - format: u
-#>     - name: class
-#>     - flags: 
-#>     - metadata:  list()
-#>     - dictionary: NULL
-#>     - children[0]:
-#> - array:
-#>   <carrow_array at 0x137ed0990>
-#>   - length: 234
+#>   - children[0]:
+#> - array_data:
+#>   <carrow_array_data at 0x11bfa6f50>
+#>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
-#>   - buffers[1]: List of 1
+#>   - buffers[2]: List of 2
 #>     $ : NULL
+#>     $ : int [1:5] 1 2 3 4 5
 #>   - dictionary: NULL
-#>   - children[11]:
-#>     <carrow_array at 0x147fac050>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 4 8 12 16 20 24 28 32 36 ...
-#>       $ : raw [1:1463] 61 75 64 69 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147fc72a0>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 2 4 6 8 10 12 14 24 34 ...
-#>       $ : raw [1:2455] 61 34 61 34 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f9e400>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[2]: List of 2
-#>       $ : NULL
-#>       $ : num [1:234] 1.8 1.8 2 2 2.8 2.8 3.1 1.8 1.8 2 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147fdf980>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[2]: List of 2
-#>       $ : NULL
-#>       $ : int [1:234] 1999 1999 2008 2008 1999 1999 2008 1999 1999 2008 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f70940>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[2]: List of 2
-#>       $ : NULL
-#>       $ : int [1:234] 4 4 4 4 6 6 6 4 4 4 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f28ef0>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 8 18 28 36 44 54 62 72 80 ...
-#>       $ : raw [1:2026] 61 75 74 6f ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f9ae90>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 1 2 3 4 5 6 7 8 9 ...
-#>       $ : raw [1:234] 66 66 66 66 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f54b20>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[2]: List of 2
-#>       $ : NULL
-#>       $ : int [1:234] 18 21 20 21 16 18 18 18 16 20 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f05f20>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[2]: List of 2
-#>       $ : NULL
-#>       $ : int [1:234] 29 29 31 30 26 26 27 26 25 28 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x147f6c930>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 1 2 3 4 5 6 7 8 9 ...
-#>       $ : raw [1:234] 70 70 70 70 ...
-#>     - dictionary: NULL
-#>     - children[0]:
-#>     <carrow_array at 0x137ebe1e0>
-#>     - length: 234
-#>     - null_count: 0
-#>     - offset: 0
-#>     - buffers[3]: List of 3
-#>       $ : NULL
-#>       $ : int [1:235] 0 7 14 21 28 35 42 49 56 63 ...
-#>       $ : raw [1:1462] 63 6f 6d 70 ...
-#>     - dictionary: NULL
-#>     - children[0]:
+#>   - children[0]:
 ```
 
+For `Array`s and `RecordBatch`es from the [arrow
+package](https://arrow.apache.org/docs/r/), this is almost always a
+zero-copy operation and is instantaneous even for very large Arrays.
+
 ``` r
-tibble::as_tibble(from_carrow_array(carray))
-#> # A tibble: 234 × 11
-#>    manufacturer model      displ  year   cyl trans drv     cty   hwy fl    class
-#>    <chr>        <chr>      <dbl> <int> <int> <chr> <chr> <int> <int> <chr> <chr>
-#>  1 audi         a4           1.8  1999     4 auto… f        18    29 p     comp…
-#>  2 audi         a4           1.8  1999     4 manu… f        21    29 p     comp…
-#>  3 audi         a4           2    2008     4 manu… f        20    31 p     comp…
-#>  4 audi         a4           2    2008     4 auto… f        21    30 p     comp…
-#>  5 audi         a4           2.8  1999     6 auto… f        16    26 p     comp…
-#>  6 audi         a4           2.8  1999     6 manu… f        18    26 p     comp…
-#>  7 audi         a4           3.1  2008     6 auto… f        18    27 p     comp…
-#>  8 audi         a4 quattro   1.8  1999     4 manu… 4        18    26 p     comp…
-#>  9 audi         a4 quattro   1.8  1999     4 auto… 4        16    25 p     comp…
-#> 10 audi         a4 quattro   2    2008     4 manu… 4        20    28 p     comp…
-#> # … with 224 more rows
+library(arrow)
+(array2 <- as_carrow_array(Array$create(1:5)))
+#> <carrow_array i[5]>
+#> - schema:
+#>   <carrow_schema 'i' at 0x12bf1f9a0>
+#>   - format: i
+#>   - name: 
+#>   - flags: nullable
+#>   - metadata:  list()
+#>   - dictionary: NULL
+#>   - children[0]:
+#> - array_data:
+#>   <carrow_array_data at 0x12bf514c0>
+#>   - length: 5
+#>   - null_count: 0
+#>   - offset: 0
+#>   - buffers[2]: List of 2
+#>     $ :<externalptr> 
+#>     $ :<externalptr> 
+#>   - dictionary: NULL
+#>   - children[0]:
 ```
+
+## Exporting arrays
+
+To convert an array object to some other type, use
+`from_carrow_array()`:
+
+``` r
+str(from_carrow_array(array))
+#>  int [1:5] 1 2 3 4 5
+```
+
+The carrow package has built-in defaults for converting arrays to R
+objects; you can also specify your own using the `ptype` argument:
+
+``` r
+str(from_carrow_array(array, ptype = double()))
+#>  num [1:5] 1 2 3 4 5
+from_carrow_array(array, ptype = arrow::Array)
+#> Array
+#> <int32>
+#> [
+#>   1,
+#>   2,
+#>   3,
+#>   4,
+#>   5
+#> ]
+```
+
+## Streams
+
+The Arrow C API also specifies an experimental stream interface. In
+addition to handling streams created elsewhere, you can create streams
+based on a `carrow_array()`:
+
+``` r
+stream1 <- as_carrow_array_stream(as_carrow_array(1:3))
+carrow_array_stream_get_next(stream1)
+#> <carrow_array i[3]>
+#> - schema:
+#>   <carrow_schema 'i' at 0x11bfc5860>
+#>   - format: i
+#>   - name: NULL
+#>   - flags: 
+#>   - metadata:  list()
+#>   - dictionary: NULL
+#>   - children[0]:
+#> - array_data:
+#>   <carrow_array_data at 0x11bff3dc0>
+#>   - length: 3
+#>   - null_count: 0
+#>   - offset: 0
+#>   - buffers[2]: List of 2
+#>     $ :<externalptr> 
+#>     $ :<externalptr> 
+#>   - dictionary: NULL
+#>   - children[0]:
+carrow_array_stream_get_next(stream1)
+#> NULL
+```
+
+…or based on a function that returns one or more `carrow_array()`s:
+
+``` r
+counter <- -1
+rows_per_chunk <- 5
+csv_file <- readr::readr_example("mtcars.csv")
+schema <- as_carrow_array(
+  readr::read_csv(
+    csv_file, 
+    n_max = 0,
+    col_types = readr::cols(.default = readr::col_double())
+  )
+)$schema
+
+stream2 <- carrow_array_stream_function(schema, function() {
+  counter <<- counter + 1L
+  result <- readr::read_csv(
+    csv_file, 
+    skip = 1 + (counter * rows_per_chunk),
+    n_max = rows_per_chunk,
+    col_names = c(
+      "mpg", "cyl", "disp", "hp", "drat",
+      "wt", "qsec", "vs", "am", "gear", "carb"
+    ),
+    col_types = readr::cols(.default = readr::col_double())
+  )
+  
+  if (nrow(result) > 0) result else NULL
+})
+```
+
+You can pass these to Arrow as a `RecordBatchReader` using
+`carrow_array_stream_to_arrow()`:
+
+``` r
+reader <- carrow_array_stream_to_arrow(stream2)
+as.data.frame(reader$read_table())
+#> # A tibble: 32 × 11
+#>      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
+#>    <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+#>  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4
+#>  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4
+#>  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1
+#>  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1
+#>  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2
+#>  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1
+#>  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4
+#>  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2
+#>  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2
+#> 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4
+#> # … with 22 more rows
+```
+
+Currently attemping to export an arrow `RecordBatchReader()` segfaults
+for an unknown reason, but in theory one could also go the other
+direction.
