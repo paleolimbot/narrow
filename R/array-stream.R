@@ -18,6 +18,7 @@ carrow_array_stream_get_schema <- function(array_stream) {
 #' @export
 carrow_array_stream_get_next <- function(array_stream) {
   array_data <- .Call(carrow_c_carrow_array_stream_get_next, array_stream)
+
   if (is.null(array_data)) {
     NULL
   } else {

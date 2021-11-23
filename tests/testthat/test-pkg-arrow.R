@@ -103,3 +103,38 @@ test_that("streams can be exported to RecordBatchReader", {
     unclass(df)
   )
 })
+
+test_that("streams can be imported from RecordBatchReader", {
+  skip_if_not_installed("arrow")
+
+  # some test data
+  df <- data.frame(a = 1L, b = 2, c = "three")
+  batch <- arrow::record_batch(df)
+  tf <- tempfile()
+
+  # write a valid file
+  file_obj <- arrow::FileOutputStream$create(tf)
+  writer <- arrow::RecordBatchFileWriter$create(file_obj, batch$schema)
+  writer$write(batch)
+  writer$close()
+  file_obj$close()
+
+  # create the reader
+  read_file_obj <- arrow::ReadableFile$create(tf)
+  reader <- arrow::RecordBatchFileReader$create(read_file_obj)
+
+  # export it to carrow
+  stream <- as_carrow_array_stream(reader)
+
+  schema <- carrow_array_stream_get_schema(stream)
+  expect_identical(
+    carrow_schema_info(schema, recursive = TRUE),
+    carrow_schema_info(as_carrow_schema(reader$schema), recursive = TRUE)
+  )
+
+  # skip("Attempt to read batch from exported RecordBatchReader segfaults")
+  # batch <- carrow_array_stream_get_next(stream)
+
+  read_file_obj$close()
+  unlink(tf)
+})

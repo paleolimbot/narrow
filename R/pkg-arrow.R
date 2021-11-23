@@ -87,6 +87,26 @@ carrow_array_stream_to_arrow <- function(x) {
   )
 }
 
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.RecordBatchReader <- function(x, ...) {
+  array_stream <- blank_invalid_array_stream()
+  asNamespace("arrow")$ExportRecordBatchReader(x, xptr_addr_double(array_stream))
+  array_stream
+}
+
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.RecordBatchFileReader <- function(x, ...) {
+  as_carrow_array_stream.RecordBatchReader(x, ...)
+}
+
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.RecordBatchStreamReader <- function(x, ...) {
+  as_carrow_array_stream.RecordBatchReader(x, ...)
+}
+
 xptr_addr_double <- function(x) {
   .Call(carrow_c_xptr_addr_double, x);
 }
@@ -97,4 +117,8 @@ blank_invalid_schema <- function() {
 
 blank_invalid_array <- function() {
   .Call(carrow_c_array_blank)
+}
+
+blank_invalid_array_stream <- function() {
+  .Call(carrow_c_array_stream_blank)
 }

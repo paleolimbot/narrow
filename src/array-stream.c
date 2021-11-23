@@ -55,7 +55,6 @@ SEXP carrow_c_carrow_array_stream_get_next(SEXP array_stream_xptr) {
   R_RegisterCFinalizer(array_data_xptr, finalize_array_data_xptr);
 
   int result = array_stream->get_next(array_stream, array_data);
-
   if (result != 0) {
     const char* error = array_stream->get_last_error(array_stream);
     if (error == NULL) {

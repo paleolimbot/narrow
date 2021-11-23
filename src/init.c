@@ -35,6 +35,7 @@ SEXP carrow_c_xptr_addr(SEXP xptr);
 SEXP carrow_c_xptr_addr_double(SEXP xptr);
 SEXP carrow_c_schema_blank();
 SEXP carrow_c_array_blank();
+SEXP carrow_c_array_stream_blank();
 SEXP carrow_c_exportable_schema(SEXP schema_xptr);
 SEXP carrow_c_exportable_array(SEXP array_data_xptr);
 SEXP carrow_c_exportable_array_stream(SEXP array_stream_xptr);
@@ -69,6 +70,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_xptr_addr_double", (DL_FUNC) &carrow_c_xptr_addr_double, 1},
   {"carrow_c_schema_blank", (DL_FUNC) &carrow_c_schema_blank, 0},
   {"carrow_c_array_blank", (DL_FUNC) &carrow_c_array_blank, 0},
+  {"carrow_c_array_stream_blank", (DL_FUNC) &carrow_c_array_stream_blank, 0},
   {"carrow_c_exportable_schema", (DL_FUNC) &carrow_c_exportable_schema, 1},
   {"carrow_c_exportable_array", (DL_FUNC) &carrow_c_exportable_array, 1},
   {"carrow_c_exportable_array_stream", (DL_FUNC) &carrow_c_exportable_array_stream, 1},

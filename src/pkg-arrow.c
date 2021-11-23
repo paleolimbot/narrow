@@ -37,6 +37,18 @@ SEXP carrow_c_array_blank() {
   return array_data_xptr;
 }
 
+SEXP carrow_c_array_stream_blank() {
+  struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
+  check_trivial_alloc(array_stream, "struct ArrowArrayStream");
+  array_stream->release = NULL;
+
+  SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
+  R_RegisterCFinalizer(array_stream_xptr, finalize_array_stream_xptr);
+  UNPROTECT(1);
+
+  return array_stream_xptr;
+}
+
 // The rest of this package operates under the assumption that references
 // to the schema/array external pointer are kept by anything that needs
 // the underlying memory to persist. When the reference count reaches 0,
