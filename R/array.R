@@ -65,7 +65,7 @@ print.carrow_array <- function(x, ...) {
   cat("- schema:\n")
   print(x$schema, indent.str = "  ")
 
-  cat(sprintf("- array:\n"))
+  cat(sprintf("- array_data:\n"))
   print(x$array_data, indent.str = "  ")
 
   invisible(x)

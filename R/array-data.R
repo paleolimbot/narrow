@@ -95,7 +95,7 @@ names.carrow_array_data <- function(x, ...) {
 
 #' @export
 format.carrow_array_data <- function(x, ...) {
-  sprintf("<carrow_array at %s>", xptr_addr(x))
+  sprintf("<carrow_array_data at %s>", xptr_addr(x))
 }
 
 #' @export
