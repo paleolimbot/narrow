@@ -42,6 +42,8 @@ SEXP carrow_c_carrow_array_stream(SEXP vctr_sexp);
 SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr);
 SEXP carrow_c_carrow_array_stream_get_next(SEXP array_stream_xptr);
 
+SEXP carrow_c_function_array_stream(SEXP schema_xptr, SEXP call, SEXP env);
+
 static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_array_from_sexp", (DL_FUNC) &carrow_c_array_from_sexp, 6},
   {"carrow_c_array_info", (DL_FUNC) &carrow_c_array_info, 1},
@@ -71,6 +73,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_carrow_array_stream", (DL_FUNC) &carrow_c_carrow_array_stream, 1},
   {"carrow_c_carrow_array_stream_get_schema", (DL_FUNC) &carrow_c_carrow_array_stream_get_schema, 1},
   {"carrow_c_carrow_array_stream_get_next", (DL_FUNC) &carrow_c_carrow_array_stream_get_next, 1},
+  {"carrow_c_function_array_stream", (DL_FUNC) &carrow_c_function_array_stream, 3},
   {NULL, NULL, 0}
 };
 
