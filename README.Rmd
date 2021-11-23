@@ -116,7 +116,7 @@ Currently attemping to export an arrow `RecordBatchReader()` segfaults for an un
 
 ## C data access
 
-The C data interface is ABI stable (and a version of the stream interface will be ABI stable in the future) so you can access the underlying pointers in compiled code from any R package (or inline C or C++ code). A `carrow_schema()` is an external pointer to a `struct ArrowSchema` and a `carrow_array_data()` is an external pointer to a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a `carrow_schema()` and a `carrow_array_data()`.
+The C data interface is ABI stable (and a version of the stream interface will be ABI stable in the future) so you can access the underlying pointers in compiled code from any R package (or inline C or C++ code). A `carrow_schema()` is an external pointer to a `struct ArrowSchema`, a `carrow_array_data()` is an external pointer to a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a `carrow_schema()` and a `carrow_array_data()`.
 
 ```{r, include=FALSE}
 Sys.setenv(

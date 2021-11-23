@@ -41,7 +41,7 @@ library(carrow)
 (array <- as_carrow_array(1:5))
 #> <carrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x14c0bda30>
+#>   <carrow_schema 'i' at 0x130978070>
 #>   - format: i
 #>   - name: NULL
 #>   - flags: 
@@ -49,7 +49,7 @@ library(carrow)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x14c055730>
+#>   <carrow_array_data at 0x1309794b0>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
@@ -69,7 +69,7 @@ library(arrow)
 (array2 <- as_carrow_array(Array$create(1:5)))
 #> <carrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x14c0ffab0>
+#>   <carrow_schema 'i' at 0x1308adee0>
 #>   - format: i
 #>   - name: 
 #>   - flags: nullable
@@ -77,7 +77,7 @@ library(arrow)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x14c0e8a90>
+#>   <carrow_array_data at 0x1308ab320>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
@@ -127,7 +127,7 @@ stream1 <- as_carrow_array_stream(as_carrow_array(1:3))
 carrow_array_stream_get_next(stream1)
 #> <carrow_array i[3]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x14c0042c0>
+#>   <carrow_schema 'i' at 0x116664b50>
 #>   - format: i
 #>   - name: NULL
 #>   - flags: 
@@ -135,7 +135,7 @@ carrow_array_stream_get_next(stream1)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x14c03c750>
+#>   <carrow_array_data at 0x116663b30>
 #>   - length: 3
 #>   - null_count: 0
 #>   - offset: 0
@@ -211,8 +211,8 @@ The C data interface is ABI stable (and a version of the stream
 interface will be ABI stable in the future) so you can access the
 underlying pointers in compiled code from any R package (or inline C or
 C++ code). A `carrow_schema()` is an external pointer to a
-`struct ArrowSchema` and a `carrow_array_data()` is an external pointer
-to a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a
+`struct ArrowSchema`, a `carrow_array_data()` is an external pointer to
+a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a
 `carrow_schema()` and a `carrow_array_data()`.
 
 ``` c
