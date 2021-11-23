@@ -41,7 +41,7 @@ library(carrow)
 (array <- as_carrow_array(1:5))
 #> <carrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x11bfb7590>
+#>   <carrow_schema 'i' at 0x14c0bda30>
 #>   - format: i
 #>   - name: NULL
 #>   - flags: 
@@ -49,7 +49,7 @@ library(carrow)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x11bfa6f50>
+#>   <carrow_array_data at 0x14c055730>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
@@ -69,7 +69,7 @@ library(arrow)
 (array2 <- as_carrow_array(Array$create(1:5)))
 #> <carrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x12bf1f9a0>
+#>   <carrow_schema 'i' at 0x14c0ffab0>
 #>   - format: i
 #>   - name: 
 #>   - flags: nullable
@@ -77,7 +77,7 @@ library(arrow)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x12bf514c0>
+#>   <carrow_array_data at 0x14c0e8a90>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
@@ -127,7 +127,7 @@ stream1 <- as_carrow_array_stream(as_carrow_array(1:3))
 carrow_array_stream_get_next(stream1)
 #> <carrow_array i[3]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x11bfc5860>
+#>   <carrow_schema 'i' at 0x14c0042c0>
 #>   - format: i
 #>   - name: NULL
 #>   - flags: 
@@ -135,7 +135,7 @@ carrow_array_stream_get_next(stream1)
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x11bff3dc0>
+#>   <carrow_array_data at 0x14c03c750>
 #>   - length: 3
 #>   - null_count: 0
 #>   - offset: 0
@@ -204,3 +204,36 @@ as.data.frame(reader$read_table())
 Currently attemping to export an arrow `RecordBatchReader()` segfaults
 for an unknown reason, but in theory one could also go the other
 direction.
+
+## C data access
+
+The C data interface is ABI stable (and a version of the stream
+interface will be ABI stable in the future) so you can access the
+underlying pointers in compiled code from any R package (or inline C or
+C++ code). A `carrow_schema()` is an external pointer to a
+`struct ArrowSchema` and a `carrow_array_data()` is an external pointer
+to a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a
+`carrow_schema()` and a `carrow_array_data()`.
+
+``` c
+#include <R.h>
+#include <Rinternals.h>
+#include "carrow.h"
+
+SEXP extract_null_count(SEXP array_data_xptr) {
+  struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
+  return Rf_ScalarInteger(array_data->null_count);
+}
+```
+
+``` r
+.Call("extract_null_count", as_carrow_array(c(NA, NA, 1:5))$array_data)
+#> [1] 2
+```
+
+The lifecycles of objects pointed to by the external pointers are
+managed by R’s garbage collector: any object that gets garbage collected
+has its `release()` callback called (if it isn’t `NULL`) and the
+underlying memory for the `struct Arrow...` freed. You can call the
+`release()` callback yourself from compiled code but you probably don’t
+want to unless you’re explicitly limiting access to an object.
