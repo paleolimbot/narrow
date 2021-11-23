@@ -40,7 +40,7 @@ test_that("carrow_array_validate works", {
   expect_silent(carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, NULL))))
 })
 
-test_that("subset-assign on a vctr does validation", {
+test_that("subset-assign on a array does validation", {
   v <- carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, 1L), null_count = 0, length = 1))
   expect_silent(v$schema <- carrow_schema("i"))
   expect_error(v$schema <- carrow_schema("u"), "Expected 3 buffers")

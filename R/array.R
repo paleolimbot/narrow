@@ -15,15 +15,15 @@
 carrow_array <- function(schema = carrow_schema("n"), array = carrow_array_data()) {
   schema <- as_carrow_schema(schema)
   arrays <- as_carrow_array_data(array)
-  vctr <- structure(list(schema = schema, array = array), class = "carrow_array")
-  carrow_array_validate(vctr)
-  vctr
+  array <- structure(list(schema = schema, array = array), class = "carrow_array")
+  carrow_array_validate(array)
+  array
 }
 
 #' @rdname carrow_array
 #' @export
 carrow_array_validate <- function(x) {
-  .Call(carrow_c_vctr_validate, x)
+  .Call(carrow_c_array_validate, x)
   invisible(x)
 }
 

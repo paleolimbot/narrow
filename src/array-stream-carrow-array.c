@@ -48,7 +48,7 @@ int carrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct A
 SEXP carrow_c_carrow_array_stream(SEXP array_sexp) {
   // makes sure array is really an array
   struct CarrowArray array;
-  vctr_from_vctr(array_sexp, &array, "array");
+  array_from_array_sexp(array_sexp, &array, "array");
 
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
   check_trivial_alloc(array_stream, "struct ArrowArrayStream");

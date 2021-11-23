@@ -1,5 +1,5 @@
 
-test_that("vctr to Array works", {
+test_that("array to Array works", {
   skip_if_not_installed("arrow")
 
   a <- from_carrow_array(as_carrow_array(1:5), arrow::Array)
@@ -8,7 +8,7 @@ test_that("vctr to Array works", {
   expect_identical(as.character(b), as.character(arrow::Array$create(c("one", "two"))))
 })
 
-test_that("vctr to RecordBatch works", {
+test_that("array to RecordBatch works", {
   skip_if_not_installed("arrow")
 
   df <- data.frame(a = 1:5, b = letters[1:5])
@@ -18,7 +18,7 @@ test_that("vctr to RecordBatch works", {
   )
 })
 
-test_that("vctr to DataType/Field/Schema works", {
+test_that("array to DataType/Field/Schema works", {
   skip_if_not_installed("arrow")
 
   a <- from_carrow_array(as_carrow_array(1:5), get("DataType", asNamespace("arrow")))
@@ -77,14 +77,14 @@ test_that("Schema to schema works", {
   )
 })
 
-test_that("Array to vctr works", {
+test_that("Array to array works", {
   skip_if_not_installed("arrow")
 
   v <- as_carrow_array(arrow::Array$create(1:5))
   expect_identical(from_carrow_array(v, integer()), 1:5)
 })
 
-test_that("RecordBatch to vctr works", {
+test_that("RecordBatch to array works", {
   skip_if_not_installed("arrow")
 
   rb <- arrow::record_batch(a = 1L, b = 2, c = "three")

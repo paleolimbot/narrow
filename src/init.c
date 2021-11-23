@@ -21,14 +21,14 @@ SEXP carrow_c_int64_from_integer(SEXP int_sexp);
 
 SEXP carrow_c_buffers_from_character(SEXP chr);
 
-SEXP carrow_c_logical_from_vctr(SEXP vctr_sexp);
-SEXP carrow_c_integer_from_vctr(SEXP vctr_sexp);
-SEXP carrow_c_double_from_vctr(SEXP vctr_sexp);
-SEXP carrow_c_raw_from_vctr(SEXP vctr_sexp);
-SEXP carrow_c_character_from_vctr(SEXP vctr_sexp);
+SEXP carrow_c_logical_from_array(SEXP array_sexp);
+SEXP carrow_c_integer_from_array(SEXP array_sexp);
+SEXP carrow_c_double_from_array(SEXP array_sexp);
+SEXP carrow_c_raw_from_array(SEXP array_sexp);
+SEXP carrow_c_character_from_array(SEXP array_sexp);
 
-SEXP carrow_c_deep_copy(SEXP vctr_sexp);
-SEXP carrow_c_vctr_validate(SEXP vctr_sexp);
+SEXP carrow_c_deep_copy(SEXP array_sexp);
+SEXP carrow_c_array_validate(SEXP array_sexp);
 
 SEXP carrow_c_xptr_addr(SEXP xptr);
 
@@ -38,7 +38,7 @@ SEXP carrow_c_array_blank();
 SEXP carrow_c_exportable_schema(SEXP schema_xptr);
 SEXP carrow_c_exportable_array(SEXP array_data_xptr);
 
-SEXP carrow_c_carrow_array_stream(SEXP vctr_sexp);
+SEXP carrow_c_carrow_array_stream(SEXP array_sexp);
 SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr);
 SEXP carrow_c_carrow_array_stream_get_next(SEXP array_stream_xptr);
 
@@ -56,13 +56,13 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_int64_from_integer", (DL_FUNC) &carrow_c_int64_from_integer, 1},
   {"carrow_c_double_from_int64", (DL_FUNC) &carrow_c_double_from_int64, 3},
   {"carrow_c_buffers_from_character", (DL_FUNC) &carrow_c_buffers_from_character, 1},
-  {"carrow_c_logical_from_vctr", (DL_FUNC) &carrow_c_logical_from_vctr, 1},
-  {"carrow_c_integer_from_vctr", (DL_FUNC) &carrow_c_integer_from_vctr, 1},
-  {"carrow_c_double_from_vctr", (DL_FUNC) &carrow_c_double_from_vctr, 1},
-  {"carrow_c_raw_from_vctr", (DL_FUNC) &carrow_c_raw_from_vctr, 1},
-  {"carrow_c_character_from_vctr", (DL_FUNC) &carrow_c_character_from_vctr, 1},
+  {"carrow_c_logical_from_array", (DL_FUNC) &carrow_c_logical_from_array, 1},
+  {"carrow_c_integer_from_array", (DL_FUNC) &carrow_c_integer_from_array, 1},
+  {"carrow_c_double_from_array", (DL_FUNC) &carrow_c_double_from_array, 1},
+  {"carrow_c_raw_from_array", (DL_FUNC) &carrow_c_raw_from_array, 1},
+  {"carrow_c_character_from_array", (DL_FUNC) &carrow_c_character_from_array, 1},
   {"carrow_c_deep_copy", (DL_FUNC) &carrow_c_deep_copy, 1},
-  {"carrow_c_vctr_validate", (DL_FUNC) &carrow_c_vctr_validate, 1},
+  {"carrow_c_array_validate", (DL_FUNC) &carrow_c_array_validate, 1},
   {"carrow_c_xptr_addr", (DL_FUNC) &carrow_c_xptr_addr, 1},
 
   {"carrow_c_xptr_addr_double", (DL_FUNC) &carrow_c_xptr_addr_double, 1},

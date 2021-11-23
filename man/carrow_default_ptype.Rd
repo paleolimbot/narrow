@@ -10,7 +10,7 @@ carrow_default_ptype(schema)
 \item{schema}{An \code{\link[=carrow_schema]{carrow_schema()}}}
 }
 \value{
-A zero-length vctr prototype
+A zero-length array prototype
 }
 \description{
 Guess prototypes for Arrow schemas

@@ -9,9 +9,9 @@
 #include "schema.h"
 #include "util.h"
 
-SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
+SEXP carrow_c_deep_copy(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
 
   struct ArrowSchema* result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(result_schema, "struct ArrowSchema");
@@ -76,7 +76,7 @@ SEXP carrow_c_deep_copy(SEXP vctr_sexp) {
   );
   STOP_IF_NOT_OK(status);
 
-  SEXP vctr_result_sexp = PROTECT(vctr_sexp_new(result_schema_xptr, result_array_data_xptr));
+  SEXP array_result_sexp = PROTECT(array_sexp_new(result_schema_xptr, result_array_data_xptr));
   UNPROTECT(3);
-  return vctr_result_sexp;
+  return array_result_sexp;
 }

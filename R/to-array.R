@@ -110,21 +110,21 @@ as_carrow_array.factor <- function(x, ..., name = NULL) {
   # could also add a factor level here to avoid copying the
   # indices vector but this makes it harder
   # to round-trip a factor() and a little disingenuous
-  dictionary_vctr <- as_carrow_array(levels(x))
+  dictionary_array <- as_carrow_array(levels(x))
   indices <- unclass(x) - 1L
 
   carrow_array(
     carrow_schema(
       "i", name,
       flags = carrow_schema_flags(nullable = any(x_is_na)),
-      dictionary = dictionary_vctr$schema
+      dictionary = dictionary_array$schema
     ),
     carrow_array_data(
       buffers = if (any(x_is_na)) list(as_carrow_bitmask(!x_is_na), indices) else list(NULL, indices),
       length = length(x),
       null_count = sum(x_is_na),
       offset = 0,
-      dictionary = dictionary_vctr$array
+      dictionary = dictionary_array$array
     )
   )
 }
@@ -146,17 +146,16 @@ as_carrow_array.raw <- function(x, ..., name = NULL) {
 #' @export
 #' @rdname as_carrow_array.NULL
 as_carrow_array.data.frame <- function(x, ..., name = NULL) {
-  vctrs <- Map(as_carrow_array, x, name = names(x))
-  # this only works if all array sizes are length 1
-  arrays <- lapply(vctrs, "[[", "array")
+  arrays <- Map(as_carrow_array, x, name = names(x))
+  array_data <- lapply(arrays, "[[", "array")
 
   carrow_array(
-    carrow_schema("+s", name, children = lapply(vctrs, "[[", "schema")),
+    carrow_schema("+s", name, children = lapply(arrays, "[[", "schema")),
     carrow_array_data(
       buffers = list(NULL),
       length = nrow(x),
       null_count = 0,
-      children = arrays
+      children = array_data
     )
   )
 }

@@ -19,9 +19,9 @@
     } \
   }
 
-SEXP carrow_c_logical_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_logical_from_array(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
 
@@ -35,7 +35,7 @@ SEXP carrow_c_logical_from_vctr(SEXP vctr_sexp) {
   );
 
   if (copy_result != 0) {
-    Rf_error("Can't convert vctr with format '%s' to logical()", array.schema->format);
+    Rf_error("Can't convert array with format '%s' to logical()", array.schema->format);
   }
 
   LOOP_NODATA(result[i] = NA_LOGICAL)
@@ -44,9 +44,9 @@ SEXP carrow_c_logical_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP carrow_c_integer_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_integer_from_array(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
 
@@ -60,7 +60,7 @@ SEXP carrow_c_integer_from_vctr(SEXP vctr_sexp) {
   );
 
   if (copy_result != 0) {
-    Rf_error("Can't convert vctr with format '%s' to integer()", array.schema->format);
+    Rf_error("Can't convert array with format '%s' to integer()", array.schema->format);
   }
 
   LOOP_NODATA(result[i] = NA_INTEGER)
@@ -69,9 +69,9 @@ SEXP carrow_c_integer_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP carrow_c_double_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_double_from_array(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
 
@@ -85,7 +85,7 @@ SEXP carrow_c_double_from_vctr(SEXP vctr_sexp) {
   );
 
   if (copy_result != 0) {
-    Rf_error("Can't convert vctr with format '%s' to double()", array.schema->format);
+    Rf_error("Can't convert array with format '%s' to double()", array.schema->format);
   }
 
   LOOP_NODATA(result[i] = NA_REAL)
@@ -94,9 +94,9 @@ SEXP carrow_c_double_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP carrow_c_raw_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_raw_from_array(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
 
@@ -110,7 +110,7 @@ SEXP carrow_c_raw_from_vctr(SEXP vctr_sexp) {
   );
 
   if (copy_result != 0) {
-    Rf_error("Can't convert vctr with format '%s' to raw()", array.schema->format);
+    Rf_error("Can't convert array with format '%s' to raw()", array.schema->format);
   }
 
   LOOP_NODATA(result[i] = 0x00)
@@ -119,9 +119,9 @@ SEXP carrow_c_raw_from_vctr(SEXP vctr_sexp) {
   return result_sexp;
 }
 
-SEXP carrow_c_character_from_vctr(SEXP vctr_sexp) {
+SEXP carrow_c_character_from_array(SEXP array_sexp) {
   struct CarrowArray array;
-  vctr_from_vctr(vctr_sexp, &array, "x");
+  array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
 

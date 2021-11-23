@@ -11,13 +11,13 @@
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
-static inline void vctr_from_vctr(SEXP vctr_sexp, struct CarrowArray* array, const char* arg) {
-  if (!Rf_inherits(vctr_sexp, "carrow_array")) {
+static inline void array_from_array_sexp(SEXP array_sexp, struct CarrowArray* array, const char* arg) {
+  if (!Rf_inherits(array_sexp, "carrow_array")) {
     Rf_error("`x` must be an `carrow_array()`");
   }
 
-  struct ArrowSchema* schema = schema_from_xptr(VECTOR_ELT(vctr_sexp, 0), arg);
-  struct ArrowArray* array_data = array_data_from_xptr(VECTOR_ELT(vctr_sexp, 1), arg);
+  struct ArrowSchema* schema = schema_from_xptr(VECTOR_ELT(array_sexp, 0), arg);
+  struct ArrowArray* array_data = array_data_from_xptr(VECTOR_ELT(array_sexp, 1), arg);
 
   struct ArrowStatus status;
 
@@ -30,12 +30,12 @@ static inline void vctr_from_vctr(SEXP vctr_sexp, struct CarrowArray* array, con
   }
 }
 
-static inline SEXP vctr_sexp_new(SEXP schema_xptr, SEXP array_data_xptr) {
+static inline SEXP array_sexp_new(SEXP schema_xptr, SEXP array_data_xptr) {
   const char* names[] = {"schema", "array", ""};
-  SEXP vctr_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
-  SET_VECTOR_ELT(vctr_sexp, 0, schema_xptr);
-  SET_VECTOR_ELT(vctr_sexp, 1, array_data_xptr);
-  Rf_setAttrib(vctr_sexp, R_ClassSymbol, Rf_mkString("carrow_array"));
+  SEXP array_sexp = PROTECT(Rf_mkNamed(VECSXP, names));
+  SET_VECTOR_ELT(array_sexp, 0, schema_xptr);
+  SET_VECTOR_ELT(array_sexp, 1, array_data_xptr);
+  Rf_setAttrib(array_sexp, R_ClassSymbol, Rf_mkString("carrow_array"));
   UNPROTECT(1);
-  return vctr_sexp;
+  return array_sexp;
 }

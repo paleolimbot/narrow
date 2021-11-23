@@ -33,7 +33,7 @@ test_that("carrow_deep_copy() works for primitive types", {
   )
 
   # with a validity buffer that has a non byte-aligned offset
-  int_vctr <- carrow_array(
+  int_array <- carrow_array(
     carrow_schema("i", flags = carrow_schema_flags(nullable = TRUE)),
     carrow_array_data(
       list(
@@ -44,9 +44,9 @@ test_that("carrow_deep_copy() works for primitive types", {
       offset = 1
     )
   )
-  expect_identical(from_carrow_array(int_vctr, integer()), c(NA, 3L, NA, 5L))
+  expect_identical(from_carrow_array(int_array, integer()), c(NA, 3L, NA, 5L))
   expect_identical(
-    from_carrow_array(carrow_deep_copy(int_vctr), integer()),
+    from_carrow_array(carrow_deep_copy(int_array), integer()),
     c(NA, 3L, NA, 5L)
   )
 })
@@ -69,8 +69,8 @@ test_that("carrow_deep_copy() works for large character", {
   skip_on_ci()
   # 1 MB * 2048
   l <- rep(strrep("a", 2 ^ 20), 2 ^ 11)
-  vctr <- as_carrow_array(l)
-  expect_identical(from_carrow_array(vctr), l)
+  array <- as_carrow_array(l)
+  expect_identical(from_carrow_array(array), l)
 })
 
 test_that("carrow_deep_copy() works for structs", {

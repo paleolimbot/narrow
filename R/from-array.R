@@ -45,39 +45,39 @@ from_carrow_array.NULL <- function(x, ptype, ...) {
 #' @export
 from_carrow_array.logical <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_logical_from_vctr, x)
+  .Call(carrow_c_logical_from_array, x)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.integer <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_integer_from_vctr, x)
+  .Call(carrow_c_integer_from_array, x)
 }
 
 from_carrow_array_integer <- function(x) {
-  .Call(carrow_c_integer_from_vctr, x)
+  .Call(carrow_c_integer_from_array, x)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.double <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_double_from_vctr, x)
+  .Call(carrow_c_double_from_array, x)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.raw <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_raw_from_vctr, x)
+  .Call(carrow_c_raw_from_array, x)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.character <- function(x, ptype, ...) {
   if (is.null(x$schema$dictionary)) {
-    .Call(carrow_c_character_from_vctr, x)
+    .Call(carrow_c_character_from_array, x)
   } else {
     indices <- from_carrow_array_integer(x) + 1L
     dictionary <- carrow_array(x$schema$dictionary, x$array$dictionary)
@@ -131,8 +131,8 @@ from_carrow_array.data.frame <- function(x, ptype, ...) {
   }
 
   child_arrays <- x$array$children
-  child_vctrs <- Map(carrow_array, child_schemas, child_arrays)
-  result <- Map(from_carrow_array, child_vctrs, ptype)
+  child_arrays <- Map(carrow_array, child_schemas, child_arrays)
+  result <- Map(from_carrow_array, child_arrays, ptype)
   names(result) <- names(ptype)
   new_data_frame(result, nrow = as.integer(as.numeric(x$array$length)))
 }

@@ -2,7 +2,7 @@
 test_that("from_carrow_array(, NULL) works", {
   expect_identical(from_carrow_array(as_carrow_array(NULL), NULL), NULL)
   expect_error(from_carrow_array(as_carrow_array(1L), NULL), "Can't convert schema format")
-  expect_error(from_carrow_array("not a vctr", NULL), "is not an `carrow_array\\(\\)`")
+  expect_error(from_carrow_array("not a array", NULL), "is not an `carrow_array\\(\\)`")
 })
 
 test_that("from_carrow_array(, logical()) works", {

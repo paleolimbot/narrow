@@ -3,7 +3,7 @@
 #'
 #' @param schema An [carrow_schema()]
 #'
-#' @return A zero-length vctr prototype
+#' @return A zero-length array prototype
 #' @export
 #'
 #' @examples
