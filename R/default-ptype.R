@@ -13,6 +13,10 @@
 #' )
 #'
 carrow_default_ptype <- function(schema) {
+  if (!inherits(schema, "carrow_schema")) {
+    stop("`schema` must be a `carrow_schema()`", call. = FALSE)
+  }
+
   if (!is.null(schema$dictionary)) {
     return(carrow_default_ptype(schema$dictionary))
   }
