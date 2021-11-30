@@ -4,6 +4,7 @@
 #' @param schema An [carrow_schema()]
 #' @param array_data An [carrow_array_data()]
 #' @param x An object to convert to an [carrow_array()]
+#' @param validate Use `FALSE` to skip validation
 #' @param ... Passed to S3 methods
 #'
 #' @return An object of class "carrow_array"
@@ -12,11 +13,14 @@
 #' @examples
 #' carrow_array()
 #'
-carrow_array <- function(schema = carrow_schema("n"), array_data = carrow_array_data()) {
+carrow_array <- function(schema = carrow_schema("n"), array_data = carrow_array_data(), validate = TRUE) {
   schema <- as_carrow_schema(schema)
   arrays <- as_carrow_array_data(array_data)
   array <- structure(list(schema = schema, array_data = array_data), class = "carrow_array")
-  carrow_array_validate(array)
+  if (validate) {
+    carrow_array_validate(array)
+  }
+
   array
 }
 
