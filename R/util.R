@@ -10,3 +10,10 @@ xptr_addr <- function(x) {
 new_data_frame <- function(x, nrow = length(x[[1]])) {
   structure(x, row.names = c(NA, nrow), class = "data.frame")
 }
+
+assert_arrow <- function(reason) {
+  if (!requireNamespace("arrow", quietly = TRUE)) {
+    stop(sprintf("Package 'arrow' is required for %s", reason), call. = FALSE)
+  }
+  invisible(TRUE)
+}
