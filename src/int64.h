@@ -33,8 +33,12 @@ static inline SEXP sexp_from_int64(int64_t n, int64_t* value) {
   return int64_sexp;
 }
 
-static inline SEXP sexp_from_scalar_int64(int64_t value) {
-  return sexp_from_int64(1, &value);
+static inline SEXP sexp_length_from_scalar_int64(int64_t value) {
+  if (value < 2147483647) {
+    return Rf_ScalarInteger(value);
+  } else {
+    return Rf_ScalarReal(value);
+  }
 }
 
 #endif

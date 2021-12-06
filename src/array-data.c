@@ -86,11 +86,11 @@ SEXP carrow_c_array_info(SEXP array_data_xptr) {
   };
   SEXP array_info = PROTECT(Rf_mkNamed(VECSXP, names));
 
-  SET_VECTOR_ELT(array_info, 0, sexp_from_scalar_int64(array_data->length));
-  SET_VECTOR_ELT(array_info, 1, sexp_from_scalar_int64(array_data->null_count));
-  SET_VECTOR_ELT(array_info, 2, sexp_from_scalar_int64(array_data->offset));
-  SET_VECTOR_ELT(array_info, 3, sexp_from_scalar_int64(array_data->n_buffers));
-  SET_VECTOR_ELT(array_info, 4, sexp_from_scalar_int64(array_data->n_children));
+  SET_VECTOR_ELT(array_info, 0, sexp_length_from_scalar_int64(array_data->length));
+  SET_VECTOR_ELT(array_info, 1, sexp_length_from_scalar_int64(array_data->null_count));
+  SET_VECTOR_ELT(array_info, 2, sexp_length_from_scalar_int64(array_data->offset));
+  SET_VECTOR_ELT(array_info, 3, sexp_length_from_scalar_int64(array_data->n_buffers));
+  SET_VECTOR_ELT(array_info, 4, sexp_length_from_scalar_int64(array_data->n_children));
 
   SEXP array_prot = R_ExternalPtrTag(array_data_xptr);
 
