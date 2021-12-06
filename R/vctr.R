@@ -60,3 +60,100 @@ vctr_indices <- function(x) {
   # probably creates a copy
   structure(x, class = NULL, array = NULL)
 }
+
+#' @export
+format.carrow_vctr <- function(x, ...) {
+  format(from_carrow_array(as_carrow_array(x), character()), ...)
+}
+
+#' @export
+print.carrow_vctr <- function(x, ...) {
+  cat(sprintf("<%s[%s]>\n", class(x)[1], length(x)))
+
+  if (length(x) == 0) {
+    return(invisible(x))
+  }
+
+  max_print <- getOption("max.print", 1000)
+  x_head <- format(utils::head(x, max_print))
+  x_head <- from_carrow_array(as_carrow_array(x_head))
+  out <- stats::setNames(format(x_head), names(x_head))
+
+  print(x_head, ...)
+
+  if (length(x) > max_print) {
+    cat(sprintf("Reached max.print (%s)\n", max_print))
+  }
+
+  invisible(x)
+}
+
+# lifted from vctrs::obj_leaf()
+#' @export
+str.carrow_vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
+  if (length(object) == 0) {
+    cat(paste0(" ", class(object)[1], "[0]\n"))
+    return(invisible(object))
+  }
+
+  # estimate possible number of elements that could be displayed
+  # to avoid formatting too many
+  width <- width - nchar(indent.str) - 2
+  length <- min(length(object), ceiling(width / 5))
+  formatted <- format(object[seq_len(length)], trim = TRUE)
+
+  title <- paste0(" ", class(object)[1], "[1:", length(object), "]")
+  cat(
+    paste0(
+      title,
+      " ",
+      strtrim(paste0(formatted, collapse = ", "), width - nchar(title)),
+      "\n"
+    )
+  )
+  invisible(object)
+}
+
+#' @export
+`[.carrow_vctr` <- function(x, i) {
+  new_carrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+}
+
+#' @export
+`[[.carrow_vctr` <- function(x, i) {
+  x[i]
+}
+
+#' @export
+`[<-.carrow_vctr` <- function(x, i, value) {
+  stop("Subset-assign is not supported for carrow_vctr")
+}
+
+#' @export
+`[[<-.carrow_vctr` <- function(x, i, value) {
+  x[i] <- value
+  x
+}
+
+#' @export
+c.carrow_vctr <- function(...) {
+  dots <- list(...)
+  arrays <- lapply(dots, as_carrow_array)
+  arrow_arrays <- lapply(dots, from_carrow_array, arrow::Array)
+
+  stop("Concatenate() is not yet exposed in Arrow C++", call. = FALSE)
+  arrow_array <- NULL
+
+  carrow_vctr(as_carrow_array(arrow_array))
+}
+
+#' @export
+rep.carrow_vctr <- function(x, ...) {
+  new_carrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+}
+
+#' @method rep_len carrow_vctr
+#' @export
+rep_len.carrow_vctr <- function(x, ...) {
+  new_carrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+}
