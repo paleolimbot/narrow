@@ -77,6 +77,13 @@ test_that("Schema to schema works", {
   )
 })
 
+test_that("Schema to array works", {
+  skip_if_not_installed("arrow")
+
+  v <- as_carrow_array(arrow::Scalar$create(1L))
+  expect_identical(from_carrow_array(v, integer()), 1L)
+})
+
 test_that("Array to array works", {
   skip_if_not_installed("arrow")
 

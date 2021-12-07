@@ -6,6 +6,7 @@
 \alias{as_carrow_schema.DataType}
 \alias{as_carrow_schema.Field}
 \alias{as_carrow_schema.Schema}
+\alias{as_carrow_array.Scalar}
 \alias{as_carrow_array.Array}
 \alias{as_carrow_array.RecordBatch}
 \alias{carrow_array_stream_to_arrow}
@@ -23,6 +24,8 @@
 \method{as_carrow_schema}{Field}(x, ...)
 
 \method{as_carrow_schema}{Schema}(x, ...)
+
+\method{as_carrow_array}{Scalar}(x, ...)
 
 \method{as_carrow_array}{Array}(x, ...)
 
