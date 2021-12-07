@@ -73,7 +73,7 @@ as_carrow_array.Array <- function(x, ...) {
   schema <- blank_invalid_schema()
   array <- blank_invalid_array()
   x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
-  carrow_array(schema, array)
+  carrow_array(schema, array, validate = FALSE)
 }
 
 #' @rdname pkg-arrow
@@ -82,7 +82,7 @@ as_carrow_array.RecordBatch <- function(x, ...) {
   schema <- blank_invalid_schema()
   array <- blank_invalid_array()
   x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
-  carrow_array(schema, array)
+  carrow_array(schema, array, validate = FALSE)
 }
 
 #' @rdname pkg-arrow

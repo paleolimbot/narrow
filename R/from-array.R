@@ -142,21 +142,25 @@ with_arrow_fallback <- function(expr, x, ptype) {
     force(expr),
     error = function(e) {
       err <- paste0(conditionMessage(e), collapse = "\n")
-      if (grepl("Can't convert", err)) {
-        convert_arrow_fallback(x, ptype)
-      } else {
-        stop(err, call. = FALSE)
-      }
+      convert_arrow_fallback(x, ptype)
     })
 }
 
 convert_arrow_fallback <- function(x, ptype) {
-  assert_arrow("fallback conversion to R")
+  assert_arrow("fallback conversion")
   if (!requireNamespace("vctrs", quietly = TRUE)) {
     stop("Package 'vctrs' required for fallback conversion", call. = FALSE)
   }
 
-  vctrs::vec_cast(from_carrow_array(x, arrow::Array)$as_vector(), ptype)
+  x_arrow <- from_carrow_array(x, arrow::Array)
+  result <- x_arrow$as_vector()
+
+  # because vctrs won't numeric convert to character
+  if (is.character(ptype)) {
+    as.character(result)
+  } else {
+    vctrs::vec_cast(result, ptype)
+  }
 }
 
 assert_x_carrow_array <- function(x) {
