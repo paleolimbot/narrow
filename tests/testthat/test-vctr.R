@@ -7,7 +7,7 @@ test_that("carrow_vctr() class works", {
 
 test_that("as_carrow_vctr.default() works", {
   vctr <- as_carrow_vctr(c("one", "two", NA, "three"))
-  expect_identical(vctr_indices(vctr), 1:4)
+  expect_identical(vctr_indices(vctr), 0:3)
   expect_identical(
     from_carrow_array(attr(vctr, "array"), character()),
     c("one", "two", NA, "three")
@@ -18,7 +18,7 @@ test_that("carrow_vctr() subset works", {
   vctr <- as_carrow_vctr(12:18)
   expect_identical(
     vctr_indices(vctr[c(FALSE, TRUE)]),
-    c(2L, 4L, 6L)
+    c(1L, 3L, 5L)
   )
 })
 
@@ -95,6 +95,6 @@ test_that("as_carrow_array() works for zero-copy case", {
 
 test_that("as_carrow_array() works for the non-zero copy case", {
   array <- as_carrow_array(11:20)
-  vctr <- new_carrow_vctr(2:10, array)
+  vctr <- new_carrow_vctr(1:9, array)
   expect_identical(from_carrow_array(as_carrow_array(vctr)), 12:20)
 })
