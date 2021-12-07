@@ -64,7 +64,7 @@ as_carrow_schema.Schema <- function(x, ...) {
 #' @rdname pkg-arrow
 #' @export
 as_carrow_array.Scalar <- function(x, ...) {
-  as_carrow_array(x$as_array())
+  as_carrow_array(x$as_array(), ...)
 }
 
 #' @rdname pkg-arrow

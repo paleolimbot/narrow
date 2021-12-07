@@ -15,7 +15,7 @@
 \usage{
 from_carrow_array(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{default}(x, ptype, ...)
+\method{from_carrow_array}{default}(x, ptype = NULL, ...)
 
 \method{from_carrow_array}{`NULL`}(x, ptype, ...)
 

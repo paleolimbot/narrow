@@ -245,3 +245,62 @@ test_that("Ops comparison generics work", {
     v1 > v2
   )
 })
+
+test_that("Summary numeric generics work", {
+  skip_if_not_installed("arrow")
+
+  v1 <- c(1:5, NA)
+  vctr1 <- as_carrow_vctr(v1)
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(sum(vctr1, na.rm = TRUE))),
+    as.double(sum(v1, na.rm = TRUE))
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(sum(vctr1, na.rm = FALSE))),
+    as.double(sum(v1, na.rm = FALSE))
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(min(vctr1, na.rm = TRUE))),
+    min(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(min(vctr1, na.rm = FALSE))),
+    min(v1, na.rm = FALSE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(max(vctr1, na.rm = TRUE))),
+    max(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(max(vctr1, na.rm = FALSE))),
+    max(v1, na.rm = FALSE)
+  )
+
+  skip("not all Summary generics are implemented in Arrow")
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(range(vctr1, na.rm = TRUE))),
+    range(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(range(vctr1, na.rm = FALSE))),
+    range(v1, na.rm = FALSE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(prod(vctr1, na.rm = TRUE))),
+    prod(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(prod(vctr1, na.rm = FALSE))),
+    prod(v1, na.rm = FALSE)
+  )
+})

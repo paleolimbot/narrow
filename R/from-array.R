@@ -19,7 +19,7 @@ from_carrow_array <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.default <- function(x, ptype, ...) {
+from_carrow_array.default <- function(x, ptype = NULL, ...) {
   assert_x_carrow_array(x)
   stop_cant_convert(x, ptype)
 }

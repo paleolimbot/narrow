@@ -258,10 +258,21 @@ Ops.carrow_vctr <- function(e1, e2) {
 }
 
 #' @export
-Summary.carrow_vctr <- function(..., na.rm = FALSE) {
+Summary.carrow_vctr <- function(x, ..., na.rm = FALSE) {
   assert_arrow("Math group generics")
   switch(
     .Generic,
+    all =, any =,
+    sum =, prod =,
+    min =, max =,
+    range = {
+      # make sure dots are empty because we ignore them
+      stopifnot(...length() == 0L)
+
+      array <- as_carrow_array(x)
+      arrow_array <- from_carrow_array(array, arrow::Array)
+      getNamespace("base")[[.Generic]](arrow_array, na.rm = na.rm)
+    },
     stop(sprintf("Summary generic '%s' not supported for carrow_vctr()", .Generic)) # nocov
   )
 }
