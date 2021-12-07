@@ -176,3 +176,13 @@ rep.carrow_vctr <- function(x, ...) {
 rep_len.carrow_vctr <- function(x, ...) {
   new_carrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
 }
+
+# data.frame() will call as.data.frame() with optional = TRUE
+#' @export
+as.data.frame.carrow_vctr <- function(x, ..., optional = FALSE) {
+  if (!optional) {
+    NextMethod()
+  } else {
+    new_data_frame(list(x))
+  }
+}

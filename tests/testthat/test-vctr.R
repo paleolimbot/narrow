@@ -98,3 +98,9 @@ test_that("as_carrow_array() works for the non-zero copy case", {
   vctr <- new_carrow_vctr(1:9, array)
   expect_identical(from_carrow_array(as_carrow_array(vctr)), 12:20)
 })
+
+test_that("carrow_vctr() can be put in a data.frame()", {
+  vctr <- as_carrow_vctr(2:8)
+  df <- data.frame(col = vctr)
+  expect_identical(df[[1]], vctr)
+})
