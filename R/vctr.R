@@ -186,3 +186,12 @@ as.data.frame.carrow_vctr <- function(x, ..., optional = FALSE) {
     new_data_frame(list(x))
   }
 }
+
+# exported in zzz.R
+vec_proxy.carrow_vctr <- function(x, ...) {
+  x
+}
+
+vec_restore.carrow_vctr <- function(x, to, ...) {
+  new_carrow_vctr(x, attr(to, "array", exact = TRUE))
+}

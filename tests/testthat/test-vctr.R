@@ -104,3 +104,15 @@ test_that("carrow_vctr() can be put in a data.frame()", {
   df <- data.frame(col = vctr)
   expect_identical(df[[1]], vctr)
 })
+
+test_that("carrow_vctr() works with vctrs", {
+  skip_if_not_installed("vctrs")
+
+  vctr <- as_carrow_vctr(2:8)
+  expect_true(vctrs::vec_is(vctr))
+  expect_identical(vctrs::vec_slice(vctr, c(1, 3, 5)), vctr[c(1, 3, 5)])
+  expect_identical(vctrs::vec_c(vctr, vctr), c(vctr, vctr))
+
+  vctr2 <- as_carrow_vctr(2:8)
+  expect_error(vctrs::vec_c(vctr, vctr2), "not yet exposed in Arrow")
+})
