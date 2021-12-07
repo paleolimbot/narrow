@@ -183,7 +183,6 @@ test_that("Ops numeric generics work", {
 
 test_that("Ops logical generics work", {
   skip_if_not_installed("arrow")
-  skip("until logical conversion is improved")
 
   v1 <- c(TRUE, TRUE, FALSE, FALSE, NA, NA, NA)
   v2 <- c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, NA)
@@ -201,14 +200,13 @@ test_that("Ops logical generics work", {
   )
 
   expect_identical(
-    from_carrow_array(as_carrow_array(vctr1 & vctr2)),
+    from_carrow_array(as_carrow_array(vctr1 | vctr2)),
     v1 | v2
   )
 })
 
 test_that("Ops comparison generics work", {
   skip_if_not_installed("arrow")
-  skip("until logical conversion is improved")
 
   v1 <- c(1, 2, 3, 4, 5, 1, NA, 3, NA, 5, NA)
   v2 <- c(5, 4, 3, 2, 1, NA, 4, NA, 2, 1, NA)
@@ -307,7 +305,6 @@ test_that("Summary numeric generics work", {
 
 test_that("Summary logical generics work", {
   skip_if_not_installed("arrow")
-  skip("until logical conversion is fixed")
 
   v1 <- c(FALSE, FALSE, NA)
   v2 <- c(TRUE, TRUE, NA)
