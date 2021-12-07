@@ -15,25 +15,41 @@ test_that("as_carrow_vctr.default() works", {
 })
 
 test_that("carrow_vctr() subset works", {
-
+  vctr <- as_carrow_vctr(12:18)
+  expect_identical(
+    vctr_indices(vctr[c(FALSE, TRUE)]),
+    c(2L, 4L, 6L)
+  )
 })
 
 test_that("carrow_vctr() subset-assign errors", {
-
+  vctr <- as_carrow_vctr(12:18)
+  expect_error(vctr[1] <- 3, "Subset-assign is not supported")
 })
 
-test_that("c() works for carros_vctr() objects pointing to the same array", {
+test_that("c() works for carrow_vctr() objects pointing to the same array", {
 
 })
 
 test_that("carrow_vctr() rep works", {
+  skip_if_not_installed("arrow")
 
+  vctr <- as_carrow_vctr(c("a", "b"))
+  expect_identical(
+    from_carrow_array(as_carrow_array(rep(vctr, 2))),
+    c("a", "b", "a", "b")
+  )
 })
 
 test_that("carrow_vctr() rep_len works", {
   skip_if_not(packageVersion("base") >= "3.6.0")
+  skip_if_not_installed("arrow")
 
-
+  vctr <- as_carrow_vctr(c("a", "b"))
+  expect_identical(
+    from_carrow_array(as_carrow_array(rep_len(vctr, 5))),
+    c("a", "b", "a", "b", "a")
+  )
 })
 
 test_that("carrow_vctr() format works", {
