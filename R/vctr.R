@@ -30,6 +30,15 @@ as_carrow_vctr.carrow_vctr <- function(x, ...) {
 }
 
 #' @export
+as_carrow_vctr.default <- function(x, ...) {
+  array <- as_carrow_array(x, ...)
+  new_carrow_vctr(
+    seq_len(array$array_data$length),
+    array = array
+  )
+}
+
+#' @export
 as_carrow_array.carrow_vctr <- function(x, ...) {
   indices <- vctr_indices(x)
   array <- attr(x, "array", exact = TRUE)
@@ -41,14 +50,6 @@ as_carrow_array.carrow_vctr <- function(x, ...) {
     arrow_array <- from_carrow_array(array, arrow::Array)
     as_carrow_array(arrow_array$Take(indices - 1L))
   }
-}
-
-#' @export
-as_carrow_vctr.default <- function(x, ...) {
-  new_carrow_vctr(
-    seq_len(array$array_data$length),
-    array = as_carrow_array(x, ...)
-  )
 }
 
 new_carrow_vctr <- function(x = integer(), array = carrow_array()) {
@@ -63,7 +64,7 @@ vctr_indices <- function(x) {
 
 #' @export
 format.carrow_vctr <- function(x, ...) {
-  format(from_carrow_array(as_carrow_array(x), character()), ...)
+  format(from_carrow_array(as_carrow_array(x)), ...)
 }
 
 #' @export
@@ -75,9 +76,8 @@ print.carrow_vctr <- function(x, ...) {
   }
 
   max_print <- getOption("max.print", 1000)
-  x_head <- format(utils::head(x, max_print))
-  x_head <- from_carrow_array(as_carrow_array(x_head))
-  out <- stats::setNames(format(x_head), names(x_head))
+  x_head <- from_carrow_array(as_carrow_array(utils::head(x, max_print)))
+  out <- stats::setNames(x_head, names(x_head))
 
   print(x_head, ...)
 
@@ -88,7 +88,6 @@ print.carrow_vctr <- function(x, ...) {
   invisible(x)
 }
 
-# lifted from vctrs::obj_leaf()
 #' @export
 str.carrow_vctr <- function(object, ..., indent.str = "", width = getOption("width")) {
   if (length(object) == 0) {
@@ -100,14 +99,21 @@ str.carrow_vctr <- function(object, ..., indent.str = "", width = getOption("wid
   # to avoid formatting too many
   width <- width - nchar(indent.str) - 2
   length <- min(length(object), ceiling(width / 5))
-  formatted <- format(object[seq_len(length)], trim = TRUE)
+
+  x_head <- from_carrow_array(as_carrow_array(utils::head(object, length)))
+  if (is.character(x_head)) {
+    formatted <- paste0('"', x_head, '"')
+    formatted[is.na(x_head)] <- "NA"
+  } else {
+    formatted <- format(x_head, trim = TRUE)
+  }
 
   title <- paste0(" ", class(object)[1], "[1:", length(object), "]")
   cat(
     paste0(
       title,
       " ",
-      strtrim(paste0(formatted, collapse = ", "), width - nchar(title)),
+      strtrim(paste0(formatted, collapse = " "), width - nchar(title)),
       "\n"
     )
   )

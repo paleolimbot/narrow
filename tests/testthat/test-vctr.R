@@ -1,9 +1,72 @@
 
 test_that("carrow_vctr() class works", {
-  array <- carrow_array()
-  x <- carrow_vctr(array)
+  x <- carrow_vctr()
   expect_s3_class(x, "carrow_vctr")
   expect_identical(structure(x, class = NULL, array = NULL), integer())
+})
+
+test_that("as_carrow_vctr.default() works", {
+  vctr <- as_carrow_vctr(c("one", "two", NA, "three"))
+  expect_identical(vctr_indices(vctr), 1:4)
+  expect_identical(
+    from_carrow_array(attr(vctr, "array"), character()),
+    c("one", "two", NA, "three")
+  )
+})
+
+test_that("carrow_vctr() subset works", {
+
+})
+
+test_that("carrow_vctr() subset-assign errors", {
+
+})
+
+test_that("c() works for carros_vctr() objects pointing to the same array", {
+
+})
+
+test_that("carrow_vctr() rep works", {
+
+})
+
+test_that("carrow_vctr() rep_len works", {
+  skip_if_not(packageVersion("base") >= "3.6.0")
+
+
+})
+
+test_that("carrow_vctr() format works", {
+  vctr <- as_carrow_vctr(11:20)
+  expect_identical(format(vctr), format(11:20))
+})
+
+test_that("carrow_vctr() print works", {
+  vctr <- carrow_vctr()
+  expect_output(
+    expect_identical(print(vctr), vctr),
+    "carrow_vctr\\[0]"
+  )
+
+  vctr <- as_carrow_vctr(12:20)
+  expect_output(
+    expect_identical(print(vctr), vctr),
+    "carrow_vctr\\[9\\]"
+  )
+})
+
+test_that("carrow_vctr() str works", {
+  vctr <- carrow_vctr()
+  expect_output(
+    expect_identical(str(vctr), vctr),
+    "carrow_vctr\\[0]"
+  )
+
+  vctr <- as_carrow_vctr(12:20)
+  expect_output(
+    expect_identical(str(vctr), vctr),
+    "carrow_vctr\\[1:9\\]"
+  )
 })
 
 test_that("as_carrow_array() works for zero-copy case", {
