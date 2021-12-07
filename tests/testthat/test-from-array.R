@@ -41,6 +41,22 @@ test_that("from_carrow_array(, logical()) works", {
     from_carrow_array(as_carrow_array(as.raw(c(1, 0))), logical()),
     c(TRUE, FALSE)
   )
+
+  # for bool underlying type
+  bool_array <- carrow_array(
+    carrow_schema("b"),
+    carrow_array_data(
+      buffers = list(
+        as_carrow_bitmask(c(TRUE, TRUE, FALSE)),
+        as_carrow_bitmask(c(TRUE, FALSE, FALSE))),
+      length = 3,
+    )
+  )
+
+  expect_identical(
+    from_carrow_array(bool_array, logical()),
+    c(TRUE, FALSE, NA)
+  )
 })
 
 test_that("from_carrow_array(, integer()) works", {
