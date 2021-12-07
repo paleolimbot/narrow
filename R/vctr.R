@@ -212,7 +212,7 @@ Math.carrow_vctr <- function(x, ...) {
     lgamma =, gamma =, digamma =, trigamma =,
     cumsum =, cumprod =, cummax =, cumin = {
       assert_arrow("Math group generics")
-      array <- as_arrow_array(x)
+      array <- as_carrow_array(x)
       arrow_array <- from_carrow_array(array, arrow::Array)
       getNamespace("base")[[.Generic]](arrow_array)
     },

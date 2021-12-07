@@ -17,21 +17,21 @@ from_carrow_array(x, ptype = carrow_default_ptype(x$schema), ...)
 
 \method{from_carrow_array}{default}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{`NULL`}(x, ptype, ...)
+\method{from_carrow_array}{`NULL`}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{logical}(x, ptype, ...)
+\method{from_carrow_array}{logical}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{integer}(x, ptype, ...)
+\method{from_carrow_array}{integer}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{double}(x, ptype, ...)
+\method{from_carrow_array}{double}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{raw}(x, ptype, ...)
+\method{from_carrow_array}{raw}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{character}(x, ptype, ...)
+\method{from_carrow_array}{character}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{factor}(x, ptype, ...)
+\method{from_carrow_array}{factor}(x, ptype = carrow_default_ptype(x$schema), ...)
 
-\method{from_carrow_array}{data.frame}(x, ptype, ...)
+\method{from_carrow_array}{data.frame}(x, ptype = carrow_default_ptype(x$schema), ...)
 }
 \arguments{
 \item{x}{An \code{\link[=carrow_array]{carrow_array()}}}

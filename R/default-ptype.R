@@ -26,7 +26,7 @@ carrow_default_ptype <- function(schema) {
     info$abbreviation,
     n =, b = logical(),
     c =, C =, s =, S =, i = integer(),
-    I =, l =, L =, e =, f =, g = double(),
+    d =, I =, l =, L =, e =, f =, g = double(),
     u =, U = character(),
     `+s` = {
       children_ptype <- lapply(schema$children, carrow_default_ptype)

@@ -26,7 +26,7 @@ from_carrow_array.default <- function(x, ptype = carrow_default_ptype(x$schema),
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.NULL <- function(x, ptype, ...) {
+from_carrow_array.NULL <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   if (!inherits(x, "carrow_array")) {
     NextMethod()
   }
@@ -43,39 +43,39 @@ from_carrow_array.NULL <- function(x, ptype, ...) {
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.logical <- function(x, ptype, ...) {
+from_carrow_array.logical <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   stopifnot(is.null(x$schema$dictionary))
   with_arrow_fallback(.Call(carrow_c_logical_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.integer <- function(x, ptype, ...) {
+from_carrow_array.integer <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   stopifnot(is.null(x$schema$dictionary))
   with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, ptype)
 }
 
 from_carrow_array_integer <- function(x) {
-  with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, ptype)
+  with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, integer())
 }
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.double <- function(x, ptype, ...) {
+from_carrow_array.double <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   stopifnot(is.null(x$schema$dictionary))
   with_arrow_fallback(.Call(carrow_c_double_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.raw <- function(x, ptype, ...) {
+from_carrow_array.raw <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   stopifnot(is.null(x$schema$dictionary))
   with_arrow_fallback(.Call(carrow_c_raw_from_array, x), ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.character <- function(x, ptype, ...) {
+from_carrow_array.character <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   if (is.null(x$schema$dictionary)) {
     with_arrow_fallback(.Call(carrow_c_character_from_array, x), x, ptype)
   } else {
@@ -87,7 +87,7 @@ from_carrow_array.character <- function(x, ptype, ...) {
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.factor <- function(x, ptype, ...) {
+from_carrow_array.factor <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   assert_x_carrow_array(x)
   stopifnot(!is.null(x$schema$dictionary))
 
@@ -113,7 +113,7 @@ from_carrow_array.factor <- function(x, ptype, ...) {
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.data.frame <- function(x, ptype, ...) {
+from_carrow_array.data.frame <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   assert_x_carrow_array(x)
   stopifnot(is.null(x$schema$dictionary))
 
