@@ -116,3 +116,132 @@ test_that("carrow_vctr() works with vctrs", {
   vctr2 <- as_carrow_vctr(2:8)
   expect_error(vctrs::vec_c(vctr, vctr2), "not yet exposed in Arrow")
 })
+
+test_that("Math generics work", {
+  # none of these are implemented in Arrow, so none are here either
+})
+
+test_that("Ops numeric generics work", {
+  skip_if_not_installed("arrow")
+
+  v1 <- c(1:5, NA)
+  v2 <- 6:11
+  vctr1 <- as_carrow_vctr(v1)
+  vctr2 <- as_carrow_vctr(v2)
+
+  # unary expressions are broken in Arrow so these don't work
+  # expect_identical(
+  #   from_carrow_array(as_carrow_array(+vctr1)),
+  #   +v1
+  # )
+  #
+  # expect_identical(
+  #   from_carrow_array(as_carrow_array(-vctr1)),
+  #   -v1
+  # )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 + vctr2)),
+    v1 + v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 - vctr2)),
+    v1 - v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 * vctr2)),
+    v1 * v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 / vctr2)),
+    v1 / v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 ^ vctr2)),
+    as.integer(v1 ^ v2)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 %% vctr2)),
+    v1 %% v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 %/% vctr2)),
+    v1 %/% v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 + vctr2)),
+    v1 + v2
+  )
+})
+
+test_that("Ops logical generics work", {
+  skip_if_not_installed("arrow")
+  skip("until logical conversion is improved")
+
+  v1 <- c(TRUE, TRUE, FALSE, FALSE, NA, NA, NA)
+  v2 <- c(TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, NA)
+  vctr1 <- as_carrow_vctr(v1)
+  vctr2 <- as_carrow_vctr(v2)
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(!vctr1)),
+    !v1
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 & vctr2)),
+    v1 & v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 & vctr2)),
+    v1 | v2
+  )
+})
+
+test_that("Ops comparison generics work", {
+  skip_if_not_installed("arrow")
+  skip("until logical conversion is improved")
+
+  v1 <- c(1, 2, 3, 4, 5, 1, NA, 3, NA, 5, NA)
+  v2 <- c(5, 4, 3, 2, 1, NA, 4, NA, 2, 1, NA)
+  vctr1 <- as_carrow_vctr(v1)
+  vctr2 <- as_carrow_vctr(v2)
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 == vctr2)),
+    v1 == v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 != vctr2)),
+    v1 != v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 < vctr2)),
+    v1 < v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 <= vctr2)),
+    v1 <= v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 >= vctr2)),
+    v1 >= v2
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(vctr1 > vctr2)),
+    v1 > v2
+  )
+})

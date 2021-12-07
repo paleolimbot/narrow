@@ -195,3 +195,78 @@ vec_proxy.carrow_vctr <- function(x, ...) {
 vec_restore.carrow_vctr <- function(x, to, ...) {
   new_carrow_vctr(x, attr(to, "array", exact = TRUE))
 }
+
+#' @export
+Math.carrow_vctr <- function(x, ...) {
+  switch(
+    .Generic,
+    abs =, sign =, sqrt =,
+    floor =, ceiling =, trunc =,
+    round =, signif =,
+    exp =, log =, expm1 =, log1p =,
+    cos =, sin =, tan =,
+    cospi =, sinpi =, tanpi =,
+    acos =, asin =, atan =,
+    cosh =, sinh =, tanh =,
+    acosh =, asinh =, atanh =,
+    lgamma =, gamma =, digamma =, trigamma =,
+    cumsum =, cumprod =, cummax =, cumin = {
+      assert_arrow("Math group generics")
+      array <- as_arrow_array(x)
+      arrow_array <- from_carrow_array(array, arrow::Array)
+      getNamespace("base")[[.Generic]](arrow_array)
+    },
+    stop(sprintf("Math generic '%s' not supported for carrow_vctr()", .Generic)) # nocov
+  )
+}
+
+#' @export
+Ops.carrow_vctr <- function(e1, e2) {
+  if (missing(e2)) {
+    switch(
+      .Generic,
+      "!" =, "+" =, "-" = {
+        assert_arrow("Unary Ops group generics")
+        array <- as_carrow_array(e1)
+        arrow_array <- from_carrow_array(array, arrow::Array)
+        result <- getNamespace("base")[[.Generic]](arrow_array)
+        return(as_carrow_vctr(result))
+      },
+      # R catches these before we do with 'invalid unary operator'
+      stop(sprintf("Unary '%s' not supported for carrow_vctr()", .Generic)) # nocov
+    )
+  }
+
+  switch(
+    .Generic,
+    "+" =, "-" =, "*" =, "/" =, "^" =, "%%" =, "%/%" =,
+    "&" =, "|" =, "!" =,
+    "==" =, "!=" =, "<" =, "<=" =, ">=" =, ">" = {
+      assert_arrow("Ops group generics")
+      vctr1 <- as_carrow_vctr(e1)
+      vctr2 <- as_carrow_vctr(e2)
+      array1 <- as_carrow_array(vctr1)
+      array2 <- as_carrow_array(vctr2)
+      arrow_array1 <- from_carrow_array(array1, arrow::Array)
+      arrow_array2 <- from_carrow_array(array2, arrow::Array)
+
+      result <- getNamespace("base")[[.Generic]](arrow_array1, arrow_array2)
+      as_carrow_vctr(result)
+    },
+    stop(sprintf("Ops generic '%s' not supported for carrow_vctr()", .Generic)) # nocov
+  )
+}
+
+#' @export
+Summary.carrow_vctr <- function(..., na.rm = FALSE) {
+  assert_arrow("Math group generics")
+  switch(
+    .Generic,
+    stop(sprintf("Summary generic '%s' not supported for carrow_vctr()", .Generic)) # nocov
+  )
+}
+
+#' @export
+Complex.carrow_vctr <- function(z) {
+  stop("Complex group generics are not supported for carrow_vctr", call. = FALSE)
+}
