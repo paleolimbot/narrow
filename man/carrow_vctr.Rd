@@ -11,6 +11,10 @@ as_carrow_vctr(x, ...)
 }
 \arguments{
 \item{array}{A \code{\link[=carrow_array]{carrow_array()}}}
+
+\item{x}{An object to convert to a \code{\link[=carrow_vctr]{carrow_vctr()}}}
+
+\item{...}{Passed to \code{\link[=as_carrow_array]{as_carrow_array()}}}
 }
 \value{
 An object of class 'carrow_vctr'
@@ -19,6 +23,6 @@ An object of class 'carrow_vctr'
 Create R vector wrappers around 'Arrow' arrays
 }
 \examples{
-carrow_vctr(1:10)
+as_carrow_vctr(1:10)
 
 }

@@ -2,12 +2,14 @@
 #' Create R vector wrappers around 'Arrow' arrays
 #'
 #' @param array A [carrow_array()]
+#' @param x An object to convert to a [carrow_vctr()]
+#' @param ... Passed to [as_carrow_array()]
 #'
 #' @return An object of class 'carrow_vctr'
 #' @export
 #'
 #' @examples
-#' carrow_vctr(1:10)
+#' as_carrow_vctr(1:10)
 #'
 carrow_vctr <- function(array = carrow_array()) {
   stopifnot(inherits(array, "carrow_array"))
