@@ -19,7 +19,7 @@ from_carrow_array <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
 
 #' @rdname from_carrow_array
 #' @export
-from_carrow_array.default <- function(x, ptype = NULL, ...) {
+from_carrow_array.default <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   assert_x_carrow_array(x)
   stop_cant_convert(x, ptype)
 }
@@ -45,39 +45,39 @@ from_carrow_array.NULL <- function(x, ptype, ...) {
 #' @export
 from_carrow_array.logical <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_logical_from_array, x)
+  with_arrow_fallback(.Call(carrow_c_logical_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.integer <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_integer_from_array, x)
+  with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, ptype)
 }
 
 from_carrow_array_integer <- function(x) {
-  .Call(carrow_c_integer_from_array, x)
+  with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.double <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_double_from_array, x)
+  with_arrow_fallback(.Call(carrow_c_double_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.raw <- function(x, ptype, ...) {
   stopifnot(is.null(x$schema$dictionary))
-  .Call(carrow_c_raw_from_array, x)
+  with_arrow_fallback(.Call(carrow_c_raw_from_array, x), ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.character <- function(x, ptype, ...) {
   if (is.null(x$schema$dictionary)) {
-    .Call(carrow_c_character_from_array, x)
+    with_arrow_fallback(.Call(carrow_c_character_from_array, x), x, ptype)
   } else {
     indices <- from_carrow_array_integer(x) + 1L
     dictionary <- carrow_array(x$schema$dictionary, x$array_data$dictionary)
@@ -137,6 +137,27 @@ from_carrow_array.data.frame <- function(x, ptype, ...) {
   new_data_frame(result, nrow = as.integer(as.numeric(x$array_data$length)))
 }
 
+with_arrow_fallback <- function(expr, x, ptype) {
+  tryCatch(
+    force(expr),
+    error = function(e) {
+      err <- paste0(conditionMessage(e), collapse = "\n")
+      if (grepl("Can't convert", err)) {
+        convert_arrow_fallback(x, ptype)
+      } else {
+        stop(err, call. = FALSE)
+      }
+    })
+}
+
+convert_arrow_fallback <- function(x, ptype) {
+  assert_arrow("fallback conversion to R")
+  if (!requireNamespace("vctrs", quietly = TRUE)) {
+    stop("Package 'vctrs' required for fallback conversion", call. = FALSE)
+  }
+
+  vctrs::vec_cast(from_carrow_array(x, arrow::Array)$as_vector(), ptype)
+}
 
 assert_x_carrow_array <- function(x) {
   if (!inherits(x, "carrow_array")) {
