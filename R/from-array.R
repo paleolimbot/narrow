@@ -44,14 +44,20 @@ from_carrow_array.NULL <- function(x, ptype = carrow_default_ptype(x$schema), ..
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.logical <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
-  stopifnot(is.null(x$schema$dictionary))
+  if (!is.null(x$schema$dictionary)) {
+    return(convert_arrow_fallback(x, ptype))
+  }
+
   with_arrow_fallback(.Call(carrow_c_logical_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.integer <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
-  stopifnot(is.null(x$schema$dictionary))
+  if (!is.null(x$schema$dictionary)) {
+    return(convert_arrow_fallback(x, ptype))
+  }
+
   with_arrow_fallback(.Call(carrow_c_integer_from_array, x), x, ptype)
 }
 
@@ -62,14 +68,20 @@ from_carrow_array_integer <- function(x) {
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.double <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
-  stopifnot(is.null(x$schema$dictionary))
+  if (!is.null(x$schema$dictionary)) {
+    return(convert_arrow_fallback(x, ptype))
+  }
+
   with_arrow_fallback(.Call(carrow_c_double_from_array, x), x, ptype)
 }
 
 #' @rdname from_carrow_array
 #' @export
 from_carrow_array.raw <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
-  stopifnot(is.null(x$schema$dictionary))
+  if (!is.null(x$schema$dictionary)) {
+    return(convert_arrow_fallback(x, ptype))
+  }
+
   with_arrow_fallback(.Call(carrow_c_raw_from_array, x), ptype)
 }
 
@@ -115,7 +127,10 @@ from_carrow_array.factor <- function(x, ptype = carrow_default_ptype(x$schema), 
 #' @export
 from_carrow_array.data.frame <- function(x, ptype = carrow_default_ptype(x$schema), ...) {
   assert_x_carrow_array(x)
-  stopifnot(is.null(x$schema$dictionary))
+  if (!is.null(x$schema$dictionary)) {
+    return(convert_arrow_fallback(x, ptype))
+  }
+
 
   # because of weirdness with UseMethod()
   if (missing(ptype)) {
@@ -153,6 +168,12 @@ convert_arrow_fallback <- function(x, ptype) {
   }
 
   x_arrow <- from_carrow_array(x, arrow::Array)
+
+  # support dictionary encoding for any type
+  if (x_arrow$type_id == arrow::Type$DICTIONARY) {
+    x_arrow <- x_arrow$cast(x_arrow$dictionary()$type)
+  }
+
   result <- x_arrow$as_vector()
 
   # because vctrs won't numeric convert to character
