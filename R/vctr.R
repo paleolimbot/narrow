@@ -225,7 +225,14 @@ Ops.carrow_vctr <- function(e1, e2) {
   if (missing(e2)) {
     switch(
       .Generic,
-      "!" =, "+" =, "-" = {
+      "!" = {
+        assert_arrow("Unary Ops group generics")
+        array <- as_carrow_array(e1)
+        arrow_array <- from_carrow_array(array, arrow::Array)$cast(arrow::bool())
+        result <- getNamespace("base")[[.Generic]](arrow_array)
+        return(as_carrow_vctr(result))
+      },
+      "+" =, "-" = {
         assert_arrow("Unary Ops group generics")
         array <- as_carrow_array(e1)
         arrow_array <- from_carrow_array(array, arrow::Array)
@@ -240,7 +247,6 @@ Ops.carrow_vctr <- function(e1, e2) {
   switch(
     .Generic,
     "+" =, "-" =, "*" =, "/" =, "^" =, "%%" =, "%/%" =,
-    "&" =, "|" =, "!" =,
     "==" =, "!=" =, "<" =, "<=" =, ">=" =, ">" = {
       assert_arrow("Ops group generics")
       vctr1 <- as_carrow_vctr(e1)
@@ -249,6 +255,18 @@ Ops.carrow_vctr <- function(e1, e2) {
       array2 <- as_carrow_array(vctr2)
       arrow_array1 <- from_carrow_array(array1, arrow::Array)
       arrow_array2 <- from_carrow_array(array2, arrow::Array)
+
+      result <- getNamespace("base")[[.Generic]](arrow_array1, arrow_array2)
+      as_carrow_vctr(result)
+    },
+    "&" =, "|" = {
+      assert_arrow("Ops group generics")
+      vctr1 <- as_carrow_vctr(e1)
+      vctr2 <- as_carrow_vctr(e2)
+      array1 <- as_carrow_array(vctr1)
+      array2 <- as_carrow_array(vctr2)
+      arrow_array1 <- from_carrow_array(array1, arrow::Array)$cast(arrow::bool())
+      arrow_array2 <- from_carrow_array(array2, arrow::Array)$cast(arrow::bool())
 
       result <- getNamespace("base")[[.Generic]](arrow_array1, arrow_array2)
       as_carrow_vctr(result)
@@ -262,7 +280,15 @@ Summary.carrow_vctr <- function(x, ..., na.rm = FALSE) {
   assert_arrow("Math group generics")
   switch(
     .Generic,
-    all =, any =,
+    all =, any = {
+      # make sure dots are empty because we ignore them
+      stopifnot(...length() == 0L)
+
+      array <- as_carrow_array(x)
+      # bool compute functions don't support non-bool inputs
+      arrow_array <- from_carrow_array(array, arrow::Array)$cast(arrow::bool())
+      getNamespace("base")[[.Generic]](arrow_array, na.rm = na.rm)
+    },
     sum =, prod =,
     min =, max =,
     range = {
