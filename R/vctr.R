@@ -146,13 +146,20 @@ str.carrow_vctr <- function(object, ..., indent.str = "", width = getOption("wid
 #' @export
 c.carrow_vctr <- function(...) {
   dots <- list(...)
-  arrays <- lapply(dots, as_carrow_array)
-  arrow_arrays <- lapply(dots, from_carrow_array, arrow::Array)
+  arrays <- lapply(dots, attr, "array", exact = TRUE)
+  arrays_identical <- if (length(arrays) > 1) Reduce(identical, arrays) else TRUE
 
-  stop("Concatenate() is not yet exposed in Arrow C++", call. = FALSE)
-  arrow_array <- NULL
-
-  carrow_vctr(as_carrow_array(arrow_array))
+  if (arrays_identical) {
+    new_carrow_vctr(
+      do.call(c, lapply(dots, unclass)),
+      array = arrays[[1]]
+    )
+  } else {
+    stop("Concatenate() is not yet exposed in Arrow C++", call. = FALSE)
+    arrow_arrays <- lapply(dots, from_carrow_array, arrow::Array)
+    arrow_array <- NULL
+    carrow_vctr(as_carrow_array(arrow_array))
+  }
 }
 
 #' @export

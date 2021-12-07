@@ -28,7 +28,9 @@ test_that("carrow_vctr() subset-assign errors", {
 })
 
 test_that("c() works for carrow_vctr() objects pointing to the same array", {
-
+  vctr <- as_carrow_vctr(c("a", "b", "c", "d"))
+  expect_identical(c(vctr), vctr)
+  expect_identical(c(vctr[1], vctr[2:4]), vctr)
 })
 
 test_that("carrow_vctr() rep works", {
