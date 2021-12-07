@@ -304,3 +304,53 @@ test_that("Summary numeric generics work", {
     prod(v1, na.rm = FALSE)
   )
 })
+
+test_that("Summary logical generics work", {
+  skip_if_not_installed("arrow")
+  skip("until logical conversion is fixed")
+
+  v1 <- c(FALSE, FALSE, NA)
+  v2 <- c(TRUE, TRUE, NA)
+  vctr1 <- as_carrow_vctr(v1)
+  vctr2 <- as_carrow_vctr(v2)
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(any(vctr1, na.rm = TRUE))),
+    any(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(any(vctr1, na.rm = FALSE))),
+    any(v1, na.rm = FALSE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(any(vctr2, na.rm = TRUE))),
+    any(v2, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(any(vctr2, na.rm = FALSE))),
+    any(v2, na.rm = FALSE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(all(vctr1, na.rm = TRUE))),
+    all(v1, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(all(vctr1, na.rm = FALSE))),
+    all(v1, na.rm = FALSE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(all(vctr2, na.rm = TRUE))),
+    all(v2, na.rm = TRUE)
+  )
+
+  expect_identical(
+    from_carrow_array(as_carrow_array(all(vctr2, na.rm = FALSE))),
+    all(v2, na.rm = FALSE)
+  )
+})
