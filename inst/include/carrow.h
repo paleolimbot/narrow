@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <Rinternals.h>
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -97,6 +98,40 @@ struct ArrowArrayStream {
   // Opaque producer-specific data
   void* private_data;
 };
+
+static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char* arg) {
+  if (!Rf_inherits(schema_xptr, "carrow_schema")) {
+    Rf_error("`%s` must be an object created with carrow_schema()", arg);
+  }
+
+  struct ArrowSchema* schema = (struct ArrowSchema*) R_ExternalPtrAddr(schema_xptr);
+  if (schema == NULL) {
+    Rf_error("`%s` is an external pointer to NULL", arg); // # nocov
+  }
+
+  if (schema->release == NULL) {
+    Rf_error("`%s` has already been released and is no longer valid", arg); // # nocov
+  }
+
+  return schema;
+}
+
+static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
+  if (!Rf_inherits(array_data_xptr, "carrow_array_data")) {
+    Rf_error("`%s` must be an object created with carrow_array_data()", arg);
+  }
+
+  struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
+  if (array_data == NULL) {
+    Rf_error("`%s` is an external pointer to NULL", arg); // # nocov
+  }
+
+  if (array_data->release == NULL) {
+    Rf_error("`%s` has already been released and is no longer valid", arg); // # nocov
+  }
+
+  return array_data;
+}
 
 #ifdef __cplusplus
 }
