@@ -67,7 +67,7 @@ SEXP carrow_c_carrow_array_stream(SEXP array_list, SEXP schema_xptr) {
 
   SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
   R_SetExternalPtrProtected(array_stream_xptr, array_list);
-  R_SetExternalPtrTag(array_stream_xptr, array_list);
+  R_SetExternalPtrTag(array_stream_xptr, schema_xptr);
 
   struct CarrowArrayStreamData* data = (struct CarrowArrayStreamData*) malloc(sizeof(struct CarrowArrayStreamData));
   check_trivial_alloc(data, "struct CarrowArrayStreamData");
