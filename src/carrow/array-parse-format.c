@@ -19,7 +19,7 @@ int carrow_array_parse_format(struct CarrowArray* array, const char* format, str
   carrow_status_reset(status);
 
   int format_len = strlen(format);
-  const char* end_ptr = format + strlen(format) + 1;
+  const char* end_ptr = format + strlen(format);
 
   if (format_len == 0) {
     carrow_status_set_error(status, EINVAL, "`format` had zero characters");
@@ -77,8 +77,8 @@ int carrow_array_parse_format(struct CarrowArray* array, const char* format, str
     // fixed-width binary
   case 'w':
     array->type = CARROW_TYPE_FIXED_SIZE_BINARY;
-    array->n_buffers = 1;
-    array->data_buffer_id = 0;
+    array->n_buffers = 2;
+    array->data_buffer_id = 1;
     char* parse_end_ptr;
     array->element_size_bytes = strtol(format + 2, &parse_end_ptr, 10);
     if (parse_end_ptr != end_ptr || format_len <= 2) {
