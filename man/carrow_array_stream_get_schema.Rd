@@ -12,11 +12,11 @@ carrow_array_stream_get_schema(array_stream)
 
 carrow_array_stream_get_next(array_stream)
 
-as_carrow_array_stream(x, ..., chunk_size = NULL)
+as_carrow_array_stream(x, ...)
 
-\method{as_carrow_array_stream}{carrow_stream}(x, ..., chunk_size = NULL)
+\method{as_carrow_array_stream}{carrow_stream}(x, ...)
 
-\method{as_carrow_array_stream}{carrow_array}(x, ..., chunk_size = NULL)
+\method{as_carrow_array_stream}{carrow_array}(x, ...)
 }
 \arguments{
 \item{array_stream}{An object of class "carrow_stream"}
@@ -24,9 +24,6 @@ as_carrow_array_stream(x, ..., chunk_size = NULL)
 \item{x}{An R object to convert to an Arrow Stream}
 
 \item{...}{Passed to S3 methods}
-
-\item{chunk_size}{The number of elements to return in each chunk
-or \code{NULL}.}
 }
 \value{
 An object of class "carrow_stream"

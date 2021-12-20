@@ -74,7 +74,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_exportable_schema", (DL_FUNC) &carrow_c_exportable_schema, 1},
   {"carrow_c_exportable_array", (DL_FUNC) &carrow_c_exportable_array, 1},
   {"carrow_c_exportable_array_stream", (DL_FUNC) &carrow_c_exportable_array_stream, 1},
-  {"carrow_c_carrow_array_stream", (DL_FUNC) &carrow_c_carrow_array_stream, 1},
+  {"carrow_c_carrow_array_stream", (DL_FUNC) &carrow_c_carrow_array_stream, 2},
   {"carrow_c_carrow_array_stream_get_schema", (DL_FUNC) &carrow_c_carrow_array_stream_get_schema, 1},
   {"carrow_c_carrow_array_stream_get_next", (DL_FUNC) &carrow_c_carrow_array_stream_get_next, 1},
   {"carrow_c_function_array_stream", (DL_FUNC) &carrow_c_function_array_stream, 3},

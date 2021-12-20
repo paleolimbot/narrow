@@ -7,8 +7,9 @@
 #include "util.h"
 
 struct CarrowArrayStreamData {
+  R_xlen_t i;
   SEXP schema_xptr;
-  SEXP array_data_xptr;
+  SEXP array_list;
 };
 
 // only for the array streams that we initialize (which either have NULL
@@ -33,23 +34,28 @@ int carrow_array_stream_get_schema(struct ArrowArrayStream* array_stream, struct
 
 int carrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct ArrowArray* out) {
   struct CarrowArrayStreamData* data = (struct CarrowArrayStreamData*) array_stream->private_data;
+  data->i++;
 
-  // we only ever export the array, as is, once
-  if (data->array_data_xptr == R_NilValue) {
+  if (data->i >= Rf_xlength(data->array_list) || data->i < 0) {
     out->release = NULL;
   } else {
-    array_data_export(data->array_data_xptr, out);
-    data->array_data_xptr = R_NilValue;
+    SEXP array_sexp = VECTOR_ELT(data->array_list, data->i);
+    if (!Rf_inherits(array_sexp, "carrow_array")) {
+      return EINVAL;
+    }
+
+    SEXP item = VECTOR_ELT(array_sexp, 1);
+    if (TYPEOF(item) != EXTPTRSXP || R_ExternalPtrAddr(item) == NULL) {
+      return EINVAL;
+    }
+
+    array_data_export(item, out);
   }
 
   return 0;
 }
 
-SEXP carrow_c_carrow_array_stream(SEXP array_sexp) {
-  // makes sure array is really an array
-  struct CarrowArray array;
-  array_from_array_sexp(array_sexp, &array, "array");
-
+SEXP carrow_c_carrow_array_stream(SEXP array_list, SEXP schema_xptr) {
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
   check_trivial_alloc(array_stream, "struct ArrowArrayStream");
   array_stream->private_data = NULL;
@@ -60,13 +66,16 @@ SEXP carrow_c_carrow_array_stream(SEXP array_sexp) {
   array_stream->release = &finalize_array_stream;
 
   SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
-  R_SetExternalPtrProtected(array_stream_xptr, array_sexp);
+  R_SetExternalPtrProtected(array_stream_xptr, array_list);
+  R_SetExternalPtrTag(array_stream_xptr, array_list);
 
   struct CarrowArrayStreamData* data = (struct CarrowArrayStreamData*) malloc(sizeof(struct CarrowArrayStreamData));
   check_trivial_alloc(data, "struct CarrowArrayStreamData");
-  data->schema_xptr = VECTOR_ELT(array_sexp, 0);
-  data->array_data_xptr = VECTOR_ELT(array_sexp, 1);
   array_stream->private_data = data;
+
+  data->i = -1;
+  data->schema_xptr = schema_xptr;
+  data->array_list = array_list;
 
   UNPROTECT(1);
   return array_stream_xptr;
