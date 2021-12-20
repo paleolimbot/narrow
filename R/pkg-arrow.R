@@ -113,6 +113,27 @@ as_carrow_array_stream.RecordBatchStreamReader <- function(x, ...) {
   as_carrow_array_stream.RecordBatchReader(x, ...)
 }
 
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.Array <- function(x, ...) {
+  as_carrow_array_stream(as_carrow_array(x), ...)
+}
+
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.ChunkedArray <- function(x, ...) {
+  arrays <- vector("list", x$num_chunks)
+  for (i in seq_along(arrays)) {
+    arrays[[i]] <- as_carrow_array.Array(x$chunk(i - 1L))
+  }
+
+  .Call(
+    carrow_c_carrow_array_stream,
+    arrays,
+    as_carrow_schema(x$type)
+  )
+}
+
 xptr_addr_double <- function(x) {
   .Call(carrow_c_xptr_addr_double, x);
 }

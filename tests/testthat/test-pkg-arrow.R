@@ -145,3 +145,31 @@ test_that("streams can be imported from RecordBatchReader", {
   read_file_obj$close()
   unlink(tf)
 })
+
+test_that("Arrays can be streamed", {
+  skip_if_not_installed("arrow")
+
+  a <- arrow::Array$create(1:5)
+  a_stream <- as_carrow_array_stream(a)
+  expect_identical(
+    from_carrow_array(carrow_array_stream_get_next(a_stream)),
+    1:5
+  )
+  expect_null(carrow_array_stream_get_next(a_stream))
+})
+
+test_that("ChunkedArrays can be streamed", {
+  skip_if_not_installed("arrow")
+
+  a <- arrow::ChunkedArray$create(1:5, 1:3)
+  a_stream <- as_carrow_array_stream(a)
+  expect_identical(
+    from_carrow_array(carrow_array_stream_get_next(a_stream)),
+    1:5
+  )
+  expect_identical(
+    from_carrow_array(carrow_array_stream_get_next(a_stream)),
+    1:3
+  )
+  expect_null(carrow_array_stream_get_next(a_stream))
+})

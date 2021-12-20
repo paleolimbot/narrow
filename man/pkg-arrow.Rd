@@ -13,6 +13,8 @@
 \alias{as_carrow_array_stream.RecordBatchReader}
 \alias{as_carrow_array_stream.RecordBatchFileReader}
 \alias{as_carrow_array_stream.RecordBatchStreamReader}
+\alias{as_carrow_array_stream.Array}
+\alias{as_carrow_array_stream.ChunkedArray}
 \title{Convert to and from arrow package types}
 \usage{
 \method{from_carrow_array}{Array}(x, ptype, ...)
@@ -38,6 +40,10 @@ carrow_array_stream_to_arrow(x)
 \method{as_carrow_array_stream}{RecordBatchFileReader}(x, ...)
 
 \method{as_carrow_array_stream}{RecordBatchStreamReader}(x, ...)
+
+\method{as_carrow_array_stream}{Array}(x, ...)
+
+\method{as_carrow_array_stream}{ChunkedArray}(x, ...)
 }
 \arguments{
 \item{x}{An object to convert to or from 'arrow' package types}
