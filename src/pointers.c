@@ -78,9 +78,10 @@ SEXP carrow_c_pointer_addr_dbl(SEXP ptr) {
 
 SEXP carrow_c_pointer_addr_chr(SEXP ptr) {
   intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
+  long long ptr_int2 = (long long) ptr_int;
   char addr_chars[100];
   memset(addr_chars, 0, 100);
-  snprintf(addr_chars, 100, "%lld", (long long) ptr_int);
+  snprintf(addr_chars, 100, "%lld", ptr_int2);
   return Rf_mkString(addr_chars);
 }
 
