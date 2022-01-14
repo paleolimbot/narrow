@@ -1,14 +1,14 @@
 
 carrow_pointer_is_valid <- function(ptr) {
-
+  .Call(carrow_c_pointer_is_valid, ptr)
 }
 
 carrow_pointer_release <- function(ptr) {
-
+  invisible(.Call(carrow_c_pointer_release, ptr))
 }
 
 carrow_pointer_move <- function(ptr_src, ptr_dst) {
-
+  invisible(.Call(carrow_c_pointer_move, ptr_src, ptr_dst))
 }
 
 carrow_allocate_schema <- function() {

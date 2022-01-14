@@ -27,9 +27,11 @@ extern SEXP carrow_c_int64_from_integer(SEXP int_sexp);
 extern SEXP carrow_c_exportable_schema(SEXP schema_xptr);
 extern SEXP carrow_c_exportable_array(SEXP array_data_xptr);
 extern SEXP carrow_c_pointer(SEXP obj_sexp);
+extern SEXP carrow_c_pointer_is_valid(SEXP ptr);
+extern SEXP carrow_c_pointer_release(SEXP ptr);
 extern SEXP carrow_c_pointer_addr_dbl(SEXP ptr);
 extern SEXP carrow_c_pointer_addr_chr(SEXP ptr);
-extern SEXP carrow_c_pointer_move(SEXP ptr);
+extern SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst);
 extern SEXP carrow_c_schema_blank();
 extern SEXP carrow_c_array_blank();
 extern SEXP carrow_c_array_stream_blank();
@@ -62,9 +64,11 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_exportable_schema", (DL_FUNC) &carrow_c_exportable_schema, 1},
   {"carrow_c_exportable_array", (DL_FUNC) &carrow_c_exportable_array, 1},
   {"carrow_c_pointer", (DL_FUNC) &carrow_c_pointer, 1},
+  {"carrow_c_pointer_is_valid", (DL_FUNC) &carrow_c_pointer_is_valid, 1},
+  {"carrow_c_pointer_release", (DL_FUNC) &carrow_c_pointer_release, 1},
   {"carrow_c_pointer_addr_dbl", (DL_FUNC) &carrow_c_pointer_addr_dbl, 1},
   {"carrow_c_pointer_addr_chr", (DL_FUNC) &carrow_c_pointer_addr_chr, 1},
-  {"carrow_c_pointer_move", (DL_FUNC) &carrow_c_pointer_move, 1},
+  {"carrow_c_pointer_move", (DL_FUNC) &carrow_c_pointer_move, 2},
   {"carrow_c_schema_blank", (DL_FUNC) &carrow_c_schema_blank, 0},
   {"carrow_c_array_blank", (DL_FUNC) &carrow_c_array_blank, 0},
   {"carrow_c_array_stream_blank", (DL_FUNC) &carrow_c_array_stream_blank, 0},
