@@ -25,13 +25,13 @@ from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
     ptype$classname,
     RecordBatch =,
     Array = arrow::Array$import_from_c(
-      xptr_addr_double(.Call(carrow_c_exportable_array, x$array_data)),
-      xptr_addr_double(.Call(carrow_c_exportable_schema, x$schema))
+      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_array, x$array_data)),
+      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_schema, x$schema))
     ),
     DataType =,
     Field =,
     Schema = ptype$import_from_c(
-      xptr_addr_double(.Call(carrow_c_exportable_schema, x$schema))
+      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_schema, x$schema))
     ),
     stop(sprintf("Can't convert from carrow_array to R6 type '%s'", ptype$classname))
   )
@@ -40,24 +40,24 @@ from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
 #' @rdname pkg-arrow
 #' @export
 as_carrow_schema.DataType <- function(x, ...) {
-  schema <- blank_invalid_schema()
-  x$export_to_c(xptr_addr_double(schema))
+  schema <- carrow_allocate_schema()
+  x$export_to_c(carrow_pointer_addr_dbl(schema))
   schema
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_carrow_schema.Field <- function(x, ...) {
-  schema <- blank_invalid_schema()
-  x$export_to_c(xptr_addr_double(schema))
+  schema <- carrow_allocate_schema()
+  x$export_to_c(carrow_pointer_addr_dbl(schema))
   schema
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_carrow_schema.Schema <- function(x, ...) {
-  schema <- blank_invalid_schema()
-  x$export_to_c(xptr_addr_double(schema))
+  schema <- carrow_allocate_schema()
+  x$export_to_c(carrow_pointer_addr_dbl(schema))
   schema
 }
 
@@ -70,18 +70,18 @@ as_carrow_array.Scalar <- function(x, ...) {
 #' @rdname pkg-arrow
 #' @export
 as_carrow_array.Array <- function(x, ...) {
-  schema <- blank_invalid_schema()
-  array <- blank_invalid_array()
-  x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
+  schema <- carrow_allocate_schema()
+  array <- carrow_allocate_array_data()
+  x$export_to_c(carrow_pointer_addr_dbl(array), carrow_pointer_addr_dbl(schema))
   carrow_array(schema, array, validate = FALSE)
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_carrow_array.RecordBatch <- function(x, ...) {
-  schema <- blank_invalid_schema()
-  array <- blank_invalid_array()
-  x$export_to_c(xptr_addr_double(array), xptr_addr_double(schema))
+  schema <- carrow_allocate_schema()
+  array <- carrow_allocate_array_data()
+  x$export_to_c(carrow_pointer_addr_dbl(array), carrow_pointer_addr_dbl(schema))
   carrow_array(schema, array, validate = FALSE)
 }
 
@@ -89,15 +89,15 @@ as_carrow_array.RecordBatch <- function(x, ...) {
 #' @export
 carrow_array_stream_to_arrow <- function(x) {
   asNamespace("arrow")$ImportRecordBatchReader(
-    xptr_addr_double(.Call(carrow_c_exportable_array_stream, x))
+    carrow_pointer_addr_dbl(.Call(carrow_c_exportable_array_stream, x))
   )
 }
 
 #' @rdname pkg-arrow
 #' @export
 as_carrow_array_stream.RecordBatchReader <- function(x, ...) {
-  array_stream <- blank_invalid_array_stream()
-  asNamespace("arrow")$ExportRecordBatchReader(x, xptr_addr_double(array_stream))
+  array_stream <- carrow_allocate_array_stream()
+  asNamespace("arrow")$ExportRecordBatchReader(x, carrow_pointer_addr_dbl(array_stream))
   array_stream
 }
 
@@ -132,20 +132,4 @@ as_carrow_array_stream.ChunkedArray <- function(x, ...) {
     arrays,
     as_carrow_schema(x$type)
   )
-}
-
-xptr_addr_double <- function(x) {
-  .Call(carrow_c_xptr_addr_double, x);
-}
-
-blank_invalid_schema <- function() {
-  .Call(carrow_c_schema_blank)
-}
-
-blank_invalid_array <- function() {
-  .Call(carrow_c_array_blank)
-}
-
-blank_invalid_array_stream <- function() {
-  .Call(carrow_c_array_stream_blank)
 }
