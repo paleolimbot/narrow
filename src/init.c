@@ -8,7 +8,7 @@ extern SEXP carrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP n
 extern SEXP carrow_c_array_info(SEXP array_data_xptr);
 extern SEXP carrow_c_carrow_array_stream(SEXP array_list, SEXP schema_xptr);
 extern SEXP carrow_c_function_array_stream(SEXP schema_xptr, SEXP call, SEXP env);
-extern SEXP carrow_c_exportable_array_stream(SEXP parent_array_stream_xptr);
+extern SEXP carrow_c_export_array_stream(SEXP parent_array_stream_xptr, SEXP xptr_dst);
 extern SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr);
 extern SEXP carrow_c_carrow_array_stream_get_next(SEXP array_stream_xptr);
 extern SEXP carrow_c_array_validate(SEXP array_sexp);
@@ -24,17 +24,17 @@ extern SEXP carrow_c_deep_copy(SEXP array_sexp);
 extern SEXP carrow_c_double_from_int64(SEXP value, SEXP start_sexp, SEXP end_sexp);
 extern SEXP carrow_c_int64_from_double(SEXP dbl_sexp);
 extern SEXP carrow_c_int64_from_integer(SEXP int_sexp);
-extern SEXP carrow_c_exportable_schema(SEXP schema_xptr);
-extern SEXP carrow_c_exportable_array(SEXP array_data_xptr);
 extern SEXP carrow_c_pointer(SEXP obj_sexp);
 extern SEXP carrow_c_pointer_is_valid(SEXP ptr);
 extern SEXP carrow_c_pointer_release(SEXP ptr);
 extern SEXP carrow_c_pointer_addr_dbl(SEXP ptr);
 extern SEXP carrow_c_pointer_addr_chr(SEXP ptr);
 extern SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst);
-extern SEXP carrow_c_schema_blank();
-extern SEXP carrow_c_array_blank();
-extern SEXP carrow_c_array_stream_blank();
+extern SEXP carrow_c_export_schema(SEXP schema_xptr, SEXP ptr_dst);
+extern SEXP carrow_c_export_array_data(SEXP array_data_xptr, SEXP ptr_dst);
+extern SEXP carrow_c_allocate_schema();
+extern SEXP carrow_c_allocate_array_data();
+extern SEXP carrow_c_allocate_array_stream();
 extern SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp, SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr);
 extern SEXP carrow_c_schema_deep_copy(SEXP schema_xptr);
 extern SEXP carrow_c_schema_data(SEXP schema_xptr);
@@ -45,7 +45,7 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_array_info", (DL_FUNC) &carrow_c_array_info, 1},
   {"carrow_c_carrow_array_stream", (DL_FUNC) &carrow_c_carrow_array_stream, 2},
   {"carrow_c_function_array_stream", (DL_FUNC) &carrow_c_function_array_stream, 3},
-  {"carrow_c_exportable_array_stream", (DL_FUNC) &carrow_c_exportable_array_stream, 1},
+  {"carrow_c_export_array_stream", (DL_FUNC) &carrow_c_export_array_stream, 2},
   {"carrow_c_carrow_array_stream_get_schema", (DL_FUNC) &carrow_c_carrow_array_stream_get_schema, 1},
   {"carrow_c_carrow_array_stream_get_next", (DL_FUNC) &carrow_c_carrow_array_stream_get_next, 1},
   {"carrow_c_array_validate", (DL_FUNC) &carrow_c_array_validate, 1},
@@ -61,17 +61,17 @@ static const R_CallMethodDef CallEntries[] = {
   {"carrow_c_double_from_int64", (DL_FUNC) &carrow_c_double_from_int64, 3},
   {"carrow_c_int64_from_double", (DL_FUNC) &carrow_c_int64_from_double, 1},
   {"carrow_c_int64_from_integer", (DL_FUNC) &carrow_c_int64_from_integer, 1},
-  {"carrow_c_exportable_schema", (DL_FUNC) &carrow_c_exportable_schema, 1},
-  {"carrow_c_exportable_array", (DL_FUNC) &carrow_c_exportable_array, 1},
   {"carrow_c_pointer", (DL_FUNC) &carrow_c_pointer, 1},
   {"carrow_c_pointer_is_valid", (DL_FUNC) &carrow_c_pointer_is_valid, 1},
   {"carrow_c_pointer_release", (DL_FUNC) &carrow_c_pointer_release, 1},
   {"carrow_c_pointer_addr_dbl", (DL_FUNC) &carrow_c_pointer_addr_dbl, 1},
   {"carrow_c_pointer_addr_chr", (DL_FUNC) &carrow_c_pointer_addr_chr, 1},
   {"carrow_c_pointer_move", (DL_FUNC) &carrow_c_pointer_move, 2},
-  {"carrow_c_schema_blank", (DL_FUNC) &carrow_c_schema_blank, 0},
-  {"carrow_c_array_blank", (DL_FUNC) &carrow_c_array_blank, 0},
-  {"carrow_c_array_stream_blank", (DL_FUNC) &carrow_c_array_stream_blank, 0},
+  {"carrow_c_export_schema", (DL_FUNC) &carrow_c_export_schema, 2},
+  {"carrow_c_export_array_data", (DL_FUNC) &carrow_c_export_array_data, 2},
+  {"carrow_c_allocate_schema", (DL_FUNC) &carrow_c_allocate_schema, 0},
+  {"carrow_c_allocate_array_data", (DL_FUNC) &carrow_c_allocate_array_data, 0},
+  {"carrow_c_allocate_array_stream", (DL_FUNC) &carrow_c_allocate_array_stream, 0},
   {"carrow_c_schema_xptr_new", (DL_FUNC) &carrow_c_schema_xptr_new, 6},
   {"carrow_c_schema_deep_copy", (DL_FUNC) &carrow_c_schema_deep_copy, 1},
   {"carrow_c_schema_data", (DL_FUNC) &carrow_c_schema_data, 1},

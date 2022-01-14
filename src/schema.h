@@ -12,7 +12,6 @@
 
 void finalize_schema_xptr(SEXP schema_xptr);
 void finalize_schema(struct ArrowSchema* schema);
-void finalize_exported_schema(struct ArrowSchema* schema);
 unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg);
 SEXP sexp_from_metadata(unsigned char* metadata);
 
@@ -50,14 +49,7 @@ static inline SEXP schema_xptr_new(struct ArrowSchema* schema) {
 
 static inline void schema_export(SEXP schema_xptr, struct ArrowSchema* schema_copy) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
-
-  // keep all the pointers but use the R_PreserveObject mechanism to keep
-  // the original data valid (R_ReleaseObject is called from the release callback)
-  memcpy(schema_copy, schema, sizeof(struct ArrowSchema));
-  schema_copy->private_data = schema_xptr;
-  schema_copy->release = &finalize_exported_schema;
-
-  R_PreserveObject(schema_xptr);
+  carrow_schema_deep_copy(schema_copy, schema);
 }
 
 #endif

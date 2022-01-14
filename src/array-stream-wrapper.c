@@ -37,19 +37,24 @@ int wrapper_array_stream_get_next(struct ArrowArrayStream* array_stream, struct 
   return data->parent_array_stream->get_next(data->parent_array_stream, out);
 }
 
-SEXP carrow_c_exportable_array_stream(SEXP parent_array_stream_xptr) {
+SEXP carrow_c_export_array_stream(SEXP parent_array_stream_xptr, SEXP xptr_dst) {
   struct ArrowArrayStream* parent_array_stream = array_stream_from_xptr(parent_array_stream_xptr, "array_stream");
 
-  struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
-  check_trivial_alloc(array_stream, "struct ArrowArrayStream");
+  struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) R_ExternalPtrAddr(xptr_dst);
+  if (array_stream == NULL) {
+    Rf_error("`ptr_dst` is a pointer to NULL");
+  }
+
+  if (array_stream->release != NULL) {
+    Rf_error("`ptr_dst` is a valid struct ArrowArrayStream");
+  }
+
   array_stream->private_data = NULL;
   array_stream->get_last_error = &wrapper_array_stream_get_last_error;
   array_stream->get_schema = &wrapper_array_stream_get_schema;
   array_stream->get_next = &wrapper_array_stream_get_next;
 
   array_stream->release = &finalize_wrapper_array_stream;
-
-  SEXP array_stream_xptr = PROTECT(R_MakeExternalPtr(array_stream, R_NilValue, R_NilValue));
 
   struct WrapperArrayStreamData* data = (struct WrapperArrayStreamData*) malloc(sizeof(struct WrapperArrayStreamData));
   check_trivial_alloc(data, "struct WrapperArrayStreamData");
@@ -60,6 +65,5 @@ SEXP carrow_c_exportable_array_stream(SEXP parent_array_stream_xptr) {
   // transfer responsibility for stream to the C object
   R_PreserveObject(parent_array_stream_xptr);
 
-  UNPROTECT(1);
-  return array_stream_xptr;
+  return R_NilValue;
 }

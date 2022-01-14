@@ -111,6 +111,60 @@ test_that("carrow_pointer_move() works for array_stream", {
   )
 })
 
+test_that("carrow_pointer_export() works for schema", {
+  ptr <- carrow_schema("i")
+  dst <- carrow_allocate_schema()
+  carrow_pointer_export(ptr, dst)
+  expect_true(carrow_pointer_is_valid(ptr))
+  expect_identical(dst$format, "i")
+
+  expect_error(
+    carrow_pointer_export(ptr, dst),
+    "`ptr_dst` is a valid struct ArrowSchema"
+  )
+
+  expect_error(
+    carrow_pointer_export(carrow_allocate_schema(), carrow_allocate_schema()),
+    "`ptr_src` has already been released"
+  )
+})
+
+test_that("carrow_pointer_export() works for array_data", {
+  ptr <- carrow_array_data()
+  dst <- carrow_allocate_array_data()
+  carrow_pointer_export(ptr, dst)
+  expect_true(carrow_pointer_is_valid(ptr))
+  expect_identical(dst$length, 0L)
+
+  expect_error(
+    carrow_pointer_export(ptr, dst),
+    "`ptr_dst` is a valid struct ArrowArray"
+  )
+
+  expect_error(
+    carrow_pointer_export(carrow_allocate_array_data(), carrow_allocate_array_data()),
+    "has already been released"
+  )
+})
+
+test_that("carrow_pointer_export() works for array_stream", {
+  ptr <- carrow_array_stream(schema = carrow_schema("i"))
+  dst <- carrow_allocate_array_stream()
+  carrow_pointer_export(ptr, dst)
+  expect_true(carrow_pointer_is_valid(ptr))
+  expect_identical(carrow_array_stream_get_schema(dst)$format, "i")
+
+  expect_error(
+    carrow_pointer_export(ptr, dst),
+    "`ptr_dst` is a valid struct ArrowArrayStream"
+  )
+
+  expect_error(
+    carrow_pointer_export(carrow_allocate_array_stream(), ptr),
+    "has already been released"
+  )
+})
+
 test_that("pointer address getters work", {
   schema <- carrow_schema("i")
   expect_match(carrow_pointer_addr_chr(schema), "^[0-9]+$")

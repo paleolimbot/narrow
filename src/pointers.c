@@ -5,6 +5,7 @@
 #include "schema.h"
 #include "array-data.h"
 #include "array-stream.h"
+#include "carrow/carrow.h"
 
 SEXP carrow_c_pointer(SEXP obj_sexp) {
   if (TYPEOF(obj_sexp) == EXTPTRSXP) {
@@ -152,7 +153,57 @@ SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
   return R_NilValue;
 }
 
-SEXP carrow_c_schema_blank() {
+
+
+// The rest of this package operates under the assumption that references
+// to the schema/array external pointer are kept by anything that needs
+// the underlying memory to persist. When the reference count reaches 0,
+// R calls the release callback (and nobody else).
+// When exporting to something that is expecting to call the release callback
+// itself (e.g., Arrow C++ via the arrow R package or pyarrow Python package),
+// the structure and the release callback need to keep the information.
+
+// schemas are less frequently iterated over and it's much simpler to
+// (recursively) copy the whole object and export it rather than try to
+// keep all the object dependencies alive and/or risk moving a dependency
+// of some other R object
+SEXP carrow_c_export_schema(SEXP schema_xptr, SEXP ptr_dst) {
+  struct ArrowSchema* obj_src = schema_from_xptr(schema_xptr, "ptr_src");
+  SEXP xptr_dst = PROTECT(carrow_c_pointer(ptr_dst));
+
+  struct ArrowSchema* obj_dst = (struct ArrowSchema*) R_ExternalPtrAddr(xptr_dst);
+  if (obj_dst == NULL) {
+    Rf_error("`ptr_dst` is a pointer to NULL");
+  }
+
+  if (obj_dst->release != NULL) {
+    Rf_error("`ptr_dst` is a valid struct ArrowSchema");
+  }
+
+  carrow_schema_deep_copy(obj_dst, obj_src);
+  UNPROTECT(1);
+  return R_NilValue;
+}
+
+
+SEXP carrow_c_export_array_data(SEXP array_data_xptr, SEXP ptr_dst) {
+  SEXP xptr_dst = PROTECT(carrow_c_pointer(ptr_dst));
+
+  struct ArrowArray* obj_dst = (struct ArrowArray*) R_ExternalPtrAddr(xptr_dst);
+  if (obj_dst == NULL) {
+    Rf_error("`ptr_dst` is a pointer to NULL");
+  }
+
+  if (obj_dst->release != NULL) {
+    Rf_error("`ptr_dst` is a valid struct ArrowArray");
+  }
+
+  array_data_export(array_data_xptr, obj_dst);
+  UNPROTECT(1);
+  return R_NilValue;
+}
+
+SEXP carrow_c_allocate_schema() {
   struct ArrowSchema* schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(schema, "struct ArrowSchema");
   schema->release = NULL;
@@ -164,7 +215,7 @@ SEXP carrow_c_schema_blank() {
   return schema_xptr;
 }
 
-SEXP carrow_c_array_blank() {
+SEXP carrow_c_allocate_array_data() {
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data, "struct ArrowArray");
   array_data->release = NULL;
@@ -176,7 +227,7 @@ SEXP carrow_c_array_blank() {
   return array_data_xptr;
 }
 
-SEXP carrow_c_array_stream_blank() {
+SEXP carrow_c_allocate_array_stream() {
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
   check_trivial_alloc(array_stream, "struct ArrowArrayStream");
   array_stream->release = NULL;

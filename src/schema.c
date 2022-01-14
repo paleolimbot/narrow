@@ -186,13 +186,6 @@ void finalize_schema(struct ArrowSchema* schema) {
   }
 }
 
-// for ArrowSchema* that are exported references to an R schema_xptr
-void finalize_exported_schema(struct ArrowSchema* schema) {
-  SEXP schema_xptr = (SEXP) schema->private_data;
-  R_ReleaseObject(schema_xptr);
-  schema->release = NULL;
-}
-
 unsigned char* metadata_from_sexp(SEXP metadata_sexp, const char* arg) {
   if (metadata_sexp == R_NilValue) {
     return NULL;

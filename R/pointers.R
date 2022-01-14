@@ -11,16 +11,36 @@ carrow_pointer_move <- function(ptr_src, ptr_dst) {
   invisible(.Call(carrow_c_pointer_move, ptr_src, ptr_dst))
 }
 
+carrow_pointer_export <- function(ptr_src, ptr_dst) {
+  if (inherits(ptr_src, "carrow_schema")) {
+    invisible(.Call(carrow_c_export_schema, ptr_src, ptr_dst))
+  } else if (inherits(ptr_src, "carrow_array_data")) {
+    invisible(.Call(carrow_c_export_array_data, ptr_src, ptr_dst))
+  } else if (inherits(ptr_src, "carrow_array_stream")) {
+    invisible(
+      .Call(
+        carrow_c_export_array_stream,
+        ptr_src,
+        carrow_from_pointer(ptr_dst, "carrow_array_stream")
+      )
+    )
+  } else {
+    stop(
+      "`ptr_src` must inherit from 'carrow_schema', 'carrow_array_data', or 'carrow_array_stream'"
+    )
+  }
+}
+
 carrow_allocate_schema <- function() {
-  .Call(carrow_c_schema_blank)
+  .Call(carrow_c_allocate_schema)
 }
 
 carrow_allocate_array_data <- function() {
-  .Call(carrow_c_array_blank)
+  .Call(carrow_c_allocate_array_data)
 }
 
 carrow_allocate_array_stream <- function() {
-  .Call(carrow_c_array_stream_blank)
+  .Call(carrow_c_allocate_array_stream)
 }
 
 carrow_pointer_addr_dbl <- function(ptr) {
