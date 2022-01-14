@@ -1,7 +1,3 @@
-// needed to make work on Windows without warnings
-// because %lld isn't recognized as a format string there
-#define __USE_MINGW_ANSI_STDIO
-#include <stdio.h>
 
 #define R_NO_REMAP
 #include <R.h>

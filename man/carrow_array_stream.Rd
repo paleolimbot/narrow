@@ -5,7 +5,8 @@
 \alias{carrow_array_stream_get_schema}
 \alias{carrow_array_stream_get_next}
 \alias{as_carrow_array_stream}
-\alias{as_carrow_array_stream.carrow_stream}
+\alias{as_carrow_array_stream.carrow_array_stream}
+\alias{as_carrow_array_stream.list}
 \alias{as_carrow_array_stream.default}
 \alias{as_carrow_array_stream.carrow_array}
 \title{Stream objects as Arrow arrays}
@@ -18,7 +19,9 @@ carrow_array_stream_get_next(array_stream)
 
 as_carrow_array_stream(x, ...)
 
-\method{as_carrow_array_stream}{carrow_stream}(x, ...)
+\method{as_carrow_array_stream}{carrow_array_stream}(x, ...)
+
+\method{as_carrow_array_stream}{list}(x, ...)
 
 \method{as_carrow_array_stream}{default}(x, ...)
 

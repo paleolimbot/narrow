@@ -73,8 +73,14 @@ as_carrow_array_stream <- function(x, ...) {
 
 #' @rdname carrow_array_stream
 #' @export
-as_carrow_array_stream.carrow_stream <- function(x, ...) {
+as_carrow_array_stream.carrow_array_stream <- function(x, ...) {
   x
+}
+
+#' @rdname carrow_array_stream
+#' @export
+as_carrow_array_stream.list <- function(x, ...) {
+  carrow_array_stream(x)
 }
 
 #' @rdname carrow_array_stream
