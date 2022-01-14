@@ -111,7 +111,71 @@ test_that("streams can be exported to RecordBatchReader", {
   )
 })
 
-test_that("streams can be imported from RecordBatchReader", {
+test_that("streams can be imported from Dataset", {
+  skip_if_not_installed("arrow")
+
+  # some test data
+  df <- data.frame(
+    a = 1:26,
+    b = as.double(1:26),
+    c = letters,
+    part = as.integer(1:26 %% 4)
+  )
+  tf <- tempfile()
+  arrow::write_dataset(df, tf, part = "part")
+
+  ds <- arrow::open_dataset(tf)
+  stream <- as_carrow_array_stream(ds)
+
+  schema <- carrow_array_stream_get_schema(stream)
+  expect_identical(
+    carrow_schema_info(schema, recursive = TRUE),
+    carrow_schema_info(as_carrow_schema(ds$schema), recursive = TRUE)
+  )
+
+  batches <- list()
+  while (!is.null(batch <- carrow_array_stream_get_next(stream))) {
+    batches[[length(batches) + 1]] <- from_carrow_array(batch)
+  }
+
+  df_recreated <- do.call(rbind, batches)
+  df_recreated <- df_recreated[order(df_recreated$a), ]
+  expect_equal(as.data.frame(df_recreated), df, ignore_attr = TRUE)
+
+  unlink(tf, recursive = TRUE)
+})
+
+test_that("streams can be imported from Table", {
+  skip_if_not_installed("arrow")
+
+  # some test data
+  df <- data.frame(
+    a = 1:26,
+    b = as.double(1:26),
+    c = letters,
+    part = as.integer(1:26 %% 4)
+  )
+
+  tbl <- arrow::Table$create(df)
+  stream <- as_carrow_array_stream(tbl)
+
+  schema <- carrow_array_stream_get_schema(stream)
+  expect_identical(
+    carrow_schema_info(schema, recursive = TRUE),
+    carrow_schema_info(as_carrow_schema(tbl$schema), recursive = TRUE)
+  )
+
+  batches <- list()
+  while (!is.null(batch <- carrow_array_stream_get_next(stream))) {
+    batches[[length(batches) + 1]] <- from_carrow_array(batch)
+  }
+
+  df_recreated <- do.call(rbind, batches)
+  df_recreated <- df_recreated[order(df_recreated$a), ]
+  expect_equal(as.data.frame(df_recreated), df, ignore_attr = TRUE)
+})
+
+test_that("streams can be imported from RecordBatchFileReader", {
   skip_if_not_installed("arrow")
 
   # some test data
@@ -139,11 +203,12 @@ test_that("streams can be imported from RecordBatchReader", {
     carrow_schema_info(as_carrow_schema(reader$schema), recursive = TRUE)
   )
 
-  # skip("Attempt to read batch from exported RecordBatchReader segfaults")
+  # skip("Attempt to read batch from exported RecordBatchFileReader segfaults")
   # batch <- carrow_array_stream_get_next(stream)
 
   read_file_obj$close()
   unlink(tf)
+  skip("Attempt to read batch from exported RecordBatchFileReader segfaults")
 })
 
 test_that("Arrays can be streamed", {

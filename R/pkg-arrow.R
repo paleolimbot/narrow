@@ -117,6 +117,24 @@ as_carrow_array_stream.RecordBatchReader <- function(x, ...) {
 
 #' @rdname pkg-arrow
 #' @export
+as_carrow_array_stream.Scanner <- function(x, ...) {
+  as_carrow_array_stream.RecordBatchReader(x$ToRecordBatchReader())
+}
+
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.Dataset <- function(x, ...) {
+  as_carrow_array_stream.Scanner(arrow::Scanner$create(x, ...))
+}
+
+#' @rdname pkg-arrow
+#' @export
+as_carrow_array_stream.Table <- function(x, ...) {
+  as_carrow_array_stream.Scanner(arrow::Scanner$create(x, ...))
+}
+
+#' @rdname pkg-arrow
+#' @export
 as_carrow_array_stream.RecordBatchFileReader <- function(x, ...) {
   as_carrow_array_stream.RecordBatchReader(x, ...)
 }

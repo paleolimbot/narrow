@@ -11,6 +11,9 @@
 \alias{as_carrow_array.RecordBatch}
 \alias{carrow_array_stream_to_arrow}
 \alias{as_carrow_array_stream.RecordBatchReader}
+\alias{as_carrow_array_stream.Scanner}
+\alias{as_carrow_array_stream.Dataset}
+\alias{as_carrow_array_stream.Table}
 \alias{as_carrow_array_stream.RecordBatchFileReader}
 \alias{as_carrow_array_stream.RecordBatchStreamReader}
 \alias{as_carrow_array_stream.Array}
@@ -36,6 +39,12 @@
 carrow_array_stream_to_arrow(x)
 
 \method{as_carrow_array_stream}{RecordBatchReader}(x, ...)
+
+\method{as_carrow_array_stream}{Scanner}(x, ...)
+
+\method{as_carrow_array_stream}{Dataset}(x, ...)
+
+\method{as_carrow_array_stream}{Table}(x, ...)
 
 \method{as_carrow_array_stream}{RecordBatchFileReader}(x, ...)
 
