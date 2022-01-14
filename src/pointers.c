@@ -1,3 +1,6 @@
+// needed to make work on Windows without warnings
+// because %lld isn't recognized as a format string there
+#define __USE_MINGW_ANSI_STDIO
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
@@ -78,10 +81,9 @@ SEXP carrow_c_pointer_addr_dbl(SEXP ptr) {
 
 SEXP carrow_c_pointer_addr_chr(SEXP ptr) {
   intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
-  long long ptr_int2 = (long long) ptr_int;
   char addr_chars[100];
   memset(addr_chars, 0, 100);
-  snprintf(addr_chars, 100, "%lld", ptr_int2);
+  snprintf(addr_chars, 100, "%lld", (long long) ptr_int);
   return Rf_mkString(addr_chars);
 }
 
