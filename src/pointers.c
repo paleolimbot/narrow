@@ -4,7 +4,6 @@
 #include "util.h"
 #include "schema.h"
 #include "array-data.h"
-#include "array-data.h"
 #include "array-stream.h"
 
 SEXP carrow_c_pointer(SEXP obj_sexp) {
@@ -16,7 +15,7 @@ SEXP carrow_c_pointer(SEXP obj_sexp) {
   } else if (TYPEOF(obj_sexp) == STRSXP && Rf_length(obj_sexp) == 1) {
     const char* text = CHAR(STRING_ELT(obj_sexp, 0));
     char* end_ptr;
-    intptr_t ptr_int = strtoull(text, &end_ptr, 10);
+    intptr_t ptr_int = strtoll(text, &end_ptr, 10);
     if (end_ptr != (text + strlen(text))) {
       Rf_error("'%s' could not be interpreted as an unsigned 64-bit integer", text);
     }
@@ -37,7 +36,7 @@ SEXP carrow_c_pointer_addr_chr(SEXP ptr) {
   intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
   char addr_chars[100];
   memset(addr_chars, 0, 100);
-  snprintf(addr_chars, 100, "%llu", (unsigned long long) ptr_int);
+  snprintf(addr_chars, 100, "%lld", (unsigned long long) ptr_int);
   return Rf_mkString(addr_chars);
 }
 
