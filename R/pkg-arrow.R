@@ -21,18 +21,30 @@ from_carrow_array.Array <- function(x, ptype, ...) {
 #' @rdname pkg-arrow
 #' @export
 from_carrow_array.R6ClassGenerator <- function(x, ptype, ...) {
+  temp_schema <- carrow_allocate_schema()
+  temp_array_data <- carrow_allocate_array_data()
+
   switch(
     ptype$classname,
     RecordBatch =,
-    Array = arrow::Array$import_from_c(
-      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_array, x$array_data)),
-      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_schema, x$schema))
-    ),
+    Array = {
+      carrow_pointer_export(x$schema, temp_schema)
+      carrow_pointer_export(x$array_data, temp_array_data)
+
+      arrow::Array$import_from_c(
+        carrow_pointer_addr_dbl(temp_array_data),
+        carrow_pointer_addr_dbl(temp_schema)
+      )
+    },
     DataType =,
     Field =,
-    Schema = ptype$import_from_c(
-      carrow_pointer_addr_dbl(.Call(carrow_c_exportable_schema, x$schema))
-    ),
+    Schema = {
+      carrow_pointer_export(x$schema, temp_schema)
+
+      ptype$import_from_c(
+        carrow_pointer_addr_dbl(temp_schema)
+      )
+    },
     stop(sprintf("Can't convert from carrow_array to R6 type '%s'", ptype$classname))
   )
 }
@@ -88,8 +100,10 @@ as_carrow_array.RecordBatch <- function(x, ...) {
 #' @rdname pkg-arrow
 #' @export
 carrow_array_stream_to_arrow <- function(x) {
+  temp_array_stream <- carrow_allocate_array_stream()
+  carrow_pointer_export(x, temp_array_stream)
   asNamespace("arrow")$ImportRecordBatchReader(
-    carrow_pointer_addr_dbl(.Call(carrow_c_exportable_array_stream, x))
+    carrow_pointer_addr_dbl(temp_array_stream)
   )
 }
 
