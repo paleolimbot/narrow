@@ -119,6 +119,7 @@ test_that("carrow_vctr() works with vctrs", {
 
 test_that("Math generics work", {
   # none of these are implemented in Arrow, so none are here either
+  skip("math generics aren't implemented in Arrow yet")
 })
 
 test_that("Ops numeric generics work", {

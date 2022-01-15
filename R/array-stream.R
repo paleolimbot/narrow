@@ -8,6 +8,7 @@
 #' @param x An R object to convert to an Arrow Stream
 #' @param array_stream An object of class "carrow_array_stream"
 #' @param ... Passed to S3 methods
+#' @inheritParams from_carrow_array
 #'
 #' @return An object of class "carrow_array_stream"
 #' @export
@@ -42,6 +43,29 @@ carrow_array_stream <- function(list_of_array = list(), schema = NULL, validate 
   }
 
   .Call(carrow_c_carrow_array_stream, list_of_array, schema)
+}
+
+#' @rdname carrow_array_stream
+#' @export
+carrow_array_stream_collect <- function(array_stream,
+                                        ptype = carrow_default_ptype(
+                                          carrow_array_stream_get_schema(array_stream))) {
+  batches <- vector("list", 1024)
+  i <- 0
+  while (!is.null(batch <- carrow_array_stream_get_next(array_stream))) {
+    i <- i + 1L
+    batches[[i]] <- from_carrow_array(batch, ptype = ptype)
+  }
+
+  if (length(batches) > i) {
+    batches <- batches[seq_len(i)]
+  }
+
+  if (is.data.frame(ptype)) {
+    do.call(rbind, batches)
+  } else {
+    do.call(c, batches)
+  }
 }
 
 #' @rdname carrow_array_stream
@@ -81,6 +105,12 @@ as_carrow_array_stream.carrow_array_stream <- function(x, ...) {
 #' @export
 as_carrow_array_stream.list <- function(x, ...) {
   carrow_array_stream(x)
+}
+
+#' @rdname carrow_array_stream
+#' @export
+as_carrow_array_stream.function <- function(x, ...) {
+  as_carrow_array_stream(x(...))
 }
 
 #' @rdname carrow_array_stream

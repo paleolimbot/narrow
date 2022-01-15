@@ -2,16 +2,23 @@
 % Please edit documentation in R/array-stream.R
 \name{carrow_array_stream}
 \alias{carrow_array_stream}
+\alias{carrow_array_stream_collect}
 \alias{carrow_array_stream_get_schema}
 \alias{carrow_array_stream_get_next}
 \alias{as_carrow_array_stream}
 \alias{as_carrow_array_stream.carrow_array_stream}
 \alias{as_carrow_array_stream.list}
+\alias{as_carrow_array_stream.function}
 \alias{as_carrow_array_stream.default}
 \alias{as_carrow_array_stream.carrow_array}
 \title{Stream objects as Arrow arrays}
 \usage{
 carrow_array_stream(list_of_array = list(), schema = NULL, validate = TRUE)
+
+carrow_array_stream_collect(
+  array_stream,
+  ptype = carrow_default_ptype(carrow_array_stream_get_schema(array_stream))
+)
 
 carrow_array_stream_get_schema(array_stream)
 
@@ -22,6 +29,8 @@ as_carrow_array_stream(x, ...)
 \method{as_carrow_array_stream}{carrow_array_stream}(x, ...)
 
 \method{as_carrow_array_stream}{list}(x, ...)
+
+\method{as_carrow_array_stream}{`function`}(x, ...)
 
 \method{as_carrow_array_stream}{default}(x, ...)
 
@@ -36,6 +45,8 @@ as_carrow_array_stream(x, ...)
 \code{list_of_array}.}
 
 \item{array_stream}{An object of class "carrow_array_stream"}
+
+\item{ptype}{An R object to use as a prototype}
 
 \item{x}{An R object to convert to an Arrow Stream}
 
