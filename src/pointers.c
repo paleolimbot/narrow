@@ -77,11 +77,16 @@ SEXP carrow_c_pointer_addr_dbl(SEXP ptr) {
   return Rf_ScalarReal(ptr_int);
 }
 
+// on Windows, we get a compiler warning because %lld isn't recognized
+// as a format string (although all tests pass). Instead we use
+// std::to_string(), defined in pointers-cpp.c
+void intptr_as_string(intptr_t ptr_int, char* buf);
+
 SEXP carrow_c_pointer_addr_chr(SEXP ptr) {
   intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
   char addr_chars[100];
   memset(addr_chars, 0, 100);
-  snprintf(addr_chars, 100, "%lld", (long long) ptr_int);
+  intptr_as_string(ptr_int, addr_chars);
   return Rf_mkString(addr_chars);
 }
 
