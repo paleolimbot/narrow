@@ -94,6 +94,7 @@ test_that("as_carrow_array() works for zero-copy case", {
 })
 
 test_that("as_carrow_array() works for the non-zero copy case", {
+  skip_if_not_installed("arrow")
   array <- as_carrow_array(11:20)
   vctr <- new_carrow_vctr(1:9, array)
   expect_identical(from_carrow_array(as_carrow_array(vctr)), 12:20)

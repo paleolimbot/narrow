@@ -17,11 +17,13 @@ SEXP carrow_c_deep_copy(SEXP array_sexp) {
   check_trivial_alloc(result_schema, "struct ArrowSchema");
   result_schema->release = NULL;
   SEXP result_schema_xptr = PROTECT(schema_xptr_new(result_schema));
+  R_RegisterCFinalizer(result_schema_xptr, finalize_schema_xptr);
 
   struct ArrowArray* result_array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(result_schema, "struct ArrowArray");
   result_array_data->release = NULL;
   SEXP result_array_data_xptr = PROTECT(array_data_xptr_new(result_array_data));
+  R_RegisterCFinalizer(result_array_data_xptr, finalize_array_data_xptr);
 
   int result = carrow_schema_deep_copy(result_schema, array.schema);
   if (result != 0) {
