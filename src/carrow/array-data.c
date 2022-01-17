@@ -11,18 +11,22 @@ void carrow_array_release_internal(struct ArrowArray* array_data) {
     return;
   }
 
-  if (array_data->n_buffers > 0 && array_data->buffers != NULL) {
+  if (array_data->buffers != NULL) {
     for (uint64_t i = 0; i < array_data->n_buffers; i++) {
       if (array_data->buffers[i] != NULL) {
         free((void*) array_data->buffers[i]);
       }
     }
+
+    free(array_data->buffers);
   }
 
   if (array_data->children != NULL) {
     for (uint64_t i = 0; i < array_data->n_children; i++) {
       carrow_array_release_internal(array_data->children[i]);
     }
+
+    free(array_data->children);
   }
 
   if (array_data->dictionary != NULL) {

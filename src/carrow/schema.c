@@ -20,6 +20,8 @@ void carrow_schema_release_internal(struct ArrowSchema* schema) {
     for (uint64_t i = 0; i < schema->n_children; i++) {
       carrow_schema_release_internal(schema->children[i]);
     }
+
+    free(schema->children);
   }
 
   if (schema->dictionary != NULL) {
