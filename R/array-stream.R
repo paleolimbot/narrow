@@ -76,7 +76,7 @@ carrow_array_stream_get_schema <- function(array_stream) {
 
 #' @rdname carrow_array_stream
 #' @export
-carrow_array_stream_get_next <- function(array_stream) {
+carrow_array_stream_get_next <- function(array_stream, validate = TRUE) {
   array_data <- .Call(carrow_c_carrow_array_stream_get_next, array_stream)
 
   if (is.null(array_data)) {
@@ -84,7 +84,8 @@ carrow_array_stream_get_next <- function(array_stream) {
   } else {
     carrow_array(
       carrow_array_stream_get_schema(array_stream),
-      array_data
+      array_data,
+      validate = validate
     )
   }
 }

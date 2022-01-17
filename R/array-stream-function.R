@@ -4,13 +4,16 @@
 #' @param schema A [carrow_schema()]
 #' @param fun An R function whose return value is converted to
 #'   a [carrow_array()] and passed to the caller.
+#' @param validate Use `FALSE` to skip validation of the output of the function
+#'   against `schema`.
 #'
 #' @return An object of class "carrow_array_stream"
 #' @export
 #'
-carrow_array_stream_function <- function(schema, fun) {
+carrow_array_stream_function <- function(schema, fun, validate = TRUE) {
   schema <- as_carrow_schema(schema)
   fun <- match.fun(fun)
+  force(validate)
 
   # Easier and better for backtraces to pass an environment + a call
   # plus we need a wrapper that won't longjmp until the base caller
@@ -28,12 +31,9 @@ carrow_array_stream_function <- function(schema, fun) {
         result
       } else {
         result_array <- as_carrow_array(result)
-        stopifnot(
-          identical(
-            carrow_schema_info(schema, recursive = TRUE),
-            carrow_schema_info(result_array$schema, recursive = TRUE)
-          )
-        )
+        if (validate) {
+          result_array$schema <- schema
+        }
         result_array$array_data
       }
     }, error = function(e) {

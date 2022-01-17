@@ -4,13 +4,16 @@
 \alias{carrow_array_stream_function}
 \title{Array streams from functions}
 \usage{
-carrow_array_stream_function(schema, fun)
+carrow_array_stream_function(schema, fun, validate = TRUE)
 }
 \arguments{
 \item{schema}{A \code{\link[=carrow_schema]{carrow_schema()}}}
 
 \item{fun}{An R function whose return value is converted to
 a \code{\link[=carrow_array]{carrow_array()}} and passed to the caller.}
+
+\item{validate}{Use \code{FALSE} to skip validation of the output of the function
+against \code{schema}.}
 }
 \value{
 An object of class "carrow_array_stream"

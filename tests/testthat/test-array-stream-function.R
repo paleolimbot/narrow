@@ -28,3 +28,17 @@ test_that("carrow_array_stream_function works", {
   expect_null(carrow_array_stream_get_next(stream))
   expect_error(carrow_array_stream_get_next(stream), "array stream is finished")
 })
+
+test_that("carrow_array_stream_function validates get_next() against schema", {
+  stream <- carrow_array_stream_function(carrow_schema("i"), function() {
+    "one"
+  })
+
+  expect_error(carrow_array_stream_get_next(stream), "Expected 2 buffers")
+
+  stream <- carrow_array_stream_function(carrow_schema("i"), function() {
+    "one"
+  }, validate = FALSE)
+
+  expect_silent(carrow_array_stream_get_next(stream, validate = FALSE))
+})
