@@ -10,7 +10,6 @@
 #include "carrow/carrow.h"
 
 void finalize_array_stream_xptr(SEXP array_stream_xptr);
-void finalize_array_stream(struct ArrowArrayStream* array_stream);
 
 static inline struct ArrowArrayStream* array_stream_from_xptr(SEXP array_stream_xptr, const char* arg) {
   if (!Rf_inherits(array_stream_xptr, "carrow_array_stream")) {

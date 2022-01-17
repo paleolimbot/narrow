@@ -239,7 +239,7 @@ SEXP carrow_c_allocate_array_stream() {
   array_stream->release = NULL;
 
   SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
-  R_RegisterCFinalizer(array_stream_xptr, finalize_array_stream_xptr);
+  R_RegisterCFinalizer(array_stream_xptr, &finalize_array_stream_xptr);
   UNPROTECT(1);
 
   return array_stream_xptr;

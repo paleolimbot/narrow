@@ -66,6 +66,7 @@ SEXP carrow_c_carrow_array_stream(SEXP array_list, SEXP schema_xptr) {
   array_stream->release = &finalize_array_stream;
 
   SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
+  R_RegisterCFinalizer(array_stream_xptr, &finalize_array_stream_xptr);
   R_SetExternalPtrProtected(array_stream_xptr, array_list);
   R_SetExternalPtrTag(array_stream_xptr, schema_xptr);
 

@@ -88,6 +88,7 @@ SEXP carrow_c_function_array_stream(SEXP schema_xptr, SEXP call, SEXP env) {
   SEXP array_stream_xptr = PROTECT(array_stream_xptr_new(array_stream));
   R_SetExternalPtrProtected(array_stream_xptr, call);
   R_SetExternalPtrTag(array_stream_xptr, env);
+  R_RegisterCFinalizer(array_stream_xptr, &finalize_array_stream_xptr);
 
   struct FunctionArrayStreamData* data = (struct FunctionArrayStreamData*) malloc(sizeof(struct FunctionArrayStreamData));
   check_trivial_alloc(data, "struct FunctionArrayStreamData");
