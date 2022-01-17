@@ -15,14 +15,11 @@
 \usage{
 carrow_array_stream(list_of_array = list(), schema = NULL, validate = TRUE)
 
-carrow_array_stream_collect(
-  array_stream,
-  ptype = carrow_default_ptype(carrow_array_stream_get_schema(array_stream))
-)
+carrow_array_stream_collect(array_stream, ptype = NULL)
 
 carrow_array_stream_get_schema(array_stream)
 
-carrow_array_stream_get_next(array_stream)
+carrow_array_stream_get_next(array_stream, validate = TRUE)
 
 as_carrow_array_stream(x, ...)
 

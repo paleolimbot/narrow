@@ -47,9 +47,16 @@ carrow_array_stream <- function(list_of_array = list(), schema = NULL, validate 
 
 #' @rdname carrow_array_stream
 #' @export
-carrow_array_stream_collect <- function(array_stream,
-                                        ptype = carrow_default_ptype(
-                                          carrow_array_stream_get_schema(array_stream))) {
+carrow_array_stream_collect <- function(array_stream, ptype = NULL) {
+  array_stream <- as_carrow_array_stream(array_stream)
+  if (is.null(ptype)) {
+    ptype <- carrow_default_ptype(
+      carrow_array_stream_get_schema(
+        array_stream
+      )
+    )
+  }
+
   batches <- vector("list", 1024)
   i <- 0
   while (!is.null(batch <- carrow_array_stream_get_next(array_stream))) {
