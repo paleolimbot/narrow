@@ -1,24 +1,24 @@
 
 #' Guess prototypes for Arrow schemas
 #'
-#' @param schema An [carrow_schema()]
+#' @param schema An [sparrow_schema()]
 #'
 #' @return A zero-length array prototype
 #' @export
 #'
 #' @examples
-#' carrow_default_ptype(carrow_schema("n"))
-#' carrow_default_ptype(
-#'   carrow_schema("+s", children = list(carrow_schema("i", "colname")))
+#' sparrow_default_ptype(sparrow_schema("n"))
+#' sparrow_default_ptype(
+#'   sparrow_schema("+s", children = list(sparrow_schema("i", "colname")))
 #' )
 #'
-carrow_default_ptype <- function(schema) {
-  if (!inherits(schema, "carrow_schema")) {
-    stop("`schema` must be a `carrow_schema()`", call. = FALSE)
+sparrow_default_ptype <- function(schema) {
+  if (!inherits(schema, "sparrow_schema")) {
+    stop("`schema` must be a `sparrow_schema()`", call. = FALSE)
   }
 
   if (!is.null(schema$dictionary)) {
-    return(carrow_default_ptype(schema$dictionary))
+    return(sparrow_default_ptype(schema$dictionary))
   }
 
   info <- parse_format(schema$format)
@@ -29,7 +29,7 @@ carrow_default_ptype <- function(schema) {
     d =, I =, l =, L =, e =, f =, g = double(),
     u =, U = character(),
     `+s` = {
-      children_ptype <- lapply(schema$children, carrow_default_ptype)
+      children_ptype <- lapply(schema$children, sparrow_default_ptype)
       children_names <- lapply(schema$children, "[[", "name")
       children_names[vapply(children_names, is.null, logical(1))] <- ""
       names(children_ptype) <- children_names

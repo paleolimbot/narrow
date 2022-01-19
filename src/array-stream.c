@@ -1,7 +1,7 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
-#include "carrow/carrow.h"
+#include "sparrow/sparrow.h"
 #include "array-stream.h"
 #include "array.h"
 #include "util.h"
@@ -19,7 +19,7 @@ void finalize_array_stream_xptr(SEXP array_stream_xptr) {
 }
 
 // accessors for R-level access
-SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr) {
+SEXP sparrow_c_sparrow_array_stream_get_schema(SEXP array_stream_xptr) {
   struct ArrowArrayStream* array_stream = array_stream_from_xptr(array_stream_xptr, "array_stream");
 
   struct ArrowSchema* schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
@@ -44,7 +44,7 @@ SEXP carrow_c_carrow_array_stream_get_schema(SEXP array_stream_xptr) {
   return schema_xptr;
 }
 
-SEXP carrow_c_carrow_array_stream_get_next(SEXP array_stream_xptr) {
+SEXP sparrow_c_sparrow_array_stream_get_next(SEXP array_stream_xptr) {
   struct ArrowArrayStream* array_stream = array_stream_from_xptr(array_stream_xptr, "array_stream");
 
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));

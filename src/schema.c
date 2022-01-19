@@ -6,12 +6,12 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "carrow/carrow.h"
+#include "sparrow/sparrow.h"
 
 #include "schema.h"
 #include "util.h"
 
-SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
+SEXP sparrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_sexp,
                              SEXP flags_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   struct ArrowSchema* result = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(result, "struct ArrowSchema");
@@ -30,7 +30,7 @@ SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_se
   SEXP schema_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
   SET_VECTOR_ELT(schema_prot, 0, children_sexp);
   SET_VECTOR_ELT(schema_prot, 1, dictionary_xptr);
-  Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("carrow_schema_prot"));
+  Rf_setAttrib(schema_prot, R_ClassSymbol, Rf_mkString("sparrow_schema_prot"));
 
   // wrap in external ptr early to ensure deletion
   SEXP result_xptr = PROTECT(schema_xptr_new(result));
@@ -74,7 +74,7 @@ SEXP carrow_c_schema_xptr_new(SEXP format_sexp, SEXP name_sexp, SEXP metadata_se
   return result_xptr;
 }
 
-SEXP carrow_c_schema_deep_copy(SEXP schema_xptr) {
+SEXP sparrow_c_schema_deep_copy(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   struct ArrowSchema* new_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
@@ -84,16 +84,16 @@ SEXP carrow_c_schema_deep_copy(SEXP schema_xptr) {
   SEXP new_schema_xptr = PROTECT(schema_xptr_new(new_schema));
   R_RegisterCFinalizer(new_schema_xptr, &finalize_schema_xptr);
 
-  int result = carrow_schema_deep_copy(new_schema, schema);
+  int result = sparrow_schema_deep_copy(new_schema, schema);
   if (result != 0) {
-    Rf_error("carrow_schema_copy() failed with code %d (%s)", result, strerror(result));
+    Rf_error("sparrow_schema_copy() failed with code %d (%s)", result, strerror(result));
   }
 
   UNPROTECT(1);
   return new_schema_xptr;
 }
 
-SEXP carrow_c_schema_data(SEXP schema_xptr) {
+SEXP sparrow_c_schema_data(SEXP schema_xptr) {
   struct ArrowSchema* schema = schema_from_xptr(schema_xptr, "schema");
 
   const char* names[] = {"format", "name", "metadata", "flags", "children", "dictionary", ""};
@@ -119,7 +119,7 @@ SEXP carrow_c_schema_data(SEXP schema_xptr) {
   // Try to return external pointers that were passed to schema_xptr_new to
   // reduce the chance of circular references
   SEXP schema_prot = R_ExternalPtrProtected(schema_xptr);
-  if (Rf_inherits(schema_prot, "carrow_schema_prot")) {
+  if (Rf_inherits(schema_prot, "sparrow_schema_prot")) {
     SET_VECTOR_ELT(result, 4, VECTOR_ELT(schema_prot, 0));
     SET_VECTOR_ELT(result, 5, VECTOR_ELT(schema_prot, 1));
   } else {
@@ -168,7 +168,7 @@ void finalize_schema_xptr(SEXP schema_xptr) {
   }
 }
 
-// for ArrowSchema* that were created by carrow_c_schema_xptr_new()
+// for ArrowSchema* that were created by sparrow_c_schema_xptr_new()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_schema(struct ArrowSchema* schema) {

@@ -25,13 +25,13 @@ SEXP double_from_int64(SEXP int64_sexp, R_xlen_t start, R_xlen_t end) {
   return dbl_sexp;
 }
 
-SEXP carrow_c_double_from_int64(SEXP value, SEXP start_sexp, SEXP end_sexp) {
+SEXP sparrow_c_double_from_int64(SEXP value, SEXP start_sexp, SEXP end_sexp) {
   R_xlen_t start = scalar_int64_from_sexp(start_sexp, "start");
   R_xlen_t end = scalar_int64_from_sexp(end_sexp, "end");
   return double_from_int64(value, start, end);
 }
 
-SEXP carrow_c_int64_from_double(SEXP dbl_sexp) {
+SEXP sparrow_c_int64_from_double(SEXP dbl_sexp) {
   R_xlen_t n = Rf_xlength(dbl_sexp);
   SEXP int64_sexp = PROTECT(Rf_allocVector(REALSXP, n));
 
@@ -42,12 +42,12 @@ SEXP carrow_c_int64_from_double(SEXP dbl_sexp) {
     value[i] = (int64_t) dbl[i];
   }
 
-  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
+  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("sparrow_int64"));
   UNPROTECT(1);
   return int64_sexp;
 }
 
-SEXP carrow_c_int64_from_integer(SEXP int_sexp) {
+SEXP sparrow_c_int64_from_integer(SEXP int_sexp) {
   R_xlen_t n = Rf_xlength(int_sexp);
   SEXP int64_sexp = PROTECT(Rf_allocVector(REALSXP, n));
 
@@ -58,7 +58,7 @@ SEXP carrow_c_int64_from_integer(SEXP int_sexp) {
     value[i] = (int64_t) integer[i];
   }
 
-  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("carrow_int64"));
+  Rf_setAttrib(int64_sexp, R_ClassSymbol, Rf_mkString("sparrow_int64"));
   UNPROTECT(1);
   return int64_sexp;
 }

@@ -1,47 +1,47 @@
 
-test_that("carrow_array class works", {
-  v <- carrow_array()
-  expect_s3_class(v, "carrow_array")
-  expect_identical(as_carrow_array(v), v)
-  expect_match(format(v), "carrow_array n\\[0\\]")
-  expect_output(print(v), "carrow_array n\\[0\\]")
+test_that("sparrow_array class works", {
+  v <- sparrow_array()
+  expect_s3_class(v, "sparrow_array")
+  expect_identical(as_sparrow_array(v), v)
+  expect_match(format(v), "sparrow_array n\\[0\\]")
+  expect_output(print(v), "sparrow_array n\\[0\\]")
 })
 
-test_that("carrow_array_validate works", {
-  v <- carrow_array()
-  expect_identical(carrow_array_validate(v), v)
+test_that("sparrow_array_validate works", {
+  v <- sparrow_array()
+  expect_identical(sparrow_array_validate(v), v)
 
   expect_error(
-    carrow_array(carrow_schema("i"), carrow_array_data()),
+    sparrow_array(sparrow_schema("i"), sparrow_array_data()),
     "Expected 2 buffers"
   )
 
   expect_error(
-    carrow_array(carrow_schema("n"), carrow_array_data(children = list(carrow_array_data()))),
+    sparrow_array(sparrow_schema("n"), sparrow_array_data(children = list(sparrow_array_data()))),
     "does not match number of children of schema"
   )
 
   expect_error(
-    carrow_array(
-      carrow_schema("+s", children = list(carrow_schema("u"))),
-      carrow_array_data(buffers = list(NULL), children = list(carrow_array_data()))
+    sparrow_array(
+      sparrow_schema("+s", children = list(sparrow_schema("u"))),
+      sparrow_array_data(buffers = list(NULL), children = list(sparrow_array_data()))
     ),
     "Expected 3 buffers"
   )
 
   expect_error(
-    carrow_array(
-      carrow_schema("i", dictionary = carrow_schema("u")),
-      carrow_array_data(buffers = list(NULL, 1L), dictionary = carrow_array_data())
+    sparrow_array(
+      sparrow_schema("i", dictionary = sparrow_schema("u")),
+      sparrow_array_data(buffers = list(NULL, 1L), dictionary = sparrow_array_data())
     ),
     "Expected 3 buffers"
   )
 
-  expect_silent(carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, NULL))))
+  expect_silent(sparrow_array(sparrow_schema("i"), sparrow_array_data(buffers = list(NULL, NULL))))
 })
 
 test_that("subset-assign on a array does validation", {
-  v <- carrow_array(carrow_schema("i"), carrow_array_data(buffers = list(NULL, 1L), null_count = 0, length = 1))
-  expect_silent(v$schema <- carrow_schema("i"))
-  expect_error(v$schema <- carrow_schema("u"), "Expected 3 buffers")
+  v <- sparrow_array(sparrow_schema("i"), sparrow_array_data(buffers = list(NULL, 1L), null_count = 0, length = 1))
+  expect_silent(v$schema <- sparrow_schema("i"))
+  expect_error(v$schema <- sparrow_schema("u"), "Expected 3 buffers")
 })

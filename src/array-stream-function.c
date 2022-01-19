@@ -2,7 +2,7 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
-#include "carrow/carrow.h"
+#include "sparrow/sparrow.h"
 #include "array-stream.h"
 #include "array.h"
 #include "util.h"
@@ -52,7 +52,7 @@ int function_array_stream_get_next(struct ArrowArrayStream* array_stream, struct
     return 0;
   }
 
-  if (Rf_inherits(result, "carrow_array_stream_error")) {
+  if (Rf_inherits(result, "sparrow_array_stream_error")) {
     const char* message = CHAR(STRING_ELT(result, 0));
     memset(data->error_message, 0, 8096);
     int message_len = strlen(message);
@@ -72,7 +72,7 @@ int function_array_stream_get_next(struct ArrowArrayStream* array_stream, struct
   return 0;
 }
 
-SEXP carrow_c_function_array_stream(SEXP schema_xptr, SEXP call, SEXP env) {
+SEXP sparrow_c_function_array_stream(SEXP schema_xptr, SEXP call, SEXP env) {
   // just for validation
   schema_from_xptr(schema_xptr, "schema");
 

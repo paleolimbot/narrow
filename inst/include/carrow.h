@@ -100,8 +100,8 @@ struct ArrowArrayStream {
 };
 
 static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char* arg) {
-  if (!Rf_inherits(schema_xptr, "carrow_schema")) {
-    Rf_error("`%s` must be an object created with carrow_schema()", arg);
+  if (!Rf_inherits(schema_xptr, "sparrow_schema")) {
+    Rf_error("`%s` must be an object created with sparrow_schema()", arg);
   }
 
   struct ArrowSchema* schema = (struct ArrowSchema*) R_ExternalPtrAddr(schema_xptr);
@@ -117,8 +117,8 @@ static inline struct ArrowSchema* schema_from_xptr(SEXP schema_xptr, const char*
 }
 
 static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
-  if (!Rf_inherits(array_data_xptr, "carrow_array_data")) {
-    Rf_error("`%s` must be an object created with carrow_array_data()", arg);
+  if (!Rf_inherits(array_data_xptr, "sparrow_array_data")) {
+    Rf_error("`%s` must be an object created with sparrow_array_data()", arg);
   }
 
   struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
@@ -134,8 +134,8 @@ static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, cons
 }
 
 static inline struct ArrowArrayStream* array_stream_from_xptr(SEXP array_stream_xptr, const char* arg) {
-  if (!Rf_inherits(array_stream_xptr, "carrow_array_stream")) {
-    Rf_error("`%s` must be an object created with carrow_array_stream()", arg);
+  if (!Rf_inherits(array_stream_xptr, "sparrow_array_stream")) {
+    Rf_error("`%s` must be an object created with sparrow_array_stream()", arg);
   }
 
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) R_ExternalPtrAddr(array_stream_xptr);

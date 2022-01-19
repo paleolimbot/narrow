@@ -5,7 +5,7 @@
 #include "util.h"
 #include "int64.h"
 
-SEXP carrow_c_xptr_addr(SEXP xptr) {
+SEXP sparrow_c_xptr_addr(SEXP xptr) {
   char buf[1024];
   memset(buf, 0, 1024);
   snprintf(buf, 1024, "%p", R_ExternalPtrAddr(xptr));

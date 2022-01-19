@@ -1,18 +1,18 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# carrow
+# sparrow
 
 <!-- badges: start -->
 
 [![Codecov test
-coverage](https://codecov.io/gh/paleolimbot/carrow/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/carrow?branch=master)
-[![R-CMD-check](https://github.com/paleolimbot/carrow/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/carrow/actions)
+coverage](https://codecov.io/gh/paleolimbot/sparrow/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/sparrow?branch=master)
+[![R-CMD-check](https://github.com/paleolimbot/sparrow/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/sparrow/actions)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of carrow is to wrap the [Arrow Data C
+The goal of sparrow is to wrap the [Arrow Data C
 API](https://arrow.apache.org/docs/format/CDataInterface.html) and
 [Arrow Stream C
 API](https://arrow.apache.org/docs/format/CStreamInterface.html) to
@@ -26,30 +26,30 @@ You can install the development version from
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("paleolimbot/carrow")
+remotes::install_github("paleolimbot/sparrow")
 ```
 
 ## Creating arrays
 
-You can create an Arrow array using `as_carrow_array()`. For many types
+You can create an Arrow array using `as_sparrow_array()`. For many types
 (e.g., integers and doubles), this is done without any copying of
-memory: carrow just arranges the existing R vector memory and protects
+memory: sparrow just arranges the existing R vector memory and protects
 it for the lifetime of the underlying `struct ArrowArray`.
 
 ``` r
-library(carrow)
-(array <- as_carrow_array(1:5))
-#> <carrow_array i[5]>
+library(sparrow)
+(array <- as_sparrow_array(1:5))
+#> <sparrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x130978070>
+#>   <sparrow_schema 'i' at 0x130978070>
 #>   - format: i
 #>   - name: NULL
-#>   - flags: 
+#>   - flags:
 #>   - metadata:  list()
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x1309794b0>
+#>   <sparrow_array_data at 0x1309794b0>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
@@ -66,24 +66,24 @@ zero-copy operation and is instantaneous even for very large Arrays.
 
 ``` r
 library(arrow)
-(array2 <- as_carrow_array(Array$create(1:5)))
-#> <carrow_array i[5]>
+(array2 <- as_sparrow_array(Array$create(1:5)))
+#> <sparrow_array i[5]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x1308adee0>
+#>   <sparrow_schema 'i' at 0x1308adee0>
 #>   - format: i
-#>   - name: 
+#>   - name:
 #>   - flags: nullable
 #>   - metadata:  list()
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x1308ab320>
+#>   <sparrow_array_data at 0x1308ab320>
 #>   - length: 5
 #>   - null_count: 0
 #>   - offset: 0
 #>   - buffers[2]: List of 2
-#>     $ :<externalptr> 
-#>     $ :<externalptr> 
+#>     $ :<externalptr>
+#>     $ :<externalptr>
 #>   - dictionary: NULL
 #>   - children[0]:
 ```
@@ -91,20 +91,20 @@ library(arrow)
 ## Exporting arrays
 
 To convert an array object to some other type, use
-`from_carrow_array()`:
+`from_sparrow_array()`:
 
 ``` r
-str(from_carrow_array(array))
+str(from_sparrow_array(array))
 #>  int [1:5] 1 2 3 4 5
 ```
 
-The carrow package has built-in defaults for converting arrays to R
+The sparrow package has built-in defaults for converting arrays to R
 objects; you can also specify your own using the `ptype` argument:
 
 ``` r
-str(from_carrow_array(array, ptype = double()))
+str(from_sparrow_array(array, ptype = double()))
 #>  num [1:5] 1 2 3 4 5
-from_carrow_array(array, ptype = arrow::Array)
+from_sparrow_array(array, ptype = arrow::Array)
 #> Array
 #> <int32>
 #> [
@@ -120,52 +120,52 @@ from_carrow_array(array, ptype = arrow::Array)
 
 The Arrow C API also specifies an experimental stream interface. In
 addition to handling streams created elsewhere, you can create streams
-based on a `carrow_array()`:
+based on a `sparrow_array()`:
 
 ``` r
-stream1 <- as_carrow_array_stream(as_carrow_array(1:3))
-carrow_array_stream_get_next(stream1)
-#> <carrow_array i[3]>
+stream1 <- as_sparrow_array_stream(as_sparrow_array(1:3))
+sparrow_array_stream_get_next(stream1)
+#> <sparrow_array i[3]>
 #> - schema:
-#>   <carrow_schema 'i' at 0x116664b50>
+#>   <sparrow_schema 'i' at 0x116664b50>
 #>   - format: i
 #>   - name: NULL
-#>   - flags: 
+#>   - flags:
 #>   - metadata:  list()
 #>   - dictionary: NULL
 #>   - children[0]:
 #> - array_data:
-#>   <carrow_array_data at 0x116663b30>
+#>   <sparrow_array_data at 0x116663b30>
 #>   - length: 3
 #>   - null_count: 0
 #>   - offset: 0
 #>   - buffers[2]: List of 2
-#>     $ :<externalptr> 
-#>     $ :<externalptr> 
+#>     $ :<externalptr>
+#>     $ :<externalptr>
 #>   - dictionary: NULL
 #>   - children[0]:
-carrow_array_stream_get_next(stream1)
+sparrow_array_stream_get_next(stream1)
 #> NULL
 ```
 
-…or based on a function that returns one or more `carrow_array()`s:
+…or based on a function that returns one or more `sparrow_array()`s:
 
 ``` r
 counter <- -1
 rows_per_chunk <- 5
 csv_file <- readr::readr_example("mtcars.csv")
-schema <- as_carrow_array(
+schema <- as_sparrow_array(
   readr::read_csv(
-    csv_file, 
+    csv_file,
     n_max = 0,
     col_types = readr::cols(.default = readr::col_double())
   )
 )$schema
 
-stream2 <- carrow_array_stream_function(schema, function() {
+stream2 <- sparrow_array_stream_function(schema, function() {
   counter <<- counter + 1L
   result <- readr::read_csv(
-    csv_file, 
+    csv_file,
     skip = 1 + (counter * rows_per_chunk),
     n_max = rows_per_chunk,
     col_names = c(
@@ -174,16 +174,16 @@ stream2 <- carrow_array_stream_function(schema, function() {
     ),
     col_types = readr::cols(.default = readr::col_double())
   )
-  
+
   if (nrow(result) > 0) result else NULL
 })
 ```
 
 You can pass these to Arrow as a `RecordBatchReader` using
-`carrow_array_stream_to_arrow()`:
+`sparrow_array_stream_to_arrow()`:
 
 ``` r
-reader <- carrow_array_stream_to_arrow(stream2)
+reader <- sparrow_array_stream_to_arrow(stream2)
 as.data.frame(reader$read_table())
 #> # A tibble: 32 × 11
 #>      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb
@@ -210,15 +210,15 @@ direction.
 The C data interface is ABI stable (and a version of the stream
 interface will be ABI stable in the future) so you can access the
 underlying pointers in compiled code from any R package (or inline C or
-C++ code). A `carrow_schema()` is an external pointer to a
-`struct ArrowSchema`, a `carrow_array_data()` is an external pointer to
-a `struct ArrowArray`, and a `carrow_array()` is a `list()` of a
-`carrow_schema()` and a `carrow_array_data()`.
+C++ code). A `sparrow_schema()` is an external pointer to a
+`struct ArrowSchema`, a `sparrow_array_data()` is an external pointer to
+a `struct ArrowArray`, and a `sparrow_array()` is a `list()` of a
+`sparrow_schema()` and a `sparrow_array_data()`.
 
 ``` c
 #include <R.h>
 #include <Rinternals.h>
-#include "carrow.h"
+#include "sparrow.h"
 
 SEXP extract_null_count(SEXP array_data_xptr) {
   struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
@@ -227,7 +227,7 @@ SEXP extract_null_count(SEXP array_data_xptr) {
 ```
 
 ``` r
-.Call("extract_null_count", as_carrow_array(c(NA, NA, 1:5))$array_data)
+.Call("extract_null_count", as_sparrow_array(c(NA, NA, 1:5))$array_data)
 #> [1] 2
 ```
 

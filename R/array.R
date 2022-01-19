@@ -1,69 +1,69 @@
 
 #' Create arrow vectors
 #'
-#' @param schema An [carrow_schema()]
-#' @param array_data An [carrow_array_data()]
-#' @param x An object to convert to an [carrow_array()]
+#' @param schema An [sparrow_schema()]
+#' @param array_data An [sparrow_array_data()]
+#' @param x An object to convert to an [sparrow_array()]
 #' @param validate Use `FALSE` to skip validation
 #' @param ... Passed to S3 methods
 #'
-#' @return An object of class "carrow_array"
+#' @return An object of class "sparrow_array"
 #' @export
 #'
 #' @examples
-#' carrow_array()
+#' sparrow_array()
 #'
-carrow_array <- function(schema = carrow_schema("n"), array_data = carrow_array_data(), validate = TRUE) {
-  schema <- as_carrow_schema(schema)
-  arrays <- as_carrow_array_data(array_data)
-  array <- structure(list(schema = schema, array_data = array_data), class = "carrow_array")
+sparrow_array <- function(schema = sparrow_schema("n"), array_data = sparrow_array_data(), validate = TRUE) {
+  schema <- as_sparrow_schema(schema)
+  arrays <- as_sparrow_array_data(array_data)
+  array <- structure(list(schema = schema, array_data = array_data), class = "sparrow_array")
   if (validate) {
-    carrow_array_validate(array)
+    sparrow_array_validate(array)
   }
 
   array
 }
 
-#' @rdname carrow_array
+#' @rdname sparrow_array
 #' @export
-carrow_array_validate <- function(x) {
-  .Call(carrow_c_array_validate, x)
+sparrow_array_validate <- function(x) {
+  .Call(sparrow_c_array_validate, x)
   invisible(x)
 }
 
-#' @rdname carrow_array
+#' @rdname sparrow_array
 #' @export
-as_carrow_array <- function(x, ...) {
-  UseMethod("as_carrow_array")
+as_sparrow_array <- function(x, ...) {
+  UseMethod("as_sparrow_array")
 }
 
-#' @rdname carrow_array
+#' @rdname sparrow_array
 #' @export
-as_carrow_array.carrow_array <- function(x, ...) {
+as_sparrow_array.sparrow_array <- function(x, ...) {
   x
 }
 
 #' @export
-`[[<-.carrow_array` <- function(x, i, ..., value) {
+`[[<-.sparrow_array` <- function(x, i, ..., value) {
   x <- unclass(x)
   x[[i]] <- value
-  do.call(carrow_array, x)
+  do.call(sparrow_array, x)
 }
 
 #' @export
-`$<-.carrow_array` <- function(x, name, ..., value) {
+`$<-.sparrow_array` <- function(x, name, ..., value) {
   x[[name]] <- value
   x
 }
 
 #' @export
-format.carrow_array <- function(x, ...) {
+format.sparrow_array <- function(x, ...) {
   total_length <- x$array_data$length
-  sprintf("<carrow_array %s[%s]>", x$schema$format, format(total_length))
+  sprintf("<sparrow_array %s[%s]>", x$schema$format, format(total_length))
 }
 
 #' @export
-print.carrow_array <- function(x, ...) {
+print.sparrow_array <- function(x, ...) {
   cat(sprintf("%s\n", format(x)))
 
   cat("- schema:\n")

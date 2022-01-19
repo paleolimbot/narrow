@@ -1,6 +1,6 @@
 
-#ifndef carrow_UTIL_H_INCLUDED
-#define carrow_UTIL_H_INCLUDED
+#ifndef sparrow_UTIL_H_INCLUDED
+#define sparrow_UTIL_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>

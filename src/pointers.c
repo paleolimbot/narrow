@@ -6,9 +6,9 @@
 #include "schema.h"
 #include "array-data.h"
 #include "array-stream.h"
-#include "carrow/carrow.h"
+#include "sparrow/sparrow.h"
 
-SEXP carrow_c_pointer(SEXP obj_sexp) {
+SEXP sparrow_c_pointer(SEXP obj_sexp) {
   if (TYPEOF(obj_sexp) == EXTPTRSXP) {
     return obj_sexp;
   } else if (TYPEOF(obj_sexp) == REALSXP && Rf_length(obj_sexp) == 1) {
@@ -29,51 +29,51 @@ SEXP carrow_c_pointer(SEXP obj_sexp) {
   return R_NilValue;
 }
 
-SEXP carrow_c_pointer_is_valid(SEXP ptr) {
-  if (Rf_inherits(ptr, "carrow_schema")) {
+SEXP sparrow_c_pointer_is_valid(SEXP ptr) {
+  if (Rf_inherits(ptr, "sparrow_schema")) {
     struct ArrowSchema* obj = (struct ArrowSchema*) R_ExternalPtrAddr(ptr);
     return Rf_ScalarLogical(obj != NULL && obj->release != NULL);
-  } else if (Rf_inherits(ptr, "carrow_array_data")) {
+  } else if (Rf_inherits(ptr, "sparrow_array_data")) {
     struct ArrowArray* obj = (struct ArrowArray*) R_ExternalPtrAddr(ptr);
     return Rf_ScalarLogical(obj != NULL && obj->release != NULL);
-  } else if (Rf_inherits(ptr, "carrow_array_stream")) {
+  } else if (Rf_inherits(ptr, "sparrow_array_stream")) {
     struct ArrowArrayStream* obj = (struct ArrowArrayStream*) R_ExternalPtrAddr(ptr);
     return Rf_ScalarLogical(obj != NULL && obj->release != NULL);
   } else {
-    Rf_error("`ptr` must inherit from 'carrow_schema', 'carrow_array_data', or 'carrow_array_stream'");
+    Rf_error("`ptr` must inherit from 'sparrow_schema', 'sparrow_array_data', or 'sparrow_array_stream'");
   }
 
   return R_NilValue;
 }
 
-SEXP carrow_c_pointer_release(SEXP ptr) {
-  if (Rf_inherits(ptr, "carrow_schema")) {
+SEXP sparrow_c_pointer_release(SEXP ptr) {
+  if (Rf_inherits(ptr, "sparrow_schema")) {
     struct ArrowSchema* obj = (struct ArrowSchema*) R_ExternalPtrAddr(ptr);
     if (Rf_ScalarLogical(obj != NULL && obj->release != NULL)) {
       obj->release(obj);
       obj->release = NULL;
     }
-  } else if (Rf_inherits(ptr, "carrow_array_data")) {
+  } else if (Rf_inherits(ptr, "sparrow_array_data")) {
     struct ArrowArray* obj = (struct ArrowArray*) R_ExternalPtrAddr(ptr);
     if (Rf_ScalarLogical(obj != NULL && obj->release != NULL)) {
       obj->release(obj);
       obj->release = NULL;
     }
-  } else if (Rf_inherits(ptr, "carrow_array_stream")) {
+  } else if (Rf_inherits(ptr, "sparrow_array_stream")) {
     struct ArrowArrayStream* obj = (struct ArrowArrayStream*) R_ExternalPtrAddr(ptr);
     if (Rf_ScalarLogical(obj != NULL && obj->release != NULL)) {
       obj->release(obj);
       obj->release = NULL;
     }
   } else {
-    Rf_error("`ptr` must inherit from 'carrow_schema', 'carrow_array_data', or 'carrow_array_stream'");
+    Rf_error("`ptr` must inherit from 'sparrow_schema', 'sparrow_array_data', or 'sparrow_array_stream'");
   }
 
   return R_NilValue;
 }
 
-SEXP carrow_c_pointer_addr_dbl(SEXP ptr) {
-  intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
+SEXP sparrow_c_pointer_addr_dbl(SEXP ptr) {
+  intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(sparrow_c_pointer(ptr));
   return Rf_ScalarReal(ptr_int);
 }
 
@@ -82,18 +82,18 @@ SEXP carrow_c_pointer_addr_dbl(SEXP ptr) {
 // std::to_string(), defined in pointers-cpp.c
 void intptr_as_string(intptr_t ptr_int, char* buf);
 
-SEXP carrow_c_pointer_addr_chr(SEXP ptr) {
-  intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(carrow_c_pointer(ptr));
+SEXP sparrow_c_pointer_addr_chr(SEXP ptr) {
+  intptr_t ptr_int = (intptr_t) R_ExternalPtrAddr(sparrow_c_pointer(ptr));
   char addr_chars[100];
   memset(addr_chars, 0, 100);
   intptr_as_string(ptr_int, addr_chars);
   return Rf_mkString(addr_chars);
 }
 
-SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
-  SEXP xptr_src = PROTECT(carrow_c_pointer(ptr_src));
+SEXP sparrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
+  SEXP xptr_src = PROTECT(sparrow_c_pointer(ptr_src));
 
-  if (Rf_inherits(ptr_dst, "carrow_schema")) {
+  if (Rf_inherits(ptr_dst, "sparrow_schema")) {
     struct ArrowSchema* obj_dst = (struct ArrowSchema*) R_ExternalPtrAddr(ptr_dst);
     if (obj_dst == NULL) {
       Rf_error("`ptr_dst` is a pointer to NULL");
@@ -111,7 +111,7 @@ SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
     memcpy(obj_dst, obj_src, sizeof(struct ArrowSchema));
     obj_src->release = NULL;
 
-  } else if (Rf_inherits(ptr_dst, "carrow_array_data")) {
+  } else if (Rf_inherits(ptr_dst, "sparrow_array_data")) {
     struct ArrowArray* obj_dst = (struct ArrowArray*) R_ExternalPtrAddr(ptr_dst);
     if (obj_dst == NULL) {
       Rf_error("`ptr_dst` is a pointer to NULL");
@@ -129,7 +129,7 @@ SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
     memcpy(obj_dst, obj_src, sizeof(struct ArrowArray));
     obj_src->release = NULL;
 
-  } else if (Rf_inherits(ptr_dst, "carrow_array_stream")) {
+  } else if (Rf_inherits(ptr_dst, "sparrow_array_stream")) {
     struct ArrowArrayStream* obj_dst = (struct ArrowArrayStream*) R_ExternalPtrAddr(ptr_dst);
     if (obj_dst == NULL) {
       Rf_error("`ptr_dst` is a pointer to NULL");
@@ -148,7 +148,7 @@ SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
     obj_src->release = NULL;
 
   } else {
-    Rf_error("`ptr_dst` must inherit from 'carrow_schema', 'carrow_array_data', or 'carrow_array_stream'");
+    Rf_error("`ptr_dst` must inherit from 'sparrow_schema', 'sparrow_array_data', or 'sparrow_array_stream'");
   }
 
   // also move SEXP dependencies
@@ -173,9 +173,9 @@ SEXP carrow_c_pointer_move(SEXP ptr_src, SEXP ptr_dst) {
 // (recursively) copy the whole object and export it rather than try to
 // keep all the object dependencies alive and/or risk moving a dependency
 // of some other R object
-SEXP carrow_c_export_schema(SEXP schema_xptr, SEXP ptr_dst) {
+SEXP sparrow_c_export_schema(SEXP schema_xptr, SEXP ptr_dst) {
   struct ArrowSchema* obj_src = schema_from_xptr(schema_xptr, "ptr_src");
-  SEXP xptr_dst = PROTECT(carrow_c_pointer(ptr_dst));
+  SEXP xptr_dst = PROTECT(sparrow_c_pointer(ptr_dst));
 
   struct ArrowSchema* obj_dst = (struct ArrowSchema*) R_ExternalPtrAddr(xptr_dst);
   if (obj_dst == NULL) {
@@ -186,14 +186,14 @@ SEXP carrow_c_export_schema(SEXP schema_xptr, SEXP ptr_dst) {
     Rf_error("`ptr_dst` is a valid struct ArrowSchema");
   }
 
-  carrow_schema_deep_copy(obj_dst, obj_src);
+  sparrow_schema_deep_copy(obj_dst, obj_src);
   UNPROTECT(1);
   return R_NilValue;
 }
 
 
-SEXP carrow_c_export_array_data(SEXP array_data_xptr, SEXP ptr_dst) {
-  SEXP xptr_dst = PROTECT(carrow_c_pointer(ptr_dst));
+SEXP sparrow_c_export_array_data(SEXP array_data_xptr, SEXP ptr_dst) {
+  SEXP xptr_dst = PROTECT(sparrow_c_pointer(ptr_dst));
 
   struct ArrowArray* obj_dst = (struct ArrowArray*) R_ExternalPtrAddr(xptr_dst);
   if (obj_dst == NULL) {
@@ -209,7 +209,7 @@ SEXP carrow_c_export_array_data(SEXP array_data_xptr, SEXP ptr_dst) {
   return R_NilValue;
 }
 
-SEXP carrow_c_allocate_schema() {
+SEXP sparrow_c_allocate_schema() {
   struct ArrowSchema* schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
   check_trivial_alloc(schema, "struct ArrowSchema");
   schema->release = NULL;
@@ -221,7 +221,7 @@ SEXP carrow_c_allocate_schema() {
   return schema_xptr;
 }
 
-SEXP carrow_c_allocate_array_data() {
+SEXP sparrow_c_allocate_array_data() {
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data, "struct ArrowArray");
   array_data->release = NULL;
@@ -233,7 +233,7 @@ SEXP carrow_c_allocate_array_data() {
   return array_data_xptr;
 }
 
-SEXP carrow_c_allocate_array_stream() {
+SEXP sparrow_c_allocate_array_stream() {
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
   check_trivial_alloc(array_stream, "struct ArrowArrayStream");
   array_stream->release = NULL;
