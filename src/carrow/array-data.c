@@ -24,6 +24,7 @@ void carrow_array_release_internal(struct ArrowArray* array_data) {
   if (array_data->children != NULL) {
     for (uint64_t i = 0; i < array_data->n_children; i++) {
       carrow_array_release_internal(array_data->children[i]);
+      free(array_data->children[i]);
     }
 
     free(array_data->children);
@@ -31,6 +32,7 @@ void carrow_array_release_internal(struct ArrowArray* array_data) {
 
   if (array_data->dictionary != NULL) {
     carrow_array_release_internal(array_data->dictionary);
+    free(array_data->dictionary);
   }
 
   array_data->release = NULL;
