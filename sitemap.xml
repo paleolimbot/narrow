@@ -1,69 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/404.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/404.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/LICENSE.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/articles/index.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/articles/why-sparrow.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/articles/why-narrow.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/authors.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/authors.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/index.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/index.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/as_sparrow_array.NULL.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/as_narrow_array.NULL.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/as_sparrow_bitmask.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/as_narrow_bitmask.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/as_sparrow_int64.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/as_narrow_int64.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/from_sparrow_array.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/from_narrow_array.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/index.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/parse_format.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow-package.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/pkg-arrow.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_array.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow-package.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_array_data.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_array.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_array_stream.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_array_data.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_array_stream_function.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_array_stream.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_deep_copy.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_array_stream_function.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_default_ptype.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_deep_copy.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_schema.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_default_ptype.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/narrow_vctr.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_schema.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/parse_format.html</loc>
   </url>
   <url>
-    <loc>https://paleolimbot.github.io/sparrow/reference/sparrow_vctr.html</loc>
+    <loc>https://paleolimbot.github.io/narrow/reference/pkg-arrow.html</loc>
   </url>
 </urlset>
