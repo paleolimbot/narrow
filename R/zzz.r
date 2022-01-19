@@ -1,8 +1,8 @@
 
 # nocov start
 .onLoad <- function(...) {
-  s3_register("vctrs::vec_proxy", "sparrow_vctr")
-  s3_register("vctrs::vec_restore", "sparrow_vctr")
+  s3_register("vctrs::vec_proxy", "narrow_vctr")
+  s3_register("vctrs::vec_restore", "narrow_vctr")
 }
 
 s3_register <- function(generic, class, method = NULL) {

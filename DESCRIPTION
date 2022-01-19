@@ -1,4 +1,4 @@
-Package: sparrow
+Package: narrow
 Title: An R Interface to the 'Apache Arrow' C API
 Version: 0.0.0.9000
 Authors@R:
@@ -20,6 +20,6 @@ Suggests:
     testthat (>= 3.0.0),
     vctrs
 Config/testthat/edition: 3
-URL: https://github.com/paleolimbot/sparrow,
-    https://paleolimbot.github.io/sparrow/
-BugReports: https://github.com/paleolimbot/sparrow/issues
+URL: https://github.com/paleolimbot/narrow,
+    https://paleolimbot.github.io/narrow/
+BugReports: https://github.com/paleolimbot/narrow/issues

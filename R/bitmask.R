@@ -7,81 +7,81 @@
 #'   when converting to [logical()].
 #' @param ... Passed to S3 methods
 #'
-#' @return An object with class 'sparrow_bitmask'
+#' @return An object with class 'narrow_bitmask'
 #' @export
 #'
 #' @examples
-#' as_sparrow_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+#' as_narrow_bitmask(c(TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
 #' as.logical(new_arrow_bitmask(0x01))
 #'
-as_sparrow_bitmask <- function(x, ...) {
-  UseMethod("as_sparrow_bitmask")
+as_narrow_bitmask <- function(x, ...) {
+  UseMethod("as_narrow_bitmask")
 }
 
-#' @rdname as_sparrow_bitmask
+#' @rdname as_narrow_bitmask
 #' @export
-as_sparrow_bitmask.default <- function(x, ...) {
-  as_sparrow_bitmask.logical(as.logical(x))
+as_narrow_bitmask.default <- function(x, ...) {
+  as_narrow_bitmask.logical(as.logical(x))
 }
 
-#' @rdname as_sparrow_bitmask
+#' @rdname as_narrow_bitmask
 #' @export
-as_sparrow_bitmask.sparrow_bitmask <- function(x, ...) {
+as_narrow_bitmask.narrow_bitmask <- function(x, ...) {
   x
 }
 
-#' @rdname as_sparrow_bitmask
+#' @rdname as_narrow_bitmask
 #' @export
-as_sparrow_bitmask.logical <- function(x, ...) {
-  .Call(sparrow_c_bitmask_from_logical, x)
+as_narrow_bitmask.logical <- function(x, ...) {
+  .Call(narrow_c_bitmask_from_logical, x)
 }
 
-#' @rdname as_sparrow_bitmask
+#' @rdname as_narrow_bitmask
 #' @export
 new_arrow_bitmask <- function(buffer = raw()) {
-  structure(as.raw(buffer), class = "sparrow_bitmask")
+  structure(as.raw(buffer), class = "narrow_bitmask")
 }
 
-#' @rdname as_sparrow_bitmask
+#' @rdname as_narrow_bitmask
 #' @export
-as.logical.sparrow_bitmask <- function(x, ..., start = 1, end = NULL) {
+as.logical.narrow_bitmask <- function(x, ..., start = 1, end = NULL) {
   end <- if (is.null(end)) length(x) * 8 else end
-  .Call(sparrow_c_logical_from_bitmask, x, start - 1, end)
+  .Call(narrow_c_logical_from_bitmask, x, start - 1, end)
 }
 
 #' @export
-`[.sparrow_bitmask` <- function(x, i) {
+`[.narrow_bitmask` <- function(x, i) {
   if (length(i) == 0) {
     new_arrow_bitmask()
   } else if (is.numeric(i) && length(i) == 1) {
-    as_sparrow_bitmask(as.logical(x, start = i, end = i))
+    as_narrow_bitmask(as.logical(x, start = i, end = i))
   } else if (is.numeric(i) && all(diff(i) == 1)) {
-    as_sparrow_bitmask(as.logical(x, start = min(i), end = max(i)))
+    as_narrow_bitmask(as.logical(x, start = min(i), end = max(i)))
   } else {
-    as_sparrow_bitmask(as.logical(x)[i])
+    as_narrow_bitmask(as.logical(x)[i])
   }
 }
 
 #' @export
-`[<-.sparrow_bitmask` <- function(x, i, value) {
+`[<-.narrow_bitmask` <- function(x, i, value) {
   x_lgl <- as.logical(x)
   x_lgl[i] <- as.logical(value)
-  as_sparrow_bitmask(x_lgl)
+  as_narrow_bitmask(x_lgl)
 }
 
 #' @export
-format.sparrow_bitmask <- function(x, ...) {
+format.narrow_bitmask <- function(x, ...) {
   format(as.logical(x), ...)
 }
 
 #' @export
-print.sparrow_bitmask <- function(x, ..., max = NULL) {
+print.narrow_bitmask <- function(x, ..., max = NULL) {
   if (is.null(max)) {
     max <- getOption("max.print", 1000)
   }
   x_to_print <- as.logical(x, start = 1, end = max + 10)
 
-  cat(sprintf("<sparrow_arrow_bitmask[%d]>\n", length(x) * 8))
+  cat(sprintf("<narrow_arrow_bitmask[%d]>\n", length(x) * 8))
   print(x_to_print, ..., max = max)
   invisible(x)
 }

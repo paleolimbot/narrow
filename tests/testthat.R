@@ -1,4 +1,4 @@
 library(testthat)
-library(sparrow)
+library(narrow)
 
-test_check("sparrow")
+test_check("narrow")

@@ -7,31 +7,31 @@
 #' @param null_count The number of NULL values or -1 if this hasn't been
 #'   computed yet.
 #' @param offset The number of elements to skip at the front of the array.
-#' @param children Child vectors as a [list()] coerced by [as_sparrow_array_data()]
+#' @param children Child vectors as a [list()] coerced by [as_narrow_array_data()]
 #' @param dictionary Dictionary array for dictionary types.
-#' @param x An object to convert to an sparrow_array
+#' @param x An object to convert to an narrow_array
 #' @param ... Passed to S3 Methods
 #'
-#' @return An object of class "sparrow_array_data"
+#' @return An object of class "narrow_array_data"
 #' @export
 #'
 #' @examples
-#' sparrow_array_data(1:100, 100)
+#' narrow_array_data(1:100, 100)
 #'
-sparrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
+narrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offset = 0,
                              children = NULL, dictionary = NULL) {
   buffers <- if (is.null(buffers)) {
     NULL
   } else if (is.list(buffers)) {
-    lapply(buffers, as_sparrow_buffer)
+    lapply(buffers, as_narrow_buffer)
   } else {
-    list(as_sparrow_buffer(buffers))
+    list(as_narrow_buffer(buffers))
   }
-  children <- if (is.null(children)) NULL else lapply(children, as_sparrow_array_data)
-  dictionary <- if (is.null(dictionary)) NULL else as_sparrow_array_data(dictionary)
+  children <- if (is.null(children)) NULL else lapply(children, as_narrow_array_data)
+  dictionary <- if (is.null(dictionary)) NULL else as_narrow_array_data(dictionary)
 
   .Call(
-    sparrow_c_array_from_sexp,
+    narrow_c_array_from_sexp,
     buffers,
     length,
     null_count,
@@ -41,67 +41,67 @@ sparrow_array_data <- function(buffers = NULL, length = 0, null_count = -1, offs
   )
 }
 
-#' @rdname sparrow_array_data
+#' @rdname narrow_array_data
 #' @export
-sparrow_array_data_info <- function(x, ...) {
-  .Call(sparrow_c_array_info, x)
+narrow_array_data_info <- function(x, ...) {
+  .Call(narrow_c_array_info, x)
 }
 
-#' @rdname sparrow_array_data
+#' @rdname narrow_array_data
 #' @export
-as_sparrow_array_data <- function(x, ...) {
-  UseMethod("as_sparrow_array_data")
+as_narrow_array_data <- function(x, ...) {
+  UseMethod("as_narrow_array_data")
 }
 
-#' @rdname sparrow_array_data
+#' @rdname narrow_array_data
 #' @export
-as_sparrow_array_data.sparrow_array_data <- function(x, ...) {
+as_narrow_array_data.narrow_array_data <- function(x, ...) {
   x
 }
 
-#' @rdname sparrow_array_data
+#' @rdname narrow_array_data
 #' @export
-as_sparrow_buffer <- function(x, ...) {
-  UseMethod("as_sparrow_buffer")
+as_narrow_buffer <- function(x, ...) {
+  UseMethod("as_narrow_buffer")
 }
 
-#' @rdname sparrow_array_data
+#' @rdname narrow_array_data
 #' @export
-as_sparrow_buffer.default <- function(x, ...) {
-  # sanitized in sparrow_c_array_from_sexp()
+as_narrow_buffer.default <- function(x, ...) {
+  # sanitized in narrow_c_array_from_sexp()
   x
 }
 
 
 #' @export
-length.sparrow_array_data <- function(x, ...) {
-  length(sparrow_array_data_info(x))
+length.narrow_array_data <- function(x, ...) {
+  length(narrow_array_data_info(x))
 }
 
 #' @export
-names.sparrow_array_data <- function(x, ...) {
-  names(sparrow_array_data_info(x))
+names.narrow_array_data <- function(x, ...) {
+  names(narrow_array_data_info(x))
 }
 
 #' @export
-`[[.sparrow_array_data` <- function(x, i, ...) {
-  sparrow_array_data_info(x)[[i]]
+`[[.narrow_array_data` <- function(x, i, ...) {
+  narrow_array_data_info(x)[[i]]
 }
 
 #' @export
-`$.sparrow_array_data` <- function(x, i, ...) {
-  sparrow_array_data_info(x)[[i]]
+`$.narrow_array_data` <- function(x, i, ...) {
+  narrow_array_data_info(x)[[i]]
 }
 
 #' @export
-format.sparrow_array_data <- function(x, ...) {
-  sprintf("<sparrow_array_data at %s>", xptr_addr(x))
+format.narrow_array_data <- function(x, ...) {
+  sprintf("<narrow_array_data at %s>", xptr_addr(x))
 }
 
 #' @export
-print.sparrow_array_data <- function(x, ..., indent.str = "") {
+print.narrow_array_data <- function(x, ..., indent.str = "") {
   cat(sprintf("%s%s\n", indent.str, format(x)))
-  info <- sparrow_array_data_info(x)
+  info <- narrow_array_data_info(x)
   for (nm in c("length", "null_count", "offset")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }

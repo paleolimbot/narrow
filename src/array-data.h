@@ -3,15 +3,15 @@
 #define ARRAY_H_INCLUDED
 #include <R.h>
 #include <Rinternals.h>
-#include "sparrow/sparrow.h"
+#include "narrow/narrow.h"
 #include "util.h"
 
 void finalize_array_data_xptr(SEXP array_data_xptr);
 void finalize_exported_array_data(struct ArrowArray* array_data);
 
 static inline struct ArrowArray* array_data_from_xptr(SEXP array_data_xptr, const char* arg) {
-  if (!Rf_inherits(array_data_xptr, "sparrow_array_data")) {
-    Rf_error("`%s` must be an object created with sparrow_array_data()", arg);
+  if (!Rf_inherits(array_data_xptr, "narrow_array_data")) {
+    Rf_error("`%s` must be an object created with narrow_array_data()", arg);
   }
 
   struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
@@ -36,7 +36,7 @@ static inline struct ArrowArray* nullable_array_data_from_xptr(SEXP array_data_x
 
 static inline SEXP array_data_xptr_new(struct ArrowArray* array_data) {
   SEXP array_data_xptr = PROTECT(R_MakeExternalPtr(array_data, R_NilValue, R_NilValue));
-  Rf_setAttrib(array_data_xptr, R_ClassSymbol, Rf_mkString("sparrow_array_data"));
+  Rf_setAttrib(array_data_xptr, R_ClassSymbol, Rf_mkString("narrow_array_data"));
   UNPROTECT(1);
   return array_data_xptr;
 }

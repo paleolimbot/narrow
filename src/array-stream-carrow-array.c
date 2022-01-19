@@ -1,12 +1,12 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
-#include "sparrow/sparrow.h"
+#include "narrow/narrow.h"
 #include "array-stream.h"
 #include "array.h"
 #include "util.h"
 
-struct sparrowArrayStreamData {
+struct narrowArrayStreamData {
   R_xlen_t i;
   SEXP schema_xptr;
   SEXP array_list;
@@ -22,25 +22,25 @@ void finalize_array_stream(struct ArrowArrayStream* array_stream) {
   array_stream->release = NULL;
 }
 
-const char* sparrow_array_stream_get_last_error(struct ArrowArrayStream* array_stream) {
+const char* narrow_array_stream_get_last_error(struct ArrowArrayStream* array_stream) {
   return NULL;
 }
 
-int sparrow_array_stream_get_schema(struct ArrowArrayStream* array_stream, struct ArrowSchema* out) {
-  struct sparrowArrayStreamData* data = (struct sparrowArrayStreamData*) array_stream->private_data;
+int narrow_array_stream_get_schema(struct ArrowArrayStream* array_stream, struct ArrowSchema* out) {
+  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) array_stream->private_data;
   schema_export(data->schema_xptr, out);
   return 0;
 }
 
-int sparrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct ArrowArray* out) {
-  struct sparrowArrayStreamData* data = (struct sparrowArrayStreamData*) array_stream->private_data;
+int narrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct ArrowArray* out) {
+  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) array_stream->private_data;
   data->i++;
 
   if (data->i >= Rf_xlength(data->array_list) || data->i < 0) {
     out->release = NULL;
   } else {
     SEXP array_sexp = VECTOR_ELT(data->array_list, data->i);
-    if (!Rf_inherits(array_sexp, "sparrow_array")) {
+    if (!Rf_inherits(array_sexp, "narrow_array")) {
       return EINVAL;
     }
 
@@ -55,13 +55,13 @@ int sparrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct 
   return 0;
 }
 
-SEXP sparrow_c_sparrow_array_stream(SEXP array_list, SEXP schema_xptr) {
+SEXP narrow_c_narrow_array_stream(SEXP array_list, SEXP schema_xptr) {
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) malloc(sizeof(struct ArrowArrayStream));
   check_trivial_alloc(array_stream, "struct ArrowArrayStream");
   array_stream->private_data = NULL;
-  array_stream->get_last_error = &sparrow_array_stream_get_last_error;
-  array_stream->get_schema = &sparrow_array_stream_get_schema;
-  array_stream->get_next = &sparrow_array_stream_get_next;
+  array_stream->get_last_error = &narrow_array_stream_get_last_error;
+  array_stream->get_schema = &narrow_array_stream_get_schema;
+  array_stream->get_next = &narrow_array_stream_get_next;
 
   array_stream->release = &finalize_array_stream;
 
@@ -70,8 +70,8 @@ SEXP sparrow_c_sparrow_array_stream(SEXP array_list, SEXP schema_xptr) {
   R_SetExternalPtrProtected(array_stream_xptr, array_list);
   R_SetExternalPtrTag(array_stream_xptr, schema_xptr);
 
-  struct sparrowArrayStreamData* data = (struct sparrowArrayStreamData*) malloc(sizeof(struct sparrowArrayStreamData));
-  check_trivial_alloc(data, "struct sparrowArrayStreamData");
+  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) malloc(sizeof(struct narrowArrayStreamData));
+  check_trivial_alloc(data, "struct narrowArrayStreamData");
   array_stream->private_data = data;
 
   data->i = -1;

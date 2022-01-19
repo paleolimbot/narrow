@@ -3,7 +3,7 @@
 #include <Rinternals.h>
 #include <string.h>
 #include "int64.h"
-#include "sparrow/sparrow.h"
+#include "narrow/narrow.h"
 #include "array-data.h"
 #include "util.h"
 
@@ -11,14 +11,14 @@ void finalize_array_data_xptr(SEXP array_data_xptr);
 void finalize_array(struct ArrowArray* array_data);
 void finalize_exported_array(struct ArrowArray* array_data);
 
-SEXP sparrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
+SEXP narrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_count_sexp,
                              SEXP int64_sexp, SEXP children_sexp, SEXP dictionary_xptr) {
   const char* names_prot[] = {"buffers", "children", "dictionary", ""};
   SEXP array_prot = PROTECT(Rf_mkNamed(VECSXP, names_prot));
   SET_VECTOR_ELT(array_prot, 0, buffers_sexp);
   SET_VECTOR_ELT(array_prot, 1, children_sexp);
   SET_VECTOR_ELT(array_prot, 2, dictionary_xptr);
-  Rf_setAttrib(array_prot, R_ClassSymbol, Rf_mkString("sparrow_array_data_prot"));
+  Rf_setAttrib(array_prot, R_ClassSymbol, Rf_mkString("narrow_array_data_prot"));
 
   struct ArrowArray* array_data = (struct ArrowArray*) malloc(sizeof(struct ArrowArray));
   check_trivial_alloc(array_data, "struct ArrowArray");
@@ -78,7 +78,7 @@ SEXP sparrow_c_array_from_sexp(SEXP buffers_sexp, SEXP length_sexp, SEXP null_co
   return array_data_xptr;
 }
 
-SEXP sparrow_c_array_info(SEXP array_data_xptr) {
+SEXP narrow_c_array_info(SEXP array_data_xptr) {
   struct ArrowArray* array_data = array_data_from_xptr(array_data_xptr, "array_data");
   const char* names[] = {
     "length", "null_count", "offset", "n_buffers", "n_children",
@@ -96,7 +96,7 @@ SEXP sparrow_c_array_info(SEXP array_data_xptr) {
 
   // if we alloced this ourselves (from R's C API),
   // it will have the SEXPs attached
-  if (array_prot != R_NilValue && Rf_inherits(array_prot, "sparrow_array_data_prot")) {
+  if (array_prot != R_NilValue && Rf_inherits(array_prot, "narrow_array_data_prot")) {
     SET_VECTOR_ELT(array_info, 5, VECTOR_ELT(array_prot, 0)); // buffers
     SET_VECTOR_ELT(array_info, 6, VECTOR_ELT(array_prot, 1)); // children
     SET_VECTOR_ELT(array_info, 7, VECTOR_ELT(array_prot, 2)); // dictionary
@@ -166,7 +166,7 @@ void finalize_exported_array_data(struct ArrowArray* array_data) {
   array_data->release = NULL;
 }
 
-// for ArrowArray* that were created by sparrow_c_array_from_sexp()
+// for ArrowArray* that were created by narrow_c_array_from_sexp()
 // this includes partially created objects that may have been
 // abandoned when parsing one or more arguments failed
 void finalize_array(struct ArrowArray* array_data) {

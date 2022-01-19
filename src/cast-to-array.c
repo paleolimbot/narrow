@@ -4,7 +4,7 @@
 #include <memory.h>
 #include <stdint.h>
 
-SEXP sparrow_c_buffers_from_character(SEXP chr) {
+SEXP narrow_c_buffers_from_character(SEXP chr) {
   R_xlen_t n = Rf_xlength(chr);
 
   // one pass for total length, one pass for copying memory
@@ -43,7 +43,7 @@ SEXP sparrow_c_buffers_from_character(SEXP chr) {
   }
 
   offsets[n] = n_bytes;
-  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("sparrow_int64"));
+  Rf_setAttrib(offsets_sexp, R_ClassSymbol, Rf_mkString("narrow_int64"));
 
   SEXP result = PROTECT(Rf_allocVector(VECSXP, 2));
   SET_VECTOR_ELT(result, 0, offsets_sexp);

@@ -4,31 +4,31 @@
 #' @inheritParams parse_format
 #' @param metadata A named character vector of [list()] of [raw()]
 #'   containing key/value metadata.
-#' @param schema A schema created with [sparrow_schema()]
+#' @param schema A schema created with [narrow_schema()]
 #' @param name An optional name
-#' @param flags Flags to set on input (see [sparrow_schema_flags()])
-#' @param children A [list()] of objects created using [sparrow_schema()].
-#' @param dictionary An [sparrow_schema()] if this is a dictionary type.
+#' @param flags Flags to set on input (see [narrow_schema_flags()])
+#' @param children A [list()] of objects created using [narrow_schema()].
+#' @param dictionary An [narrow_schema()] if this is a dictionary type.
 #' @param dictionary_ordered `TRUE` if the `dictionary` array is ordered
 #' @param nullable `TRUE` if the type is semantically nullable
 #' @param map_keys_sorted `TRUE` if the keys for a map have been sorted
 #' @param recursive Use `TRUE` to serialize the schema recursively
-#' @param x An object to convert to an [sparrow_schema()]
+#' @param x An object to convert to an [narrow_schema()]
 #' @param ... Passed to S3 methods
 #'
-#' @return An external pointer with class 'sparrow_schema'
+#' @return An external pointer with class 'narrow_schema'
 #' @export
 #'
-sparrow_schema <- function(format, name = NULL, metadata = NULL,
-                         flags = sparrow_schema_flags(),
+narrow_schema <- function(format, name = NULL, metadata = NULL,
+                         flags = narrow_schema_flags(),
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)
-  .Call(sparrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
+  .Call(narrow_c_schema_xptr_new, format, name, metadata, flags, children, dictionary)
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-sparrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
+narrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
                                map_keys_sorted = FALSE) {
   flags <- 0L
   if (dictionary_ordered) {
@@ -44,42 +44,42 @@ sparrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
   flags
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-sparrow_schema_deep_copy <- function(schema) {
-  .Call(sparrow_c_schema_deep_copy, as_sparrow_schema(schema))
+narrow_schema_deep_copy <- function(schema) {
+  .Call(narrow_c_schema_deep_copy, as_narrow_schema(schema))
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-as_sparrow_schema <- function(x, ...) {
-  UseMethod("as_sparrow_schema")
+as_narrow_schema <- function(x, ...) {
+  UseMethod("as_narrow_schema")
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-as_sparrow_schema.sparrow_schema <- function(x, ...) {
+as_narrow_schema.narrow_schema <- function(x, ...) {
   x
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-as_sparrow_schema.character <- function(x, ...) {
-  sparrow_schema(x)
+as_narrow_schema.character <- function(x, ...) {
+  narrow_schema(x)
 }
 
-#' @rdname sparrow_schema
+#' @rdname narrow_schema
 #' @export
-sparrow_schema_info <- function(x, ..., recursive = FALSE) {
-  result <- .Call(sparrow_c_schema_data, x)
+narrow_schema_info <- function(x, ..., recursive = FALSE) {
+  result <- .Call(narrow_c_schema_data, x)
   result$metadata <- list_of_raw_to_metadata(result$metadata)
   if (recursive) {
     if (!is.null(result$children)) {
-      result$children <- lapply(result$children, sparrow_schema_info, recursive = TRUE)
+      result$children <- lapply(result$children, narrow_schema_info, recursive = TRUE)
     }
 
     if (!is.null(result$dictionary)) {
-      result$dictionary <- sparrow_schema_info(result$dictionary)
+      result$dictionary <- narrow_schema_info(result$dictionary)
     }
   }
 
@@ -129,47 +129,47 @@ list_of_raw_to_metadata <- function(metadata) {
 
 
 #' @export
-length.sparrow_schema <- function(x, ...) {
-  length(sparrow_schema_info(x))
+length.narrow_schema <- function(x, ...) {
+  length(narrow_schema_info(x))
 }
 
 #' @export
-names.sparrow_schema <- function(x, ...) {
-  names(sparrow_schema_info(x))
+names.narrow_schema <- function(x, ...) {
+  names(narrow_schema_info(x))
 }
 
 #' @export
-`[[.sparrow_schema` <- function(x, i, ...) {
-  sparrow_schema_info(x)[[i]]
+`[[.narrow_schema` <- function(x, i, ...) {
+  narrow_schema_info(x)[[i]]
 }
 
 #' @export
-`$.sparrow_schema` <- function(x, i, ...) {
-  sparrow_schema_info(x)[[i]]
+`$.narrow_schema` <- function(x, i, ...) {
+  narrow_schema_info(x)[[i]]
 }
 
 #' @export
-`[[<-.sparrow_schema` <- function(x, i, value) {
-  info <- sparrow_schema_info(x)
+`[[<-.narrow_schema` <- function(x, i, value) {
+  info <- narrow_schema_info(x)
   info[[i]] <- value
-  do.call(sparrow_schema, info)
+  do.call(narrow_schema, info)
 }
 
 #' @export
-`$<-.sparrow_schema` <- function(x, name, value) {
+`$<-.narrow_schema` <- function(x, name, value) {
   x[[name]] <- value
   x
 }
 
 #' @export
-format.sparrow_schema <- function(x, ...) {
-  sprintf("<sparrow_schema '%s' at %s>", sparrow_schema_info(x)$format, xptr_addr(x))
+format.narrow_schema <- function(x, ...) {
+  sprintf("<narrow_schema '%s' at %s>", narrow_schema_info(x)$format, xptr_addr(x))
 }
 
 #' @export
-print.sparrow_schema <- function(x, ..., indent.str = "") {
+print.narrow_schema <- function(x, ..., indent.str = "") {
   cat(paste0(indent.str, format(x), "\n"))
-  info <- sparrow_schema_info(x)
+  info <- narrow_schema_info(x)
   for (nm in c("format", "name")) {
     cat(sprintf("%s- %s: %s\n", indent.str, nm, format(info[[nm]])))
   }
@@ -212,8 +212,8 @@ print.sparrow_schema <- function(x, ..., indent.str = "") {
 
 #' @export
 #' @importFrom utils str
-str.sparrow_schema <- function(object, ...) {
+str.narrow_schema <- function(object, ...) {
   cat(paste0(format(object), " "))
-  str(sparrow_schema_info(object), ...)
+  str(narrow_schema_info(object), ...)
   invisible(object)
 }

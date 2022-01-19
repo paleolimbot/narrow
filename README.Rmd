@@ -14,15 +14,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-# sparrow
+# narrow
 
 <!-- badges: start -->
-[![Codecov test coverage](https://codecov.io/gh/paleolimbot/sparrow/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/sparrow?branch=master)
-[![R-CMD-check](https://github.com/paleolimbot/sparrow/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/sparrow/actions)
+[![Codecov test coverage](https://codecov.io/gh/paleolimbot/narrow/branch/master/graph/badge.svg)](https://codecov.io/gh/paleolimbot/narrow?branch=master)
+[![R-CMD-check](https://github.com/paleolimbot/narrow/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/narrow/actions)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of sparrow is to wrap the [Arrow Data C API](https://arrow.apache.org/docs/format/CDataInterface.html) and [Arrow Stream C API](https://arrow.apache.org/docs/format/CStreamInterface.html) to provide lightweight Arrow support for R packages to consume and produce streams of data in Arrow format.
+The goal of narrow is to wrap the [Arrow Data C API](https://arrow.apache.org/docs/format/CDataInterface.html) and [Arrow Stream C API](https://arrow.apache.org/docs/format/CStreamInterface.html) to provide lightweight Arrow support for R packages to consume and produce streams of data in Arrow format.
 
 ## Installation
 
@@ -30,57 +30,57 @@ You can install the development version from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("paleolimbot/sparrow")
+remotes::install_github("paleolimbot/narrow")
 ```
 
 ## Creating arrays
 
-You can create an Arrow array using `as_sparrow_array()`. For many types (e.g., integers and doubles), this is done without any copying of memory: sparrow just arranges the existing R vector memory and protects it for the lifetime of the underlying `struct ArrowArray`.
+You can create an Arrow array using `as_narrow_array()`. For many types (e.g., integers and doubles), this is done without any copying of memory: narrow just arranges the existing R vector memory and protects it for the lifetime of the underlying `struct ArrowArray`.
 
 ```{r example}
-library(sparrow)
-(array <- as_sparrow_array(1:5))
+library(narrow)
+(array <- as_narrow_array(1:5))
 ```
 
 For `Array`s and `RecordBatch`es from the [arrow package](https://arrow.apache.org/docs/r/), this is almost always a zero-copy operation and is instantaneous even for very large Arrays.
 
 ```{r}
 library(arrow)
-(array2 <- as_sparrow_array(Array$create(1:5)))
+(array2 <- as_narrow_array(Array$create(1:5)))
 ```
 
 ## Exporting arrays
 
-To convert an array object to some other type, use `from_sparrow_array()`:
+To convert an array object to some other type, use `from_narrow_array()`:
 
 ```{r}
-str(from_sparrow_array(array))
+str(from_narrow_array(array))
 ```
 
-The sparrow package has built-in defaults for converting arrays to R objects; you can also specify your own using the `ptype` argument:
+The narrow package has built-in defaults for converting arrays to R objects; you can also specify your own using the `ptype` argument:
 
 ```{r}
-str(from_sparrow_array(array, ptype = double()))
-from_sparrow_array(array, ptype = arrow::Array)
+str(from_narrow_array(array, ptype = double()))
+from_narrow_array(array, ptype = arrow::Array)
 ```
 
 ## Streams
 
-The Arrow C API also specifies an experimental stream interface. In addition to handling streams created elsewhere, you can create streams based on a `sparrow_array()`:
+The Arrow C API also specifies an experimental stream interface. In addition to handling streams created elsewhere, you can create streams based on a `narrow_array()`:
 
 ```{r}
-stream1 <- as_sparrow_array_stream(as_sparrow_array(1:3))
-sparrow_array_stream_get_next(stream1)
-sparrow_array_stream_get_next(stream1)
+stream1 <- as_narrow_array_stream(as_narrow_array(1:3))
+narrow_array_stream_get_next(stream1)
+narrow_array_stream_get_next(stream1)
 ```
 
-...or based on a function that returns one or more `sparrow_array()`s:
+...or based on a function that returns one or more `narrow_array()`s:
 
 ```{r}
 counter <- -1
 rows_per_chunk <- 5
 csv_file <- readr::readr_example("mtcars.csv")
-schema <- as_sparrow_array(
+schema <- as_narrow_array(
   readr::read_csv(
     csv_file,
     n_max = 0,
@@ -88,7 +88,7 @@ schema <- as_sparrow_array(
   )
 )$schema
 
-stream2 <- sparrow_array_stream_function(schema, function() {
+stream2 <- narrow_array_stream_function(schema, function() {
   counter <<- counter + 1L
   result <- readr::read_csv(
     csv_file,
@@ -105,10 +105,10 @@ stream2 <- sparrow_array_stream_function(schema, function() {
 })
 ```
 
-You can pass these to Arrow as a `RecordBatchReader` using `sparrow_array_stream_to_arrow()`:
+You can pass these to Arrow as a `RecordBatchReader` using `narrow_array_stream_to_arrow()`:
 
 ```{r}
-reader <- sparrow_array_stream_to_arrow(stream2)
+reader <- narrow_array_stream_to_arrow(stream2)
 as.data.frame(reader$read_table())
 ```
 
@@ -116,18 +116,18 @@ Currently attemping to export an arrow `RecordBatchReader()` segfaults for an un
 
 ## C data access
 
-The C data interface is ABI stable (and a version of the stream interface will be ABI stable in the future) so you can access the underlying pointers in compiled code from any R package (or inline C or C++ code). A `sparrow_schema()` is an external pointer to a `struct ArrowSchema`, a `sparrow_array_data()` is an external pointer to a `struct ArrowArray`, and a `sparrow_array()` is a `list()` of a `sparrow_schema()` and a `sparrow_array_data()`.
+The C data interface is ABI stable (and a version of the stream interface will be ABI stable in the future) so you can access the underlying pointers in compiled code from any R package (or inline C or C++ code). A `narrow_schema()` is an external pointer to a `struct ArrowSchema`, a `narrow_array_data()` is an external pointer to a `struct ArrowArray`, and a `narrow_array()` is a `list()` of a `narrow_schema()` and a `narrow_array_data()`.
 
 ```{r, include=FALSE}
 Sys.setenv(
-  PKG_CPPFLAGS = paste0("-I", system.file("include", package = "sparrow"))
+  PKG_CPPFLAGS = paste0("-I", system.file("include", package = "narrow"))
 )
 ```
 
 ```{c, results='hide'}
 #include <R.h>
 #include <Rinternals.h>
-#include "sparrow.h"
+#include "narrow.h"
 
 SEXP extract_null_count(SEXP array_data_xptr) {
   struct ArrowArray* array_data = (struct ArrowArray*) R_ExternalPtrAddr(array_data_xptr);
@@ -136,7 +136,7 @@ SEXP extract_null_count(SEXP array_data_xptr) {
 ```
 
 ```{r}
-.Call("extract_null_count", as_sparrow_array(c(NA, NA, 1:5))$array_data)
+.Call("extract_null_count", as_narrow_array(c(NA, NA, 1:5))$array_data)
 ```
 
 The lifecycles of objects pointed to by the external pointers are managed by R's garbage collector: any object that gets garbage collected has its `release()` callback called (if it isn't `NULL`) and the underlying memory for the `struct Arrow...` freed. You can call the `release()` callback yourself from compiled code but you probably don't want to unless you're explicitly limiting access to an object.

@@ -1,14 +1,14 @@
 
 #' Create copies of Arrow vectors
 #'
-#' @param x An [sparrow_array()].
+#' @param x An [narrow_array()].
 #'
-#' @return An [sparrow_array()]
+#' @return An [narrow_array()]
 #' @export
 #'
 #' @examples
-#' sparrow_deep_copy(as_sparrow_array(1:5))
+#' narrow_deep_copy(as_narrow_array(1:5))
 #'
-sparrow_deep_copy <- function(x) {
-  .Call(sparrow_c_deep_copy, as_sparrow_array(x))
+narrow_deep_copy <- function(x) {
+  .Call(narrow_c_deep_copy, as_narrow_array(x))
 }

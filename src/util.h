@@ -1,6 +1,6 @@
 
-#ifndef sparrow_UTIL_H_INCLUDED
-#define sparrow_UTIL_H_INCLUDED
+#ifndef narrow_UTIL_H_INCLUDED
+#define narrow_UTIL_H_INCLUDED
 
 #include <R.h>
 #include <Rinternals.h>

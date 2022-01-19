@@ -2,7 +2,7 @@
 #define R_NO_REMAP
 #include <R.h>
 #include <Rinternals.h>
-#include "sparrow/sparrow.h"
+#include "narrow/narrow.h"
 #include "array-stream.h"
 #include "array.h"
 #include "util.h"
@@ -37,7 +37,7 @@ int wrapper_array_stream_get_next(struct ArrowArrayStream* array_stream, struct 
   return data->parent_array_stream->get_next(data->parent_array_stream, out);
 }
 
-SEXP sparrow_c_export_array_stream(SEXP parent_array_stream_xptr, SEXP xptr_dst) {
+SEXP narrow_c_export_array_stream(SEXP parent_array_stream_xptr, SEXP xptr_dst) {
   struct ArrowArrayStream* parent_array_stream = array_stream_from_xptr(parent_array_stream_xptr, "array_stream");
 
   struct ArrowArrayStream* array_stream = (struct ArrowArrayStream*) R_ExternalPtrAddr(xptr_dst);
