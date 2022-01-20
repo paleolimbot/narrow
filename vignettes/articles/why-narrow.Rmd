@@ -11,6 +11,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+## A developer-facing package
+
 The [Apache Arrow](https://arrow.apache.org/) project is awesome. So is the [R package](https://arrow.apache.org/docs/r/) that provides bindings to the C++ API in a way that mirrors how it's done in [Python](https://arrow.apache.org/docs/python/) and adds a [dplyr](https://dplyr.tidyverse.org/) interface to the single-node query engine. The 'arrow' package for R provides an end-to-end solution for querying and computing on in-memory and bigger-than-memory data sets, including a particularly slick workflow for [hosting data on cloud storage and querying it locally](https://arrow.apache.org/docs/r/articles/fs.html). It's a fantastic user-facing package that makes it possible for users familiar with [dplyr](https://dplyr.tidyverse.org/) to work with larger-than-memory (and larger-than-disk!) data without learning a new skillset.
 
 Apache Arrow also has a lot to offer the R package ecosystem as a developer-facing package. R doesn't natively support many useful types (e.g., fixed-precision decimals and 64-bit integers) and starts to get slow when dealing with really big (millions of elements) character vectors and nested lists. Arrow supports a rich set of types and can slice and rearrange tens of millions of strings without stuttering. Zero-copy transfer between R, Python, Rust, and other language bindings make it possible to take advantage of processing functions exposed in other languages without writing to disk. The parquet, feather, and IPC formats are open, cross-platform versions of Arrow types that are fast to read and write (compared to CSV or serializing R objects) and provide the same rich set of types as in-memory Arrow arrays.
@@ -69,6 +71,13 @@ Even if there is a binary available for Arrow C++ and it *was* easy to download 
 ## Scope
 
 I think the main goal of a developer-facing Apache Arrow R package should be to make it easy to use, easy to test, and safe to pass around external pointers to C API structures. These structures are ABI stable and are safe to pass around among R packages and embedded interpreters. If a dependency package wants to operate on an array of unsigned 64-bit integers (like an [S2 cell identifier](https://r-spatial.github.io/s2/reference/s2_cell.html#details)), all they should have to do is run the input through `as_narrow_array()`. The package doing the operating doesn't have to know about how or why the input came to be a pointer to a `struct ArrowArray` and a `struct ArrowSchema`. Similarly, any package that wants to represent an object as an array of unsigned 64-bit integers just has to create the appropriate `struct ArrowArray` and `struct ArrowSchema`.
+
+As I've prototyped it here, the idea is similar to DBI except the focus is on types rather than methods. We have four types:
+
+- `narrow_schema()`
+- `narrow_array_data()`
+- `narrow_array()` (schema + array data)
+- `narrow_array_stream()`
 
 First, I'll demonstrate "easy". For this example, we need some C or C++ code:
 
