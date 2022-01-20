@@ -64,11 +64,11 @@ Most R users on Linux (or using Linux via Docker or rhub) will spend about 15 mi
 
 One way to ease this friction is to make the troublesome `Sys.setenv(NOT_CRAN = "true")` line go away. It's necessary because CRAN doesn't allow packages to download binaries by default (with a very large asterisk, because many packages do this anyway). The policy is there in the name of transparency to make sure that binaries served by CRAN can be inspected for malicious code and/or inspected for code quality. It is absolutely possible to download a binary from a trusted source in a transparent way, and this should be made possible and easy to do by CRAN. That battle can and should be fought but will take some time (my guess is a few years).
 
-Even if there is a binary available for Arrow C++ and it *was* easy to download and link to it in a CRAN package, the scope of the 'arrow' package is such that it's still going to take over a minute to compile. A minute is very good for a package that can query huge amounts of data stored on the cloud using familiar dplyr syntax. A minute is very bad for a package that just wants to read and write a file with a nested list structure (e.g., geometry) without resorting to CSV. Again, there are tricks to speed this up, but getting users to read an install guide for a first, second, or third order dependency is always going to be a source of friction.
+Even if there is a binary available for Arrow C++ and it *was* easy to download and link to it in a CRAN package, the scope of the 'arrow' package is such that it's still going to take over a minute to compile. A minute is very good for a package that can query huge amounts of data stored on the cloud using familiar dplyr syntax. A minute is very bad for a package that just wants to read and write something better than a CSV. Again, there are tricks to speed this up, but getting users to read an install guide for a first, second, or third order dependency is always going to be a source of friction.
 
 ## Scope
 
-I think the main goal of a developer-facing package should be to make it easy to use, easy to test, and safe to pass around external pointers to C API structures. These structures are ABI stable and are safe to pass around among R packages and embedded interpreters. If a dependency package wants to operate on an array of unsigned 64-bit integers (like an [S2 cell identifier](https://r-spatial.github.io/s2/reference/s2_cell.html#details)), all they should have to do is run the input through `as_narrow_array()`. The package doing the operating doesn't have to know about how or why the input came to be a pointer to a `struct ArrowArray` and a `struct ArrowSchema`. Similarly, any package that wants to represent an object as an array of unsigned 64-bit integers doesn't just has to create the appropriate `struct ArrowArray` and `struct ArrowSchema`.
+I think the main goal of a developer-facing Apache Arrow R package should be to make it easy to use, easy to test, and safe to pass around external pointers to C API structures. These structures are ABI stable and are safe to pass around among R packages and embedded interpreters. If a dependency package wants to operate on an array of unsigned 64-bit integers (like an [S2 cell identifier](https://r-spatial.github.io/s2/reference/s2_cell.html#details)), all they should have to do is run the input through `as_narrow_array()`. The package doing the operating doesn't have to know about how or why the input came to be a pointer to a `struct ArrowArray` and a `struct ArrowSchema`. Similarly, any package that wants to represent an object as an array of unsigned 64-bit integers just has to create the appropriate `struct ArrowArray` and `struct ArrowSchema`.
 
 First, I'll demonstrate "easy". For this example, we need some C or C++ code:
 
@@ -107,7 +107,7 @@ print_uint64(arrow::Array$create(1:5)$cast(arrow::uint64()))
 
 This example doesn't require extra code to make it safe, either, because `array_data_from_xptr()` (defined in `narrow.h`) checks that the `struct ArrowArray` is not `NULL` nor has a `NULL` release callback. Keen onlookers will notice that it doesn't check the validity buffer for null elements, nor does it check the number of buffers, both of which I'll come back to. The point is that iterating over Arrow arrays takes 6 lines of C++ and 5 lines of R. There's no configure script, and the narrow package prototype as I've implemented it here installs in a few seconds and has no dependencies (R dependencies nor system dependencies).
 
-Next I'll demonstrate "easy to test". This particular array only has a few buffers and is reasonable to construct by hand given some knowledge of the format spec (and if you're iterating over an Arrow array in C, you know what that structure is).
+Next I'll demonstrate "easy to test". This particular array only has a few buffers and is reasonable to construct by hand given some knowledge of the format spec.
 
 ```{r}
 library(testthat)
@@ -171,10 +171,10 @@ narrow_array_stream_collect(stream)
 These are extra things that I haven't implemented that I think should also be included.
 
 - Read and write, because feather/IPC is so much better than CSV and everybody should be using it
-- Slice, filter, and take, because it's hard to implement an extension type otherwise.
+- Slice, filter, and take, because it's hard to implement an extension vector type otherwise
 - Convert (to and from R objects), because it makes testing a lot easier and makes it possible for more users to take advantage of Arrow types.
 
-For all of these, it's easy to fall back to the arrow R package if it's installed or to fall back to the arrow R package for the hard bits (e.g., casting). I  There's no need for any of this to be fast because if speed is an issue, users can be directed to the arrow R package.
+For all of these, it's easy to fall back to the arrow R package if it's installed or to fall back to the arrow R package for the hard bits (e.g., casting). I still think all three are worth implementing for a developer-facing R package. There's no need for any of this to be fast because if speed is an issue, users can be directed to the arrow R package.
 
 ## Too much scope?
 
