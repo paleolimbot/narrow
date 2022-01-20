@@ -175,7 +175,7 @@ test_that("streams can be imported from Table", {
   expect_equal(as.data.frame(df_recreated), df, ignore_attr = TRUE)
 })
 
-test_that("streams can be imported from RecordBatchFileReader", {
+test_that("streams can be imported from RecordBatchStreamReader", {
   skip_if_not_installed("arrow")
 
   # some test data
@@ -185,14 +185,14 @@ test_that("streams can be imported from RecordBatchFileReader", {
 
   # write a valid file
   file_obj <- arrow::FileOutputStream$create(tf)
-  writer <- arrow::RecordBatchFileWriter$create(file_obj, batch$schema)
+  writer <- arrow::RecordBatchStreamWriter$create(file_obj, batch$schema)
   writer$write(batch)
   writer$close()
   file_obj$close()
 
   # create the reader
   read_file_obj <- arrow::ReadableFile$create(tf)
-  reader <- arrow::RecordBatchFileReader$create(read_file_obj)
+  reader <- arrow::RecordBatchStreamReader$create(read_file_obj)
 
   # export it to narrow
   stream <- as_narrow_array_stream(reader)
@@ -204,11 +204,11 @@ test_that("streams can be imported from RecordBatchFileReader", {
   )
 
   # skip("Attempt to read batch from exported RecordBatchFileReader segfaults")
-  # batch <- narrow_array_stream_get_next(stream)
+  batch <- narrow_array_stream_get_next(stream)
+  expect_identical(from_narrow_array(batch), df)
 
   read_file_obj$close()
   unlink(tf)
-  skip("Attempt to read batch from exported RecordBatchFileReader segfaults")
 })
 
 test_that("Arrays can be streamed", {
