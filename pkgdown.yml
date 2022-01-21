@@ -3,7 +3,7 @@ pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   why-narrow: why-narrow.html
-last_built: 2022-01-21T15:37Z
+last_built: 2022-01-21T16:59Z
 urls:
   reference: https://paleolimbot.github.io/narrow/reference
   article: https://paleolimbot.github.io/narrow/articles
