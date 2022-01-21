@@ -17,60 +17,11 @@ The [Apache Arrow](https://arrow.apache.org/) project is awesome. So is the [R p
 
 Apache Arrow also has a lot to offer the R package ecosystem as a developer-facing package. R doesn't natively support many useful types (e.g., fixed-precision decimals and 64-bit integers) and starts to get slow when dealing with really big (millions of elements) character vectors and nested lists. Arrow supports a rich set of types and can slice and rearrange tens of millions of strings without stuttering. Zero-copy transfer between R, Python, Rust, and other language bindings make it possible to take advantage of processing functions exposed in other languages without writing to disk. The parquet, feather, and IPC formats are open, cross-platform versions of Arrow types that are fast to read and write (compared to CSV or serializing R objects) and provide the same rich set of types as in-memory Arrow arrays.
 
-I'm going to make the argument here that while the arrow R package is an fantastic user-facing package, it's a difficult package for R developers to use as a dependency.
-
-Stepping back from Arrow, it's worth taking a look at the [DBI package](https://dbi.r-dbi.org/), which is several decades old, has 181 reverse dependencies (972 if you count recursive dependencies), and is *the* package to implement if you have a database engine and you want R users to use it. It defines three object types (`DBIDriver`, `DBIConnection`, and `DBIResult`) and the methods needed to connect to a database, make a query, get and R object back.
-
-- `dbConnect(<DBIDriver>)` -> `DBIConnection`
-- `dbSendQuery(<DBIConnection>)` -> `DBIResult`
-- `dbFetch(res)` -> `data.frame`
-
-The sources are about 700 KB and installed the package takes up about 1.2 MB. This is actually a medium-sized R package in terms of size and lines of code (about 1800), but has zero dependencies and installs in a few seconds. The main thing is that nobody has ever noticed the DBI package being installed nor had any install problems with it. That's makes it really easy for a package developer to add as a dependency.
-
-```{r, eval=FALSE, echo=FALSE}
-length(tools::dependsOnPkgs("DBI", recursive = FALSE, installed = available.packages()))
-
-curl::curl_download(
-  "https://github.com/r-dbi/DBI/archive/refs/heads/main.zip",
-  "DBI.zip"
-)
-
-unzip("DBI.zip", exdir = ".")
-
-system("cloc DBI.zip")
-sum(file.size(list.files(system.file("", package = "DBI"), recursive = TRUE, full.names = TRUE))) / (2 ^ 20)
-```
-
-As a user, if you've heard about the arrow R package and want to use it, it's easy to install:
-
-```r
-install.packages("arrow")
-```
-
-...unless you're on Linux, in which case it's still pretty easy but you have to do this:
-
-```r
-Sys.setenv(NOT_CRAN = "true")
-install.packages("arrow")
-```
-
-Both of those will install a pre-compiled version of the underlying C++ library. If you don't, it will take a 10 minutes or so to build. Even with the pre-compiled underlying C++ library, it takes about 60 seconds to install the package. There are a few tricks you can use to speed this up that are detailed in a [truly excellent install guide](https://arrow.apache.org/docs/r/articles/install.html), which, as a user excited about Arrow who just typed `install.packages("arrow")`, is an excellent resource.
-
-Pretend for a moment, though, that you just typed this:
-
-```r
-install.packages("somePackageDependingOnArrow")
-```
-
-Most R users on Linux (or using Linux via Docker or rhub) will spend about 15 minutes waiting for arrow to install. As a user excited about the somePackageDependingOnArrow package that might have no clue what Arrow is or why 'arrow' is taking so long to install, this is annoying at best. If a package in turn depends on somePackageDependingOnArrow, there's even less reason for the user to care about looking up the install instructions. The arrow package *is* really useful and many of the things it does are impossible to do otherwise, so in many cases dealing with that install friction is worth it as the maintainer of somePackageDependingOnArrow. For many other maintainers, it's probably easier to just not use Arrow.
-
-One way to ease this friction is to make the troublesome `Sys.setenv(NOT_CRAN = "true")` line go away. It's necessary because CRAN doesn't allow packages to download binaries by default (with a very large asterisk, because many packages do this anyway). The policy is there in the name of transparency to make sure that binaries served by CRAN can be inspected for malicious code and/or inspected for code quality. It is absolutely possible to download a binary from a trusted source in a transparent way, and this should be made possible and easy to do by CRAN. That battle can and should be fought but will take some time (my guess is a few years).
-
-Even if there is a binary available for Arrow C++ and it *was* easy to download and link to it in a CRAN package, the scope of the 'arrow' package is such that it's still going to take over a minute to compile. A minute is very good for a package that can query huge amounts of data stored on the cloud using familiar dplyr syntax. A minute is very bad for a package that just wants to read and write something better than a CSV. Again, there are tricks to speed this up, but getting users to read an install guide for a first, second, or third order dependency is always going to be a source of friction.
+For many R packages, the value offered by the arrow R package as a dependency outweighs any size or scope considerations. For packages with a more limited scope, the Arrow R package may not be a good fit as a dependency. The C API, added to the Arrow R package in [version 5.0.0](https://arrow.apache.org/docs/r/news/index.html#c-interface), provides a path to such a package: whereas the C++ structures used by the arrow R package aren't safe to expose elsewhere, the C API structures *are* safe to pass between packages and embedded interpreters and are able to do so without copying the Array data for most Arrays.
 
 ## Scope
 
-I think the main goal of a developer-facing Apache Arrow R package should be to make it easy to use, easy to test, and safe to pass around external pointers to C API structures. These structures are ABI stable and are safe to pass around among R packages and embedded interpreters. If a dependency package wants to operate on an array of unsigned 64-bit integers (like an [S2 cell identifier](https://r-spatial.github.io/s2/reference/s2_cell.html#details)), all they should have to do is run the input through `as_narrow_array()`. The package doing the operating doesn't have to know about how or why the input came to be a pointer to a `struct ArrowArray` and a `struct ArrowSchema`. Similarly, any package that wants to represent an object as an array of unsigned 64-bit integers just has to create the appropriate `struct ArrowArray` and `struct ArrowSchema`.
+I think the main goal of a developer-facing Apache Arrow R package should be to make it easy to use, easy to test, and safe to pass around external pointers to C API structures. If a dependency package wants to operate on an array of unsigned 64-bit integers (like an [S2 cell identifier](https://r-spatial.github.io/s2/reference/s2_cell.html#details)), all they should have to do is run the input through `as_narrow_array()`. The package doing the operating doesn't have to know about how or why the input came to be a pointer to a `struct ArrowArray` and a `struct ArrowSchema`. Similarly, any package that wants to represent an object as an array of unsigned 64-bit integers just has to create the appropriate `struct ArrowArray` and `struct ArrowSchema`.
 
 As I've prototyped it here, the idea is similar to DBI except the focus is on types rather than methods. We have four types:
 
@@ -185,12 +136,45 @@ These are extra things that I haven't implemented that I think should also be in
 
 For all of these, it's easy to fall back to the arrow R package if it's installed or to fall back to the arrow R package for the hard bits (e.g., casting). I still think all three are worth implementing for a developer-facing R package. There's no need for any of this to be fast because if speed is an issue, users can be directed to the arrow R package.
 
-## Too much scope?
-
-I mentioned earlier that the DBI package is actually medium-sized R package (1 MB installed, which is mostly R code). While the general idea of DBI is simple, the reality of providing a common interface to many database backends is complex, so there are functions like `dbQuoteLiteral()` that are included that make functions like `glue::glue_sql()` (which generates SQL in a way that protects against injection attacks) possible. That functionality could have been outsourced to another package but then a package that wants to implement a database backend would have to import *two* packages. The extra functionality doesn't cost anything to install, so I'd argue it's worth it. Similarly, I'd argue that including the facilities to validate, read, write, and rearrange Arrow arrays is worth it, as long as it can be done without installation cost.
-
 ## A 'narrow' C library?
 
 Perhaps the most obvious way to do this kind of thing would be to vendor in a minimal copy of Arrow C++ library and use it to implement the bits that I've mentioned above. Another way to do it is to write and use a tiny vendorable C library. I did it using the C library approach in the prototype because I was having a good time with it (I based the style off the excellent [tensorflow C API](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/c/c_api.h) and the structure off the [rlang C library](https://github.com/r-lib/rlang/tree/main/src/rlang) and [sqlite3](https://www.sqlite.org/download.html)), but that by no means requires that it be the direction a future 'narrow' R package needs to go.
 
-I think the tiny vendorable C library is the right approach beccause it's not trivial to vendor C++ into an R package. Even if *we* can do it, it would be harder for a dependency package to take the same approach if they wanted to, for example, extract metadata from the schema, read the bitpacked validity buffer, or validate arrays themselves in compiled code. I'll also point to the success of SQLite, which ships as two files (sqlite3.h and sqlite3.c), is ubiquitous as a way to read and write typed data to disk, and is the basis for many file formats (e.g., the GeoPackage format for geospatial data).
+I think the tiny vendorable C library is the right approach because it's not trivial to vendor reorganize a C++ project into an R package. Even if *we* can do it, it would be harder for a dependency package to take the same approach if they wanted to, for example, extract metadata from the schema, read the bitpacked validity buffer, or validate arrays themselves in compiled code. I'll also point to the success of SQLite, which ships as two files (sqlite3.h and sqlite3.c), is ubiquitous as a way to read and write typed data to disk, and is the basis for many file formats (e.g., the GeoPackage format for geospatial data).
+
+## Real-world example
+
+I started writing narrow to learn about the columnar format and continued adding bits as I started experimenting with [representing geometry as nested Arrow structures](https://fishandwhistle.net/post/2021/prototyping-an-apache-arrow-representation-of-geometry/). In the prototype package implementing this, [geoarrow](https://github.com/paleolimbot/geoarrow), I needed to create nested lists and demonstrate that reading/writing these objects was as fast or faster than some other common ways to do it that existed already. The R spatial developer crowd can be wary of dependencies, so I also wanted to demonstrate that it could be done in a lightweight package. Conceptually this also made sense...reading the C structures didn't take much code and that is a good thing: my goal was that it should take a comparable amount of code to read well-known binary, which is the current best bet for passing geometries between libraries in memory.
+
+I used `narrow_array()`, `narrow_array_data()`, and `narrow_schema()` to create the nested data efficiently. In Python there is `Array.from_buffers()` to do this kind of thing that isn't implemented in R yet to my knowledge. For points, it looked like this:
+
+```{r}
+x <- 1:5
+y <- 1:5
+interleaved <- rbind(as.double(x), as.double(y))
+
+point_array <- narrow_array(
+  narrow_schema("+w:2", children = list(narrow_schema("g", name = ""))),
+  narrow_array_data(
+    length = ncol(interleaved),
+    buffers = list(NULL),
+    children = list(
+      narrow_array_data(
+        buffers = list(NULL, interleaved),
+        length = length(interleaved),
+        null_count = 0
+      )
+    ),
+    null_count = 0
+  )
+)
+```
+
+From there I made arrow R package objects and used it to write Parquet, demonstrating that it made smaller files that could be read faster than the gold-standard shapefile (even with compression).
+
+```{r}
+tbl <- arrow::Table$create(points = from_narrow_array(point_array, arrow::Array))
+arrow::write_parquet(tbl, tempfile())
+```
+
+The conversion of C structures back to R representation of geometry is more complex, particularly to support lines, polygons, multi, and more than one point representation (e.g., float, dictionary encoded). I prototyped this, too, but this is where a tiny C library would help. The main things were that I needed to decode the metadata field to inspect the extension type and get metadata (e.g., dimension names), I needed to inspect the bitpacked validity buffer to handle nulls, and I needed to parse the format string to pick the proper point wrapper class to decode the points. Because it's a prototype I copied bits from the C library and modified them to suit, but it would be better if I didn't have to do. Importantly, it might mean that future developers of in-memory and on-disk formats (geometry or otherwise) use Arrow structures more frequently because it is the easiest way to make it happen.
