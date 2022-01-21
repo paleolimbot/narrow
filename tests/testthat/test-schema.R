@@ -8,7 +8,7 @@ test_that("narrow_schema() works with mostly defaults", {
   expect_identical(s_data$metadata, list())
   expect_identical(s_data$children, list())
   expect_null(s_data$dictionary)
-  expect_null(s_data$name)
+  expect_identical(s_data$name, "")
 
   # get the garbage collector to run at least once
   gc()

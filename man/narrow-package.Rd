@@ -12,6 +12,7 @@ Provides an R API to the 'Apache Arrow' C API.
 Useful links:
 \itemize{
   \item \url{https://github.com/paleolimbot/narrow}
+  \item \url{https://paleolimbot.github.io/narrow/}
   \item Report bugs at \url{https://github.com/paleolimbot/narrow/issues}
 }
 

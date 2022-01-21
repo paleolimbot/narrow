@@ -19,7 +19,7 @@
 #' @return An external pointer with class 'narrow_schema'
 #' @export
 #'
-narrow_schema <- function(format, name = NULL, metadata = NULL,
+narrow_schema <- function(format, name = "", metadata = NULL,
                          flags = narrow_schema_flags(),
                          children = NULL, dictionary = NULL) {
   metadata <- metadata_to_list_of_raw(metadata)

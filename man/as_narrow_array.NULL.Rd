@@ -11,21 +11,21 @@
 \alias{as_narrow_array.data.frame}
 \title{Convert R objects to Arrow vectors}
 \usage{
-\method{as_narrow_array}{`NULL`}(x, ..., name = NULL)
+\method{as_narrow_array}{`NULL`}(x, ..., name = "")
 
-\method{as_narrow_array}{logical}(x, ..., name = NULL)
+\method{as_narrow_array}{logical}(x, ..., name = "")
 
-\method{as_narrow_array}{integer}(x, ..., name = NULL)
+\method{as_narrow_array}{integer}(x, ..., name = "")
 
-\method{as_narrow_array}{double}(x, ..., name = NULL)
+\method{as_narrow_array}{double}(x, ..., name = "")
 
-\method{as_narrow_array}{character}(x, ..., name = NULL)
+\method{as_narrow_array}{character}(x, ..., name = "")
 
-\method{as_narrow_array}{factor}(x, ..., name = NULL)
+\method{as_narrow_array}{factor}(x, ..., name = "")
 
-\method{as_narrow_array}{raw}(x, ..., name = NULL)
+\method{as_narrow_array}{raw}(x, ..., name = "")
 
-\method{as_narrow_array}{data.frame}(x, ..., name = NULL)
+\method{as_narrow_array}{data.frame}(x, ..., name = "")
 }
 \arguments{
 \item{x}{An object to convert to an \code{\link[=narrow_array]{narrow_array()}}}

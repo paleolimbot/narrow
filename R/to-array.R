@@ -21,13 +21,13 @@
 #' as_narrow_array("fish")
 #' as_narrow_array(data.frame(x = 1:10, y = as.raw(1:10)))
 #'
-as_narrow_array.NULL <- function(x, ..., name = NULL) {
+as_narrow_array.NULL <- function(x, ..., name = "") {
   narrow_array(narrow_schema("n", name), narrow_array_data(null_count = 0))
 }
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.logical <- function(x, ..., name = NULL) {
+as_narrow_array.logical <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
     narrow_schema("i", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
@@ -42,7 +42,7 @@ as_narrow_array.logical <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.integer <- function(x, ..., name = NULL) {
+as_narrow_array.integer <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
     narrow_schema("i", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
@@ -57,7 +57,7 @@ as_narrow_array.integer <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.double <- function(x, ..., name = NULL) {
+as_narrow_array.double <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
     narrow_schema("g", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
@@ -72,7 +72,7 @@ as_narrow_array.double <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.character <- function(x, ..., name = NULL) {
+as_narrow_array.character <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
 
   # flatten and check for long data vector
@@ -103,7 +103,7 @@ as_narrow_array.character <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.factor <- function(x, ..., name = NULL) {
+as_narrow_array.factor <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
 
   # indices are 1-based and Arrow needs 0-based
@@ -131,7 +131,7 @@ as_narrow_array.factor <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.raw <- function(x, ..., name = NULL) {
+as_narrow_array.raw <- function(x, ..., name = "") {
   narrow_array(
     narrow_schema("C", name),
     narrow_array_data(
@@ -145,7 +145,7 @@ as_narrow_array.raw <- function(x, ..., name = NULL) {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.data.frame <- function(x, ..., name = NULL) {
+as_narrow_array.data.frame <- function(x, ..., name = "") {
   arrays <- Map(as_narrow_array, x, name = names(x))
   array_data <- lapply(arrays, "[[", "array_data")
 

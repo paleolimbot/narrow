@@ -12,7 +12,7 @@
 \usage{
 narrow_schema(
   format,
-  name = NULL,
+  name = "",
   metadata = NULL,
   flags = narrow_schema_flags(),
   children = NULL,
