@@ -64,7 +64,7 @@ test_that("Schema to schema works", {
     narrow_schema_info(s, recursive = TRUE),
     narrow_schema_info(
       narrow_schema(
-        "+s", name = "",
+        "+s", name = "", flags = 0L,
         children = list(
           narrow_schema(
             "i", name = "field_name",

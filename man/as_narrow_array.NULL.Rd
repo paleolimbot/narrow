@@ -25,7 +25,7 @@
 
 \method{as_narrow_array}{raw}(x, ..., name = "")
 
-\method{as_narrow_array}{data.frame}(x, ..., name = "")
+\method{as_narrow_array}{data.frame}(x, ..., name = "", nullable = FALSE)
 }
 \arguments{
 \item{x}{An object to convert to an \code{\link[=narrow_array]{narrow_array()}}}
@@ -33,6 +33,8 @@
 \item{...}{Passed to S3 methods}
 
 \item{name}{An optional name}
+
+\item{nullable}{\code{TRUE} if the type is semantically nullable}
 }
 \value{
 An \code{\link[=narrow_array]{narrow_array()}}

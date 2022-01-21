@@ -4,14 +4,11 @@ test_that("narrow_schema() works with mostly defaults", {
   expect_s3_class(s, "narrow_schema")
   s_data <- narrow_schema_info(s)
   expect_identical(s_data$format, "i")
-  expect_identical(s_data$flags, 0L)
+  expect_identical(s_data$flags, 2L)
   expect_identical(s_data$metadata, list())
   expect_identical(s_data$children, list())
   expect_null(s_data$dictionary)
   expect_identical(s_data$name, "")
-
-  # get the garbage collector to run at least once
-  gc()
 })
 
 test_that("as_narrow_schema() works", {

@@ -28,7 +28,7 @@ narrow_schema <- function(format, name = "", metadata = NULL,
 
 #' @rdname narrow_schema
 #' @export
-narrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = FALSE,
+narrow_schema_flags <- function(dictionary_ordered = FALSE, nullable = TRUE,
                                map_keys_sorted = FALSE) {
   flags <- 0L
   if (dictionary_ordered) {

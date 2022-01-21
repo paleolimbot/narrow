@@ -30,7 +30,7 @@ as_narrow_array.NULL <- function(x, ..., name = "") {
 as_narrow_array.logical <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
-    narrow_schema("i", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
+    narrow_schema("i", name),
     narrow_array_data(
       buffers = if (any(x_is_na)) list(as_narrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -45,7 +45,7 @@ as_narrow_array.logical <- function(x, ..., name = "") {
 as_narrow_array.integer <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
-    narrow_schema("i", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
+    narrow_schema("i", name),
     narrow_array_data(
       buffers = if (any(x_is_na)) list(as_narrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -60,7 +60,7 @@ as_narrow_array.integer <- function(x, ..., name = "") {
 as_narrow_array.double <- function(x, ..., name = "") {
   x_is_na <- is.na(x)
   narrow_array(
-    narrow_schema("g", name, flags = narrow_schema_flags(nullable = any(x_is_na))),
+    narrow_schema("g", name),
     narrow_array_data(
       buffers = if (any(x_is_na)) list(as_narrow_bitmask(!x_is_na), x) else list(NULL, x),
       length = length(x),
@@ -91,7 +91,7 @@ as_narrow_array.character <- function(x, ..., name = "") {
   }
 
   narrow_array(
-    narrow_schema(format, name, flags = narrow_schema_flags(nullable = any(x_is_na))),
+    narrow_schema(format, name),
     narrow_array_data(
       buffers = buffers,
       length = length(x),
@@ -116,7 +116,6 @@ as_narrow_array.factor <- function(x, ..., name = "") {
   narrow_array(
     narrow_schema(
       "i", name,
-      flags = narrow_schema_flags(nullable = any(x_is_na)),
       dictionary = dictionary_array$schema
     ),
     narrow_array_data(
@@ -145,12 +144,15 @@ as_narrow_array.raw <- function(x, ..., name = "") {
 
 #' @export
 #' @rdname as_narrow_array.NULL
-as_narrow_array.data.frame <- function(x, ..., name = "") {
-  arrays <- Map(as_narrow_array, x, name = names(x))
+as_narrow_array.data.frame <- function(x, ..., name = "", nullable = FALSE) {
+  arrays <- Map(as_narrow_array, x, name = names(x), nullable = TRUE)
   array_data <- lapply(arrays, "[[", "array_data")
 
   narrow_array(
-    narrow_schema("+s", name, children = lapply(arrays, "[[", "schema")),
+    narrow_schema(
+      "+s", name,
+      flags = narrow_schema_flags(nullable = nullable),
+      children = lapply(arrays, "[[", "schema")),
     narrow_array_data(
       buffers = list(NULL),
       length = nrow(x),

@@ -21,7 +21,7 @@ narrow_schema(
 
 narrow_schema_flags(
   dictionary_ordered = FALSE,
-  nullable = FALSE,
+  nullable = TRUE,
   map_keys_sorted = FALSE
 )
 
