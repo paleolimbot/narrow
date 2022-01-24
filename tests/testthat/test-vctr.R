@@ -24,7 +24,12 @@ test_that("narrow_vctr() subset works", {
   vctr <- as_narrow_vctr(12:18)
   expect_identical(
     vctr_indices(vctr[c(FALSE, TRUE)]),
-    c(1L, 3L, 5L)
+    c(0L, 1L, 2L)
+  )
+
+  expect_identical(
+    from_narrow_array(as_narrow_array(vctr[c(FALSE, TRUE)])),
+    c(13L, 15L, 17L)
   )
 })
 
@@ -35,8 +40,14 @@ test_that("narrow_vctr() subset-assign errors", {
 
 test_that("c() works for narrow_vctr() objects pointing to the same array", {
   vctr <- as_narrow_vctr(c("a", "b", "c", "d"))
-  expect_identical(c(vctr), vctr)
-  expect_identical(c(vctr[1], vctr[2:4]), vctr)
+  expect_identical(
+    from_narrow_array(as_narrow_array(c(vctr))),
+    from_narrow_array(as_narrow_array(vctr))
+  )
+  expect_identical(
+    from_narrow_array(as_narrow_array(c(vctr, vctr))),
+    rep(from_narrow_array(as_narrow_array(vctr)), 2)
+  )
 })
 
 test_that("narrow_vctr() rep works", {
@@ -117,8 +128,14 @@ test_that("narrow_vctr() works with vctrs", {
 
   vctr <- as_narrow_vctr(2:8)
   expect_true(vctrs::vec_is(vctr))
-  expect_identical(vctrs::vec_slice(vctr, c(1, 3, 5)), vctr[c(1, 3, 5)])
-  expect_identical(vctrs::vec_c(vctr, vctr), c(vctr, vctr))
+  expect_identical(
+    from_narrow_array(as_narrow_array(vctrs::vec_slice(vctr, c(1, 3, 5)))),
+    from_narrow_array(as_narrow_array(vctr[c(1, 3, 5)]))
+  )
+  expect_identical(
+    from_narrow_array(as_narrow_array(vctrs::vec_c(vctr, vctr))),
+    from_narrow_array(as_narrow_array(c(vctr, vctr)))
+  )
 
   vctr2 <- as_narrow_vctr(2:8)
   expect_error(vctrs::vec_c(vctr, vctr2), "not yet exposed in Arrow")

@@ -136,7 +136,12 @@ str.narrow_vctr <- function(object, ..., indent.str = "", width = getOption("wid
 
 #' @export
 `[.narrow_vctr` <- function(x, i) {
-  new_narrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+  assert_arrow("narrow_vctr() subset")
+  indices <- NextMethod()
+  arrow_array <- from_narrow_array(attr(x, "array", exact = TRUE), arrow::Array)
+  array <- as_narrow_array(arrow_array$Take(indices))
+  array$schema <- attr(x, "array", exact = TRUE)$schema
+  narrow_vctr(array)
 }
 
 #' @export
@@ -162,10 +167,7 @@ c.narrow_vctr <- function(...) {
   arrays_identical <- if (length(arrays) > 1) Reduce(identical, arrays) else TRUE
 
   if (arrays_identical) {
-    new_narrow_vctr(
-      do.call(c, lapply(dots, unclass)),
-      array = arrays[[1]]
-    )
+    new_narrow_vctr(do.call(c, lapply(dots, vctr_indices)), array = arrays[[1]])[]
   } else {
     stop("Concatenate() is not yet exposed in Arrow C++", call. = FALSE)
     arrow_arrays <- lapply(dots, from_narrow_array, arrow::Array)
@@ -176,13 +178,14 @@ c.narrow_vctr <- function(...) {
 
 #' @export
 rep.narrow_vctr <- function(x, ...) {
-  new_narrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+  new_narrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))[]
 }
 
 #' @method rep_len narrow_vctr
 #' @export
 rep_len.narrow_vctr <- function(x, ...) {
-  new_narrow_vctr(NextMethod(), attr(x, "array", exact = TRUE))
+  indices <- rep_len(vctr_indices(x), ...)
+  new_narrow_vctr(indices, attr(x, "array", exact = TRUE))[]
 }
 
 # data.frame() will call as.data.frame() with optional = TRUE
@@ -201,7 +204,8 @@ vec_proxy.narrow_vctr <- function(x, ...) {
 }
 
 vec_restore.narrow_vctr <- function(x, to, ...) {
-  new_narrow_vctr(x, attr(to, "array", exact = TRUE))
+  to_a <- attr(to, "array", exact = TRUE)
+  new_narrow_vctr(x, array = to_a)[]
 }
 
 #' @export
