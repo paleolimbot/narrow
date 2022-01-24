@@ -12,8 +12,7 @@
 #' as_narrow_vctr(1:10)
 #'
 narrow_vctr <- function(array = narrow_array()) {
-  stopifnot(inherits(array, "narrow_array"))
-
+  array <- as_narrow_array(array)
   new_narrow_vctr(
     seq_len0(array$array_data$length),
     array = array
@@ -96,10 +95,11 @@ print.narrow_vctr <- function(x, ...) {
   }
 
   max_print <- getOption("max.print", 1000)
-  x_head <- from_narrow_array(as_narrow_array(utils::head(x, max_print)))
-  out <- stats::setNames(x_head, names(x_head))
 
-  print(x_head, ...)
+  x_head <- utils::head(x, max_print)
+  formatted <- format(x_head)
+  formatted <- stats::setNames(formatted, names(x_head))
+  print(formatted, ..., quote = FALSE)
 
   if (length(x) > max_print) {
     cat(sprintf("Reached max.print (%s)\n", max_print))
@@ -120,13 +120,7 @@ str.narrow_vctr <- function(object, ..., indent.str = "", width = getOption("wid
   width <- width - nchar(indent.str) - 2
   length <- min(length(object), ceiling(width / 5))
 
-  x_head <- from_narrow_array(as_narrow_array(utils::head(object, length)))
-  if (is.character(x_head)) {
-    formatted <- paste0('"', x_head, '"')
-    formatted[is.na(x_head)] <- "NA"
-  } else {
-    formatted <- format(x_head, trim = TRUE)
-  }
+  formatted <- format(utils::head(object, length), trim = TRUE)
 
   title <- paste0(" ", class(object)[1], "[1:", length(object), "]")
   cat(
