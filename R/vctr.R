@@ -56,7 +56,19 @@ as_narrow_array.narrow_vctr <- function(x, ...) {
 
 new_narrow_vctr <- function(x = integer(), array = narrow_array()) {
   stopifnot(inherits(array, "narrow_array"), is.numeric(x))
-  structure(x, class = "narrow_vctr", array = array)
+  structure(x, class = narrow_vctr_class(array$schema), array = array)
+}
+
+narrow_vctr_class <- function(schema) {
+  extension <- schema$metadata[["ARROW:extension:name"]]
+  if (!is.null(extension)) {
+    ext_sanitized <- gsub("[^0-9A-Za-z_]+", "_", extension)
+    class_ext <- paste0("narrow_vctr_", ext_sanitized)
+  } else {
+    class_ext <- NULL
+  }
+
+  c(class_ext, "narrow_vctr")
 }
 
 vctr_indices <- function(x) {
