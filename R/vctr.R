@@ -54,6 +54,8 @@ as_narrow_array.narrow_vctr <- function(x, ...) {
   }
 }
 
+#' @rdname narrow_vctr
+#' @export
 new_narrow_vctr <- function(x = integer(), array = narrow_array()) {
   stopifnot(inherits(array, "narrow_array"), is.numeric(x))
   structure(x, class = narrow_vctr_class(array$schema), array = array)

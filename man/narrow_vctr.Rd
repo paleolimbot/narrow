@@ -3,11 +3,14 @@
 \name{narrow_vctr}
 \alias{narrow_vctr}
 \alias{as_narrow_vctr}
+\alias{new_narrow_vctr}
 \title{Create R vector wrappers around 'Arrow' arrays}
 \usage{
 narrow_vctr(array = narrow_array())
 
 as_narrow_vctr(x, ...)
+
+new_narrow_vctr(x = integer(), array = narrow_array())
 }
 \arguments{
 \item{array}{A \code{\link[=narrow_array]{narrow_array()}}}
