@@ -8,7 +8,10 @@ test_that("narrow_vctr() class works", {
 test_that("narrow_vctr() class works for extensions", {
   schema <- narrow_schema("i", metadata = list("ARROW:extension:name" = "pkg.thing"))
   array <- narrow_array(schema, narrow_array_data(list(NULL, 1:5), null_count = 0, length = 5))
-  expect_identical(class(narrow_vctr(array)), c("narrow_vctr_pkg_thing", "narrow_vctr"))
+  expect_identical(
+    class(narrow_vctr(array)),
+    c("narrow_vctr_pkg_thing", "narrow_vctr_pkg", "narrow_vctr")
+  )
 })
 
 test_that("as_narrow_vctr.default() works", {

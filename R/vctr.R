@@ -63,8 +63,15 @@ new_narrow_vctr <- function(x = integer(), array = narrow_array()) {
 narrow_vctr_class <- function(schema) {
   extension <- schema$metadata[["ARROW:extension:name"]]
   if (!is.null(extension)) {
-    ext_sanitized <- gsub("[^0-9A-Za-z_]+", "_", extension)
-    class_ext <- paste0("narrow_vctr_", ext_sanitized)
+    ext_sanitized <- gsub("[^0-9A-Za-z_.]+", "_", extension)
+    ext_parts <- strsplit(extension, ".", fixed = TRUE)[[1]]
+    class_ext <- vapply(
+      seq_along(ext_parts),
+      function(i) paste(ext_parts[seq_len(i)], collapse = "_"),
+      character(1)
+    )
+
+    class_ext <- paste0("narrow_vctr_", rev(class_ext))
   } else {
     class_ext <- NULL
   }
