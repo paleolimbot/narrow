@@ -206,6 +206,11 @@ SEXP narrow_c_character_from_array(SEXP array_sexp) {
         data_buffer, array.type,
         1, offset + i
       );
+
+      if (double_copy_result != 0) {
+        Rf_error("narrow_buffer_copy_value() failed with code %d", double_copy_result);
+      }
+
       sprintf(double_buffer, "%g", double_val);
       SET_STRING_ELT(result_sexp, i, Rf_mkCharCE(double_buffer, CE_UTF8));
     }

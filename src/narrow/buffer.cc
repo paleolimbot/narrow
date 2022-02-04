@@ -64,7 +64,7 @@ int static_copy_template_to_bool(void* dest_void, const void* src_void,
   src_type_t* src = (src_type_t*) src_void;
 
   unsigned char dst_byte, src_byte, src_value;
-  for (uint64_t i = 0; i < n_elements; i++) {
+  for (int64_t i = 0; i < n_elements; i++) {
     src_byte = src[(offset + i) / 8];
     src_value = (src_byte & (((unsigned char) 1) << ((offset + i) % 8))) != 0;
     dst_byte = dest[i / 8];
