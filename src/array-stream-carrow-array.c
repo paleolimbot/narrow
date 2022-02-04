@@ -6,7 +6,7 @@
 #include "array.h"
 #include "util.h"
 
-struct narrowArrayStreamData {
+struct NarrowArrayStreamData {
   R_xlen_t i;
   SEXP schema_xptr;
   SEXP array_list;
@@ -27,13 +27,13 @@ const char* narrow_array_stream_get_last_error(struct ArrowArrayStream* array_st
 }
 
 int narrow_array_stream_get_schema(struct ArrowArrayStream* array_stream, struct ArrowSchema* out) {
-  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) array_stream->private_data;
+  struct NarrowArrayStreamData* data = (struct NarrowArrayStreamData*) array_stream->private_data;
   schema_export(data->schema_xptr, out);
   return 0;
 }
 
 int narrow_array_stream_get_next(struct ArrowArrayStream* array_stream, struct ArrowArray* out) {
-  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) array_stream->private_data;
+  struct NarrowArrayStreamData* data = (struct NarrowArrayStreamData*) array_stream->private_data;
   data->i++;
 
   if (data->i >= Rf_xlength(data->array_list) || data->i < 0) {
@@ -70,8 +70,8 @@ SEXP narrow_c_narrow_array_stream(SEXP array_list, SEXP schema_xptr) {
   R_SetExternalPtrProtected(array_stream_xptr, array_list);
   R_SetExternalPtrTag(array_stream_xptr, schema_xptr);
 
-  struct narrowArrayStreamData* data = (struct narrowArrayStreamData*) malloc(sizeof(struct narrowArrayStreamData));
-  check_trivial_alloc(data, "struct narrowArrayStreamData");
+  struct NarrowArrayStreamData* data = (struct NarrowArrayStreamData*) malloc(sizeof(struct NarrowArrayStreamData));
+  check_trivial_alloc(data, "struct NarrowArrayStreamData");
   array_stream->private_data = data;
 
   data->i = -1;

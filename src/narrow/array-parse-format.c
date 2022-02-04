@@ -7,7 +7,7 @@
 #include "array.h"
 #include "status.h"
 
-void narrow_array_set_primitive(struct narrowArray* array, enum ArrowType type, uint64_t size) {
+void narrow_array_set_primitive(struct NarrowArray* array, enum ArrowType type, uint64_t size) {
   array->type = type;
   array->data_buffer_type = array->type;
   array->n_buffers = 2;
@@ -15,7 +15,7 @@ void narrow_array_set_primitive(struct narrowArray* array, enum ArrowType type, 
   array->element_size_bytes = size;
 }
 
-int narrow_array_parse_format(struct narrowArray* array, const char* format, struct ArrowStatus* status) {
+int narrow_array_parse_format(struct NarrowArray* array, const char* format, struct ArrowStatus* status) {
   narrow_status_reset(status);
 
   int format_len = strlen(format);

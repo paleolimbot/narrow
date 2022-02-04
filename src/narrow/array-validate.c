@@ -6,7 +6,7 @@
 #include "array.h"
 #include "array-init.h"
 
-int narrow_array_validate(struct narrowArray* array, struct ArrowStatus* status) {
+int narrow_array_validate(struct NarrowArray* array, struct ArrowStatus* status) {
   narrow_status_reset(status);
 
   if (array->schema == NULL) {
@@ -30,7 +30,7 @@ int narrow_array_validate(struct narrowArray* array, struct ArrowStatus* status)
   }
 
   // initialize a copy and check for out-of-sync values
-  struct narrowArray array_copy;
+  struct NarrowArray array_copy;
   narrow_array_init(&array_copy, array->schema, array->array_data, status);
   RETURN_IF_NOT_OK(status);
 
@@ -130,7 +130,7 @@ int narrow_array_validate(struct narrowArray* array, struct ArrowStatus* status)
   }
 
   // check children + dictionary
-  struct narrowArray child;
+  struct NarrowArray child;
 
   if (array->schema->n_children > 0) {
     for (int64_t i = 0; i < array->schema->n_children; i++) {

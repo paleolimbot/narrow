@@ -20,7 +20,7 @@
   }
 
 SEXP narrow_c_logical_from_array(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
@@ -45,7 +45,7 @@ SEXP narrow_c_logical_from_array(SEXP array_sexp) {
 }
 
 SEXP narrow_c_integer_from_array(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
@@ -70,7 +70,7 @@ SEXP narrow_c_integer_from_array(SEXP array_sexp) {
 }
 
 SEXP narrow_c_double_from_array(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
@@ -95,7 +95,7 @@ SEXP narrow_c_double_from_array(SEXP array_sexp) {
 }
 
 SEXP narrow_c_raw_from_array(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;
@@ -120,7 +120,7 @@ SEXP narrow_c_raw_from_array(SEXP array_sexp) {
 }
 
 SEXP narrow_c_character_from_array(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
   int64_t size = array.array_data->length;
   int64_t offset = array.array_data->offset;

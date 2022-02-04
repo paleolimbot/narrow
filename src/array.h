@@ -11,7 +11,7 @@
 
 #define STOP_IF_NOT_OK(status_) if (status_.code != 0) Rf_error("%s", status_.message)
 
-static inline void array_from_array_sexp(SEXP array_sexp, struct narrowArray* array, const char* arg) {
+static inline void array_from_array_sexp(SEXP array_sexp, struct NarrowArray* array, const char* arg) {
   if (!Rf_inherits(array_sexp, "narrow_array")) {
     Rf_error("`x` must be an `narrow_array()`");
   }

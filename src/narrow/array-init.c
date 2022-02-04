@@ -8,7 +8,7 @@
 #include "array-parse-format.h"
 #include "status.h"
 
-int narrow_array_init(struct narrowArray* array, struct ArrowSchema* schema,
+int narrow_array_init(struct NarrowArray* array, struct ArrowSchema* schema,
                       struct ArrowArray* array_data, struct ArrowStatus* status) {
   narrow_status_reset(status);
 
@@ -21,7 +21,7 @@ int narrow_array_init(struct narrowArray* array, struct ArrowSchema* schema,
   return 0;
 }
 
-int narrow_array_set_schema(struct narrowArray* array, struct ArrowSchema* schema,
+int narrow_array_set_schema(struct NarrowArray* array, struct ArrowSchema* schema,
                             struct ArrowStatus* status) {
   narrow_status_reset(status);
   if (array == NULL) {
@@ -59,7 +59,7 @@ int narrow_array_set_schema(struct narrowArray* array, struct ArrowSchema* schem
   return 0;
 }
 
-int narrow_array_set_array(struct narrowArray* array, struct ArrowArray* array_data,
+int narrow_array_set_array(struct NarrowArray* array, struct ArrowArray* array_data,
                            struct ArrowStatus* status) {
   narrow_status_reset(status);
 

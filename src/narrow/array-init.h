@@ -10,11 +10,11 @@ extern "C" {
 #endif
 
 
-int narrow_array_init(struct narrowArray* array, struct ArrowSchema* schema,
+int narrow_array_init(struct NarrowArray* array, struct ArrowSchema* schema,
                       struct ArrowArray* array_data, struct ArrowStatus* status);
-int narrow_array_set_schema(struct narrowArray* array, struct ArrowSchema* schema,
+int narrow_array_set_schema(struct NarrowArray* array, struct ArrowSchema* schema,
                             struct ArrowStatus* status);
-int narrow_array_set_array(struct narrowArray* array, struct ArrowArray* array_data,
+int narrow_array_set_array(struct NarrowArray* array, struct ArrowArray* array_data,
                            struct ArrowStatus* status);
 
 #ifdef __cplusplus

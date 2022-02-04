@@ -10,7 +10,7 @@
 #include "util.h"
 
 SEXP narrow_c_deep_copy(SEXP array_sexp) {
-  struct narrowArray array;
+  struct NarrowArray array;
   array_from_array_sexp(array_sexp, &array, "x");
 
   struct ArrowSchema* result_schema = (struct ArrowSchema*) malloc(sizeof(struct ArrowSchema));
@@ -39,7 +39,7 @@ SEXP narrow_c_deep_copy(SEXP array_sexp) {
   result_array_data->offset = 0;
 
   struct ArrowStatus status;
-  struct narrowArray array_dst;
+  struct NarrowArray array_dst;
 
   narrow_array_init(&array_dst, result_schema, result_array_data, &status);
   STOP_IF_NOT_OK(status);

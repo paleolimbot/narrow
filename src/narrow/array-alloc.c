@@ -10,7 +10,7 @@
 #include "array-init.h"
 #include "array-alloc.h"
 
-int narrow_array_alloc_buffers(struct narrowArray* array, int32_t which_buffers, struct ArrowStatus* status) {
+int narrow_array_alloc_buffers(struct NarrowArray* array, int32_t which_buffers, struct ArrowStatus* status) {
   narrow_status_reset(status);
 
   if (array == NULL) {
@@ -143,7 +143,7 @@ int narrow_array_alloc_buffers(struct narrowArray* array, int32_t which_buffers,
     }
   }
 
-  struct narrowArray child_array;
+  struct NarrowArray child_array;
 
   if (which_buffers & narrow_BUFFER_CHILD) {
     // also allocate child arrays

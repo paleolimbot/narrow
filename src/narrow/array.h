@@ -142,7 +142,7 @@ enum ArrowType {
 // that contains the casted pointers from Array as defined by Schema
 // It does not own any of its pointers, which are all borrowed from
 // its schema and array members.
-struct narrowArray {
+struct NarrowArray {
   struct ArrowSchema* schema;
   struct ArrowArray* array_data;
 
@@ -162,11 +162,11 @@ struct narrowArray {
   int data_buffer_id;
 };
 
-static inline unsigned char* narrow_array_validity_buffer(struct narrowArray* array) {
+static inline unsigned char* narrow_array_validity_buffer(struct NarrowArray* array) {
   return (unsigned char*) array->array_data->buffers[0];
 }
 
-static inline int32_t* narrow_array_offset_buffer(struct narrowArray* array) {
+static inline int32_t* narrow_array_offset_buffer(struct NarrowArray* array) {
   if (array->offset_buffer_id == -1) {
     return 0;
   }
@@ -174,7 +174,7 @@ static inline int32_t* narrow_array_offset_buffer(struct narrowArray* array) {
   return (int32_t*) array->array_data->buffers[array->offset_buffer_id];
 }
 
-static inline int64_t* narrow_array_large_offset_buffer(struct narrowArray* array) {
+static inline int64_t* narrow_array_large_offset_buffer(struct NarrowArray* array) {
   if (array->large_offset_buffer_id == -1) {
     return 0;
   }
@@ -182,7 +182,7 @@ static inline int64_t* narrow_array_large_offset_buffer(struct narrowArray* arra
   return (int64_t*) array->array_data->buffers[array->large_offset_buffer_id];
 }
 
-static inline char* narrow_array_union_type_buffer(struct narrowArray* array) {
+static inline char* narrow_array_union_type_buffer(struct NarrowArray* array) {
   if (array->union_type_buffer_id == -1) {
     return 0;
   }
@@ -190,7 +190,7 @@ static inline char* narrow_array_union_type_buffer(struct narrowArray* array) {
   return (char*) array->array_data->buffers[array->union_type_buffer_id];
 }
 
-static inline void* narrow_array_data_buffer(struct narrowArray* array) {
+static inline void* narrow_array_data_buffer(struct NarrowArray* array) {
   if (array->data_buffer_id == -1) {
     return 0;
   }
