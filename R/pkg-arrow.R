@@ -31,7 +31,7 @@ from_narrow_array.R6ClassGenerator <- function(x, ptype, ...) {
       narrow_pointer_export(x$schema, temp_schema)
       narrow_pointer_export(x$array_data, temp_array_data)
 
-      arrow::Array$import_from_c(
+      ptype$import_from_c(
         narrow_pointer_addr_dbl(temp_array_data),
         narrow_pointer_addr_dbl(temp_schema)
       )
