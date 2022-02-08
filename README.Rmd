@@ -112,7 +112,12 @@ reader <- narrow_array_stream_to_arrow(stream2)
 as.data.frame(reader$read_table())
 ```
 
-Currently attemping to export an arrow `RecordBatchReader()` segfaults for an unknown reason, but in theory one could also go the other direction.
+Round-turn operations for `RecordBatch` also work:
+
+```{r}
+df <- readr::read_csv(csv_file, show_col_types=FALSE)
+as.data.frame(from_narrow_array(as_narrow_array(df), arrow::RecordBatch)) 
+```
 
 ## C data access
 
