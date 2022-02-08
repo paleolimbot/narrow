@@ -86,15 +86,15 @@
 <span class="op">(</span><span class="va">array</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/narrow_array.html">as_narrow_array</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; &lt;narrow_array i[5]&gt;</span>
 <span class="co">#&gt; - schema:</span>
-<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x130978070&gt;</span>
+<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x55967f8285a0&gt;</span>
 <span class="co">#&gt;   - format: i</span>
-<span class="co">#&gt;   - name: NULL</span>
-<span class="co">#&gt;   - flags:</span>
+<span class="co">#&gt;   - name: </span>
+<span class="co">#&gt;   - flags: nullable</span>
 <span class="co">#&gt;   - metadata:  list()</span>
 <span class="co">#&gt;   - dictionary: NULL</span>
 <span class="co">#&gt;   - children[0]:</span>
 <span class="co">#&gt; - array_data:</span>
-<span class="co">#&gt;   &lt;narrow_array_data at 0x1309794b0&gt;</span>
+<span class="co">#&gt;   &lt;narrow_array_data at 0x559682692480&gt;</span>
 <span class="co">#&gt;   - length: 5</span>
 <span class="co">#&gt;   - null_count: 0</span>
 <span class="co">#&gt;   - offset: 0</span>
@@ -109,21 +109,21 @@
 <span class="op">(</span><span class="va">array2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/narrow_array.html">as_narrow_array</a></span><span class="op">(</span><span class="va">Array</span><span class="op">$</span><span class="fu">create</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; &lt;narrow_array i[5]&gt;</span>
 <span class="co">#&gt; - schema:</span>
-<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x1308adee0&gt;</span>
+<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x5596817a4350&gt;</span>
 <span class="co">#&gt;   - format: i</span>
-<span class="co">#&gt;   - name:</span>
+<span class="co">#&gt;   - name: </span>
 <span class="co">#&gt;   - flags: nullable</span>
 <span class="co">#&gt;   - metadata:  list()</span>
 <span class="co">#&gt;   - dictionary: NULL</span>
 <span class="co">#&gt;   - children[0]:</span>
 <span class="co">#&gt; - array_data:</span>
-<span class="co">#&gt;   &lt;narrow_array_data at 0x1308ab320&gt;</span>
+<span class="co">#&gt;   &lt;narrow_array_data at 0x559681bbade0&gt;</span>
 <span class="co">#&gt;   - length: 5</span>
 <span class="co">#&gt;   - null_count: 0</span>
 <span class="co">#&gt;   - offset: 0</span>
 <span class="co">#&gt;   - buffers[2]: List of 2</span>
-<span class="co">#&gt;     $ :&lt;externalptr&gt;</span>
-<span class="co">#&gt;     $ :&lt;externalptr&gt;</span>
+<span class="co">#&gt;     $ :&lt;externalptr&gt; </span>
+<span class="co">#&gt;     $ :&lt;externalptr&gt; </span>
 <span class="co">#&gt;   - dictionary: NULL</span>
 <span class="co">#&gt;   - children[0]:</span></code></pre></div>
 </div>
@@ -138,7 +138,7 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="fu"><a href="reference/from_narrow_array.html">from_narrow_array</a></span><span class="op">(</span><span class="va">array</span>, ptype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/double.html" class="external-link">double</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt;  num [1:5] 1 2 3 4 5</span>
-<span class="fu"><a href="reference/from_narrow_array.html">from_narrow_array</a></span><span class="op">(</span><span class="va">array</span>, ptype <span class="op">=</span> <span class="fu">arrow</span><span class="fu">::</span><span class="va"><a href="https://arrow.apache.org/docs/r//reference/array.html" class="external-link">Array</a></span><span class="op">)</span>
+<span class="fu"><a href="reference/from_narrow_array.html">from_narrow_array</a></span><span class="op">(</span><span class="va">array</span>, ptype <span class="op">=</span> <span class="fu">arrow</span><span class="fu">::</span><span class="va"><a href="https://arrow.apache.org/docs/r/reference/array.html" class="external-link">Array</a></span><span class="op">)</span>
 <span class="co">#&gt; Array</span>
 <span class="co">#&gt; &lt;int32&gt;</span>
 <span class="co">#&gt; [</span>
@@ -158,21 +158,21 @@
 <span class="fu"><a href="reference/narrow_array_stream.html">narrow_array_stream_get_next</a></span><span class="op">(</span><span class="va">stream1</span><span class="op">)</span>
 <span class="co">#&gt; &lt;narrow_array i[3]&gt;</span>
 <span class="co">#&gt; - schema:</span>
-<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x116664b50&gt;</span>
+<span class="co">#&gt;   &lt;narrow_schema 'i' at 0x559682878380&gt;</span>
 <span class="co">#&gt;   - format: i</span>
-<span class="co">#&gt;   - name: NULL</span>
-<span class="co">#&gt;   - flags:</span>
+<span class="co">#&gt;   - name: </span>
+<span class="co">#&gt;   - flags: nullable</span>
 <span class="co">#&gt;   - metadata:  list()</span>
 <span class="co">#&gt;   - dictionary: NULL</span>
 <span class="co">#&gt;   - children[0]:</span>
 <span class="co">#&gt; - array_data:</span>
-<span class="co">#&gt;   &lt;narrow_array_data at 0x116663b30&gt;</span>
+<span class="co">#&gt;   &lt;narrow_array_data at 0x5596812cff20&gt;</span>
 <span class="co">#&gt;   - length: 3</span>
 <span class="co">#&gt;   - null_count: 0</span>
 <span class="co">#&gt;   - offset: 0</span>
 <span class="co">#&gt;   - buffers[2]: List of 2</span>
-<span class="co">#&gt;     $ :&lt;externalptr&gt;</span>
-<span class="co">#&gt;     $ :&lt;externalptr&gt;</span>
+<span class="co">#&gt;     $ :&lt;externalptr&gt; </span>
+<span class="co">#&gt;     $ :&lt;externalptr&gt; </span>
 <span class="co">#&gt;   - dictionary: NULL</span>
 <span class="co">#&gt;   - children[0]:</span>
 <span class="fu"><a href="reference/narrow_array_stream.html">narrow_array_stream_get_next</a></span><span class="op">(</span><span class="va">stream1</span><span class="op">)</span>
@@ -223,21 +223,38 @@
 <span class="co">#&gt;  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
 <span class="co">#&gt; 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span>
 <span class="co">#&gt; # … with 22 more rows</span></code></pre></div>
-<p>Currently attemping to export an arrow <code><a href="https://arrow.apache.org/docs/r//reference/RecordBatchReader.html" class="external-link">RecordBatchReader()</a></code> segfaults for an unknown reason, but in theory one could also go the other direction.</p>
+<p>Round-turn operations for <code>RecordBatch</code> also work:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu">read_csv</span><span class="op">(</span><span class="va">csv_file</span>, show_col_types<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="reference/from_narrow_array.html">from_narrow_array</a></span><span class="op">(</span><span class="fu"><a href="reference/narrow_array.html">as_narrow_array</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span>, <span class="fu">arrow</span><span class="fu">::</span><span class="va"><a href="https://arrow.apache.org/docs/r/reference/RecordBatch.html" class="external-link">RecordBatch</a></span><span class="op">)</span><span class="op">)</span> 
+<span class="co">#&gt; # A tibble: 32 × 11</span>
+<span class="co">#&gt;      mpg   cyl  disp    hp  drat    wt  qsec    vs    am  gear  carb</span>
+<span class="co">#&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;  1  21       6  160    110  3.9   2.62  16.5     0     1     4     4</span>
+<span class="co">#&gt;  2  21       6  160    110  3.9   2.88  17.0     0     1     4     4</span>
+<span class="co">#&gt;  3  22.8     4  108     93  3.85  2.32  18.6     1     1     4     1</span>
+<span class="co">#&gt;  4  21.4     6  258    110  3.08  3.22  19.4     1     0     3     1</span>
+<span class="co">#&gt;  5  18.7     8  360    175  3.15  3.44  17.0     0     0     3     2</span>
+<span class="co">#&gt;  6  18.1     6  225    105  2.76  3.46  20.2     1     0     3     1</span>
+<span class="co">#&gt;  7  14.3     8  360    245  3.21  3.57  15.8     0     0     3     4</span>
+<span class="co">#&gt;  8  24.4     4  147.    62  3.69  3.19  20       1     0     4     2</span>
+<span class="co">#&gt;  9  22.8     4  141.    95  3.92  3.15  22.9     1     0     4     2</span>
+<span class="co">#&gt; 10  19.2     6  168.   123  3.92  3.44  18.3     1     0     4     4</span>
+<span class="co">#&gt; # … with 22 more rows</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="c-data-access">C data access<a class="anchor" aria-label="anchor" href="#c-data-access"></a>
 </h2>
 <p>The C data interface is ABI stable (and a version of the stream interface will be ABI stable in the future) so you can access the underlying pointers in compiled code from any R package (or inline C or C++ code). A <code><a href="reference/narrow_schema.html">narrow_schema()</a></code> is an external pointer to a <code>struct ArrowSchema</code>, a <code><a href="reference/narrow_array_data.html">narrow_array_data()</a></code> is an external pointer to a <code>struct ArrowArray</code>, and a <code><a href="reference/narrow_array.html">narrow_array()</a></code> is a <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code> of a <code><a href="reference/narrow_schema.html">narrow_schema()</a></code> and a <code><a href="reference/narrow_array_data.html">narrow_array_data()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="pp">#include </span><span class="im">"narrow.h"</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a></span>
-<span id="cb9-5"><a href="#cb9-5"></a>SEXP extract_null_count(SEXP array_data_xptr) {</span>
-<span id="cb9-6"><a href="#cb9-6"></a>  <span class="kw">struct</span> ArrowArray* array_data = (<span class="kw">struct</span> ArrowArray*) R_ExternalPtrAddr(array_data_xptr);</span>
-<span id="cb9-7"><a href="#cb9-7"></a>  <span class="cf">return</span> Rf_ScalarInteger(array_data-&gt;null_count);</span>
-<span id="cb9-8"><a href="#cb9-8"></a>}</span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1"></a><span class="pp">#include </span><span class="im">&lt;R.h&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a><span class="pp">#include </span><span class="im">&lt;Rinternals.h&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a><span class="pp">#include </span><span class="im">"narrow.h"</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a></span>
+<span id="cb10-5"><a href="#cb10-5"></a>SEXP extract_null_count(SEXP array_data_xptr) {</span>
+<span id="cb10-6"><a href="#cb10-6"></a>  <span class="kw">struct</span> ArrowArray* array_data = (<span class="kw">struct</span> ArrowArray*) R_ExternalPtrAddr(array_data_xptr);</span>
+<span id="cb10-7"><a href="#cb10-7"></a>  <span class="cf">return</span> Rf_ScalarInteger(array_data-&gt;null_count);</span>
+<span id="cb10-8"><a href="#cb10-8"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/CallExternal.html" class="external-link">.Call</a></span><span class="op">(</span><span class="st">"extract_null_count"</span>, <span class="fu"><a href="reference/narrow_array.html">as_narrow_array</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="cn">NA</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">array_data</span><span class="op">)</span>
 <span class="co">#&gt; [1] 2</span></code></pre></div>
 <p>The lifecycles of objects pointed to by the external pointers are managed by R’s garbage collector: any object that gets garbage collected has its <code>release()</code> callback called (if it isn’t <code>NULL</code>) and the underlying memory for the <code>struct Arrow...</code> freed. You can call the <code>release()</code> callback yourself from compiled code but you probably don’t want to unless you’re explicitly limiting access to an object.</p>
